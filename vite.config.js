@@ -13,7 +13,8 @@ export default defineConfig({
   },
   esbuild: {
     jsx: 'automatic',
-    include: /\.jsx?$/
+    include: /\.jsx?$/,
+    loader: { '.js': 'jsx' }
   },
   server: {
     port: 3000,
