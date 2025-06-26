@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -39,6 +39,13 @@ export function MenuManagement() {
   const [draggedCategory, setDraggedCategory] = useState(null);
   const [draggedItem, setDraggedItem] = useState(null);
   const [editingCategory, setEditingCategory] = useState(null);
+  const [isDarkMode, setIsDarkMode] = useState(true);
+
+  // Check theme on mount
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme');
+    setIsDarkMode(savedTheme === 'dark' || !savedTheme);
+  }, []);
 
   const [categories, setCategories] = useState([
     { 
@@ -162,12 +169,22 @@ export function MenuManagement() {
     .sort((a, b) => a.order - b.order);
 
   const getDietaryBadgeColor = (dietary) => {
-    switch (dietary) {
-      case 'vegetarian': return 'bg-green-500/20 text-green-300 border-green-500/30';
-      case 'vegan': return 'bg-green-500/20 text-green-300 border-green-500/30';
-      case 'gluten-free': return 'bg-blue-500/20 text-blue-300 border-blue-500/30';
-      case 'spicy': return 'bg-red-500/20 text-red-300 border-red-500/30';
-      default: return 'bg-slate-500/20 text-slate-300 border-slate-500/30';
+    if (isDarkMode) {
+      switch (dietary) {
+        case 'vegetarian': return 'bg-green-500/20 text-green-300 border-green-500/30';
+        case 'vegan': return 'bg-green-500/20 text-green-300 border-green-500/30';
+        case 'gluten-free': return 'bg-blue-500/20 text-blue-300 border-blue-500/30';
+        case 'spicy': return 'bg-red-500/20 text-red-300 border-red-500/30';
+        default: return 'bg-slate-500/20 text-slate-300 border-slate-500/30';
+      }
+    } else {
+      switch (dietary) {
+        case 'vegetarian': return 'bg-green-100 text-green-800 border-green-200';
+        case 'vegan': return 'bg-green-100 text-green-800 border-green-200';
+        case 'gluten-free': return 'bg-blue-100 text-blue-800 border-blue-200';
+        case 'spicy': return 'bg-red-100 text-red-800 border-red-200';
+        default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      }
     }
   };
 
@@ -304,41 +321,122 @@ export function MenuManagement() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-white">Menü Yönetimi</h1>
-          <p className="text-slate-400 mt-1">Menü kategorilerinizi ve öğelerinizi düzenleyin</p>
+          <h1 className={cn(
+            "text-3xl font-bold transition-colors duration-200",
+            isDarkMode ? "text-white" : "text-gray-900"
+          )}>
+            Menü Yönetimi
+          </h1>
+          <p className={cn(
+            "mt-1 transition-colors duration-200",
+            isDarkMode ? "text-slate-400" : "text-gray-600"
+          )}>
+            Menü kategorilerinizi ve öğelerinizi düzenleyin
+          </p>
         </div>
         <div className="flex items-center space-x-3 mt-4 sm:mt-0">
           <Dialog open={isAddingCategory} onOpenChange={setIsAddingCategory}>
             <DialogTrigger asChild>
-              <Button variant="outline" className="border-slate-600 hover:bg-slate-700 text-slate-300">
+              <Button variant="outline" className={cn(
+                "transition-colors duration-200",
+                isDarkMode 
+                  ? "border-slate-600 hover:bg-slate-700 text-slate-300" 
+                  : "border-gray-300 hover:bg-gray-100 text-gray-700"
+              )}>
                 <Plus className="w-4 h-4 mr-2" />
                 Kategori Ekle
               </Button>
             </DialogTrigger>
-            <DialogContent className="bg-slate-800 border-slate-700">
+            <DialogContent className={cn(
+              "transition-colors duration-200",
+              isDarkMode ? "bg-slate-800 border-slate-700" : "bg-white border-gray-200"
+            )}>
               <DialogHeader>
-                <DialogTitle className="text-white">Yeni Kategori Ekle</DialogTitle>
+                <DialogTitle className={cn(
+                  "transition-colors duration-200",
+                  isDarkMode ? "text-white" : "text-gray-900"
+                )}>
+                  Yeni Kategori Ekle
+                </DialogTitle>
               </DialogHeader>
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="categoryName" className="text-slate-300">Kategori Adı</Label>
-                  <Input id="categoryName" placeholder="ör. Deniz Ürünleri" className="mt-1 bg-slate-700 border-slate-600 text-white" />
+                  <Label htmlFor="categoryName" className={cn(
+                    "transition-colors duration-200",
+                    isDarkMode ? "text-slate-300" : "text-gray-700"
+                  )}>
+                    Kategori Adı
+                  </Label>
+                  <Input 
+                    id="categoryName" 
+                    placeholder="ör. Deniz Ürünleri" 
+                    className={cn(
+                      "mt-1 transition-colors duration-200",
+                      isDarkMode 
+                        ? "bg-slate-700 border-slate-600 text-white" 
+                        : "bg-white border-gray-300 text-gray-900"
+                    )} 
+                  />
                 </div>
                 <div>
-                  <Label htmlFor="categoryDescription" className="text-slate-300">Açıklama</Label>
-                  <Textarea id="categoryDescription" placeholder="Bu kategorinin kısa açıklaması" className="mt-1 h-20 bg-slate-700 border-slate-600 text-white" />
+                  <Label htmlFor="categoryDescription" className={cn(
+                    "transition-colors duration-200",
+                    isDarkMode ? "text-slate-300" : "text-gray-700"
+                  )}>
+                    Açıklama
+                  </Label>
+                  <Textarea 
+                    id="categoryDescription" 
+                    placeholder="Bu kategorinin kısa açıklaması" 
+                    className={cn(
+                      "mt-1 h-20 transition-colors duration-200",
+                      isDarkMode 
+                        ? "bg-slate-700 border-slate-600 text-white" 
+                        : "bg-white border-gray-300 text-gray-900"
+                    )} 
+                  />
                 </div>
                 <div>
-                  <Label className="text-slate-300">Kategori Resmi</Label>
-                  <div className="mt-2 border-2 border-dashed border-slate-600 rounded-lg p-6 text-center hover:border-blue-400 transition-colors cursor-pointer">
-                    <Camera className="w-8 h-8 text-slate-400 mx-auto mb-2" />
-                    <p className="text-sm text-slate-300">Resim yüklemek için tıklayın</p>
-                    <p className="text-xs text-slate-500 mt-1">PNG, JPG 5MB'a kadar</p>
+                  <Label className={cn(
+                    "transition-colors duration-200",
+                    isDarkMode ? "text-slate-300" : "text-gray-700"
+                  )}>
+                    Kategori Resmi
+                  </Label>
+                  <div className={cn(
+                    "mt-2 border-2 border-dashed rounded-lg p-6 text-center hover:border-blue-400 transition-colors cursor-pointer",
+                    isDarkMode ? "border-slate-600" : "border-gray-300"
+                  )}>
+                    <Camera className={cn(
+                      "w-8 h-8 mx-auto mb-2 transition-colors duration-200",
+                      isDarkMode ? "text-slate-400" : "text-gray-400"
+                    )} />
+                    <p className={cn(
+                      "text-sm transition-colors duration-200",
+                      isDarkMode ? "text-slate-300" : "text-gray-600"
+                    )}>
+                      Resim yüklemek için tıklayın
+                    </p>
+                    <p className={cn(
+                      "text-xs mt-1 transition-colors duration-200",
+                      isDarkMode ? "text-slate-500" : "text-gray-500"
+                    )}>
+                      PNG, JPG 5MB'a kadar
+                    </p>
                   </div>
                 </div>
               </div>
               <DialogFooter>
-                <Button variant="outline" onClick={() => setIsAddingCategory(false)} className="border-slate-600 text-slate-300">
+                <Button 
+                  variant="outline" 
+                  onClick={() => setIsAddingCategory(false)} 
+                  className={cn(
+                    "transition-colors duration-200",
+                    isDarkMode 
+                      ? "border-slate-600 text-slate-300" 
+                      : "border-gray-300 text-gray-700"
+                  )}
+                >
                   İptal
                 </Button>
                 <Button className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600">
@@ -354,43 +452,144 @@ export function MenuManagement() {
                 Öğe Ekle
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-2xl bg-slate-800 border-slate-700">
+            <DialogContent className={cn(
+              "max-w-2xl transition-colors duration-200",
+              isDarkMode ? "bg-slate-800 border-slate-700" : "bg-white border-gray-200"
+            )}>
               <DialogHeader>
-                <DialogTitle className="text-white">Yeni Menü Öğesi Ekle</DialogTitle>
+                <DialogTitle className={cn(
+                  "transition-colors duration-200",
+                  isDarkMode ? "text-white" : "text-gray-900"
+                )}>
+                  Yeni Menü Öğesi Ekle
+                </DialogTitle>
               </DialogHeader>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-4">
                   <div>
-                    <Label htmlFor="itemName" className="text-slate-300">Öğe Adı</Label>
-                    <Input id="itemName" placeholder="ör. Pasta Carbonara" className="mt-1 bg-slate-700 border-slate-600 text-white" />
+                    <Label htmlFor="itemName" className={cn(
+                      "transition-colors duration-200",
+                      isDarkMode ? "text-slate-300" : "text-gray-700"
+                    )}>
+                      Öğe Adı
+                    </Label>
+                    <Input 
+                      id="itemName" 
+                      placeholder="ör. Pasta Carbonara" 
+                      className={cn(
+                        "mt-1 transition-colors duration-200",
+                        isDarkMode 
+                          ? "bg-slate-700 border-slate-600 text-white" 
+                          : "bg-white border-gray-300 text-gray-900"
+                      )} 
+                    />
                   </div>
                   <div>
-                    <Label htmlFor="itemPrice" className="text-slate-300">Fiyat (₺)</Label>
-                    <Input id="itemPrice" type="number" step="0.01" placeholder="0.00" className="mt-1 bg-slate-700 border-slate-600 text-white" />
+                    <Label htmlFor="itemPrice" className={cn(
+                      "transition-colors duration-200",
+                      isDarkMode ? "text-slate-300" : "text-gray-700"
+                    )}>
+                      Fiyat (₺)
+                    </Label>
+                    <Input 
+                      id="itemPrice" 
+                      type="number" 
+                      step="0.01" 
+                      placeholder="0.00" 
+                      className={cn(
+                        "mt-1 transition-colors duration-200",
+                        isDarkMode 
+                          ? "bg-slate-700 border-slate-600 text-white" 
+                          : "bg-white border-gray-300 text-gray-900"
+                      )} 
+                    />
                   </div>
                   <div>
-                    <Label htmlFor="prepTime" className="text-slate-300">Hazırlık Süresi</Label>
-                    <Input id="prepTime" placeholder="ör. 15 dk" className="mt-1 bg-slate-700 border-slate-600 text-white" />
+                    <Label htmlFor="prepTime" className={cn(
+                      "transition-colors duration-200",
+                      isDarkMode ? "text-slate-300" : "text-gray-700"
+                    )}>
+                      Hazırlık Süresi
+                    </Label>
+                    <Input 
+                      id="prepTime" 
+                      placeholder="ör. 15 dk" 
+                      className={cn(
+                        "mt-1 transition-colors duration-200",
+                        isDarkMode 
+                          ? "bg-slate-700 border-slate-600 text-white" 
+                          : "bg-white border-gray-300 text-gray-900"
+                      )} 
+                    />
                   </div>
                   <div>
-                    <Label htmlFor="itemDescription" className="text-slate-300">Açıklama</Label>
-                    <Textarea id="itemDescription" placeholder="Yemeği tanımlayın..." className="mt-1 h-20 bg-slate-700 border-slate-600 text-white" />
+                    <Label htmlFor="itemDescription" className={cn(
+                      "transition-colors duration-200",
+                      isDarkMode ? "text-slate-300" : "text-gray-700"
+                    )}>
+                      Açıklama
+                    </Label>
+                    <Textarea 
+                      id="itemDescription" 
+                      placeholder="Yemeği tanımlayın..." 
+                      className={cn(
+                        "mt-1 h-20 transition-colors duration-200",
+                        isDarkMode 
+                          ? "bg-slate-700 border-slate-600 text-white" 
+                          : "bg-white border-gray-300 text-gray-900"
+                      )} 
+                    />
                   </div>
                 </div>
                 <div className="space-y-4">
                   <div>
-                    <Label className="text-slate-300">Ürün Resmi</Label>
-                    <div className="mt-2 border-2 border-dashed border-slate-600 rounded-lg p-6 text-center hover:border-blue-400 transition-colors cursor-pointer">
-                      <Camera className="w-8 h-8 text-slate-400 mx-auto mb-2" />
-                      <p className="text-sm text-slate-300">Resim yüklemek için tıklayın</p>
-                      <p className="text-xs text-slate-500 mt-1">PNG, JPG 5MB'a kadar</p>
+                    <Label className={cn(
+                      "transition-colors duration-200",
+                      isDarkMode ? "text-slate-300" : "text-gray-700"
+                    )}>
+                      Ürün Resmi
+                    </Label>
+                    <div className={cn(
+                      "mt-2 border-2 border-dashed rounded-lg p-6 text-center hover:border-blue-400 transition-colors cursor-pointer",
+                      isDarkMode ? "border-slate-600" : "border-gray-300"
+                    )}>
+                      <Camera className={cn(
+                        "w-8 h-8 mx-auto mb-2 transition-colors duration-200",
+                        isDarkMode ? "text-slate-400" : "text-gray-400"
+                      )} />
+                      <p className={cn(
+                        "text-sm transition-colors duration-200",
+                        isDarkMode ? "text-slate-300" : "text-gray-600"
+                      )}>
+                        Resim yüklemek için tıklayın
+                      </p>
+                      <p className={cn(
+                        "text-xs mt-1 transition-colors duration-200",
+                        isDarkMode ? "text-slate-500" : "text-gray-500"
+                      )}>
+                        PNG, JPG 5MB'a kadar
+                      </p>
                     </div>
                   </div>
                   <div>
-                    <Label className="text-slate-300">Diyet Seçenekleri</Label>
+                    <Label className={cn(
+                      "transition-colors duration-200",
+                      isDarkMode ? "text-slate-300" : "text-gray-700"
+                    )}>
+                      Diyet Seçenekleri
+                    </Label>
                     <div className="flex flex-wrap gap-2 mt-2">
                       {['Vejetaryen', 'Vegan', 'Glutensiz', 'Acılı'].map((option) => (
-                        <Badge key={option} variant="outline" className="cursor-pointer hover:bg-blue-500/20 border-slate-600 text-slate-300">
+                        <Badge 
+                          key={option} 
+                          variant="outline" 
+                          className={cn(
+                            "cursor-pointer hover:bg-blue-500/20 transition-colors duration-200",
+                            isDarkMode 
+                              ? "border-slate-600 text-slate-300" 
+                              : "border-gray-300 text-gray-700"
+                          )}
+                        >
                           {option}
                         </Badge>
                       ))}
@@ -399,7 +598,16 @@ export function MenuManagement() {
                 </div>
               </div>
               <DialogFooter>
-                <Button variant="outline" onClick={() => setIsAddingItem(false)} className="border-slate-600 text-slate-300">
+                <Button 
+                  variant="outline" 
+                  onClick={() => setIsAddingItem(false)} 
+                  className={cn(
+                    "transition-colors duration-200",
+                    isDarkMode 
+                      ? "border-slate-600 text-slate-300" 
+                      : "border-gray-300 text-gray-700"
+                  )}
+                >
                   İptal
                 </Button>
                 <Button className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600">
@@ -414,9 +622,17 @@ export function MenuManagement() {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Categories Panel */}
         <div className="lg:col-span-1">
-          <Card className="bg-slate-800/50 backdrop-blur-xl border-slate-700/50">
+          <Card className={cn(
+            "backdrop-blur-xl transition-colors duration-200",
+            isDarkMode 
+              ? "bg-slate-800/50 border-slate-700/50" 
+              : "bg-white/80 border-gray-200/50"
+          )}>
             <CardHeader>
-              <CardTitle className="flex items-center text-white">
+              <CardTitle className={cn(
+                "flex items-center transition-colors duration-200",
+                isDarkMode ? "text-white" : "text-gray-900"
+              )}>
                 <ChefHat className="w-5 h-5 mr-2 text-blue-400" />
                 Kategoriler
               </CardTitle>
@@ -432,8 +648,12 @@ export function MenuManagement() {
                     selectedCategory === category.id
                       ? "bg-gradient-to-r from-blue-500/20 to-purple-500/20 border-blue-500/50"
                       : category.isActive
-                        ? "border-green-500/50 hover:border-green-400"
-                        : "border-red-500/50 hover:border-red-400 opacity-60",
+                        ? isDarkMode 
+                          ? "border-green-500/50 hover:border-green-400" 
+                          : "border-green-500 hover:border-green-600"
+                        : isDarkMode 
+                          ? "border-red-500/50 hover:border-red-400 opacity-60" 
+                          : "border-red-500 hover:border-red-600 opacity-60",
                     draggedCategory === category.id && "opacity-50"
                   )}
                   onClick={() => setSelectedCategory(category.id)}
@@ -444,8 +664,14 @@ export function MenuManagement() {
                   onDragEnd={handleCategoryDragEnd}
                 >
                   <div className="flex items-start space-x-3">
-                    <GripVertical className="w-4 h-4 text-slate-500 cursor-move mt-1 flex-shrink-0" />
-                    <div className="w-12 h-12 rounded-lg overflow-hidden bg-slate-700 flex-shrink-0">
+                    <GripVertical className={cn(
+                      "w-4 h-4 cursor-move mt-1 flex-shrink-0 transition-colors duration-200",
+                      isDarkMode ? "text-slate-500" : "text-gray-400"
+                    )} />
+                    <div className={cn(
+                      "w-12 h-12 rounded-lg overflow-hidden flex-shrink-0",
+                      isDarkMode ? "bg-slate-700" : "bg-gray-200"
+                    )}>
                       <img 
                         src={category.image} 
                         alt={category.name}
@@ -455,20 +681,33 @@ export function MenuManagement() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between mb-1">
                         <h3 className={cn(
-                          "font-medium truncate",
-                          selectedCategory === category.id ? "text-white" : "text-slate-300"
+                          "font-medium truncate transition-colors duration-200",
+                          selectedCategory === category.id 
+                            ? "text-white" 
+                            : isDarkMode 
+                              ? "text-slate-300" 
+                              : "text-gray-700"
                         )}>
                           {category.name}
                         </h3>
                         <div className="flex items-center space-x-1">
-                          <Badge variant="secondary" className="text-xs bg-slate-700 text-slate-300">
+                          <Badge variant="secondary" className={cn(
+                            "text-xs transition-colors duration-200",
+                            isDarkMode 
+                              ? "bg-slate-700 text-slate-300" 
+                              : "bg-gray-200 text-gray-700"
+                          )}>
                             {category.itemCount}
                           </Badge>
                         </div>
                       </div>
                       <p className={cn(
-                        "text-xs truncate mb-2",
-                        selectedCategory === category.id ? "text-blue-200" : "text-slate-500"
+                        "text-xs truncate mb-2 transition-colors duration-200",
+                        selectedCategory === category.id 
+                          ? "text-blue-200" 
+                          : isDarkMode 
+                            ? "text-slate-500" 
+                            : "text-gray-500"
                       )}>
                         {category.description}
                       </p>
@@ -498,7 +737,10 @@ export function MenuManagement() {
                               setEditingCategory(category.id);
                             }}
                           >
-                            <Edit className="w-3 h-3 text-slate-400 hover:text-blue-400" />
+                            <Edit className={cn(
+                              "w-3 h-3 hover:text-blue-400 transition-colors duration-200",
+                              isDarkMode ? "text-slate-400" : "text-gray-500"
+                            )} />
                           </Button>
                           <Button
                             variant="ghost"
@@ -509,7 +751,10 @@ export function MenuManagement() {
                               deleteCategory(category.id);
                             }}
                           >
-                            <Trash2 className="w-3 h-3 text-slate-400 hover:text-red-400" />
+                            <Trash2 className={cn(
+                              "w-3 h-3 hover:text-red-400 transition-colors duration-200",
+                              isDarkMode ? "text-slate-400" : "text-gray-500"
+                            )} />
                           </Button>
                         </div>
                       </div>
@@ -523,28 +768,47 @@ export function MenuManagement() {
 
         {/* Items Panel */}
         <div className="lg:col-span-3">
-          <Card className="bg-slate-800/50 backdrop-blur-xl border-slate-700/50">
+          <Card className={cn(
+            "backdrop-blur-xl transition-colors duration-200",
+            isDarkMode 
+              ? "bg-slate-800/50 border-slate-700/50" 
+              : "bg-white/80 border-gray-200/50"
+          )}>
             <CardHeader>
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
-                <CardTitle className="capitalize text-white">
+                <CardTitle className={cn(
+                  "capitalize transition-colors duration-200",
+                  isDarkMode ? "text-white" : "text-gray-900"
+                )}>
                   {categories.find(c => c.id === selectedCategory)?.name} ({filteredItems.length} öğe)
                 </CardTitle>
                 <div className="flex items-center space-x-3">
                   <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
+                    <Search className={cn(
+                      "absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 transition-colors duration-200",
+                      isDarkMode ? "text-slate-400" : "text-gray-400"
+                    )} />
                     <Input
                       placeholder="Öğe ara..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-10 w-64 bg-slate-700 border-slate-600 text-white"
+                      className={cn(
+                        "pl-10 w-64 transition-colors duration-200",
+                        isDarkMode 
+                          ? "bg-slate-700 border-slate-600 text-white" 
+                          : "bg-white border-gray-300 text-gray-900"
+                      )}
                     />
                   </div>
-                  <div className="flex items-center space-x-1 bg-slate-700 rounded-lg p-1">
+                  <div className={cn(
+                    "flex items-center space-x-1 rounded-lg p-1 transition-colors duration-200",
+                    isDarkMode ? "bg-slate-700" : "bg-gray-200"
+                  )}>
                     <Button
                       variant={viewMode === 'list' ? 'default' : 'ghost'}
                       size="sm"
                       onClick={() => setViewMode('list')}
-                      className={viewMode === 'list' ? 'bg-blue-500' : 'text-slate-400 hover:text-white'}
+                      className={viewMode === 'list' ? 'bg-blue-500' : isDarkMode ? 'text-slate-400 hover:text-white' : 'text-gray-600 hover:text-gray-900'}
                     >
                       <List className="w-4 h-4" />
                     </Button>
@@ -552,7 +816,7 @@ export function MenuManagement() {
                       variant={viewMode === 'grid' ? 'default' : 'ghost'}
                       size="sm"
                       onClick={() => setViewMode('grid')}
-                      className={viewMode === 'grid' ? 'bg-blue-500' : 'text-slate-400 hover:text-white'}
+                      className={viewMode === 'grid' ? 'bg-blue-500' : isDarkMode ? 'text-slate-400 hover:text-white' : 'text-gray-600 hover:text-gray-900'}
                     >
                       <Grid className="w-4 h-4" />
                     </Button>
@@ -572,8 +836,12 @@ export function MenuManagement() {
                       "rounded-lg transition-all duration-200 border-2 cursor-pointer",
                       viewMode === 'list' ? "p-2" : "p-4",
                       item.isActive 
-                        ? "border-green-500 bg-slate-700/30 hover:border-green-400 hover:bg-slate-700/50" 
-                        : "border-red-500 bg-slate-700/20 opacity-60 hover:border-red-400",
+                        ? isDarkMode 
+                          ? "border-green-500 bg-slate-700/30 hover:border-green-400 hover:bg-slate-700/50" 
+                          : "border-green-500 bg-green-50 hover:border-green-600 hover:bg-green-100"
+                        : isDarkMode 
+                          ? "border-red-500 bg-slate-700/20 opacity-60 hover:border-red-400" 
+                          : "border-red-500 bg-red-50 opacity-60 hover:border-red-600",
                       draggedItem === item.id && "opacity-50"
                     )}
                     onClick={() => toggleItemStatus(item.id)}
@@ -584,12 +852,18 @@ export function MenuManagement() {
                     onDragEnd={handleItemDragEnd}
                   >
                     {viewMode === 'list' ? (
-                      // Ultra Compact List Layout - Improved styling
+                      // Ultra Compact List Layout
                       <div className="flex items-center space-x-3">
-                        <GripVertical className="w-4 h-4 text-slate-500 cursor-move flex-shrink-0" />
+                        <GripVertical className={cn(
+                          "w-4 h-4 cursor-move flex-shrink-0 transition-colors duration-200",
+                          isDarkMode ? "text-slate-500" : "text-gray-400"
+                        )} />
                         
                         {/* Product Image */}
-                        <div className="w-12 h-12 rounded-lg overflow-hidden bg-slate-700 flex-shrink-0">
+                        <div className={cn(
+                          "w-12 h-12 rounded-lg overflow-hidden flex-shrink-0",
+                          isDarkMode ? "bg-slate-700" : "bg-gray-200"
+                        )}>
                           <img 
                             src={item.image} 
                             alt={item.name}
@@ -600,15 +874,25 @@ export function MenuManagement() {
                         {/* Product Info */}
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center space-x-2">
-                            <h3 className="font-medium text-white text-sm truncate">{item.name}</h3>
+                            <h3 className={cn(
+                              "font-medium text-sm truncate transition-colors duration-200",
+                              isDarkMode ? "text-white" : "text-gray-900"
+                            )}>
+                              {item.name}
+                            </h3>
                             {item.isFeatured && (
                               <Star className="w-3 h-3 text-yellow-400 fill-current flex-shrink-0" />
                             )}
                           </div>
-                          <p className="text-xs text-slate-400 truncate">{item.description}</p>
+                          <p className={cn(
+                            "text-xs truncate transition-colors duration-200",
+                            isDarkMode ? "text-slate-400" : "text-gray-600"
+                          )}>
+                            {item.description}
+                          </p>
                         </div>
                         
-                        {/* Price - More prominent styling */}
+                        {/* Price */}
                         <div className="flex items-center" onClick={(e) => e.stopPropagation()}>
                           {editingPrice === item.id ? (
                             <div className="flex items-center space-x-1">
@@ -651,27 +935,43 @@ export function MenuManagement() {
                           )}
                         </div>
                         
-                        {/* Action Buttons - Themed styling */}
+                        {/* Action Buttons */}
                         <div className="flex items-center space-x-1" onClick={(e) => e.stopPropagation()}>
                           <Button 
                             size="icon" 
-                            className="h-8 w-8 bg-slate-600 hover:bg-blue-600 text-white border-0"
+                            className={cn(
+                              "h-8 w-8 border-0 transition-colors duration-200",
+                              isDarkMode 
+                                ? "bg-slate-600 hover:bg-blue-600 text-white" 
+                                : "bg-gray-300 hover:bg-blue-500 text-gray-700 hover:text-white"
+                            )}
                           >
                             <Edit className="w-3 h-3" />
                           </Button>
                           <Button 
                             size="icon" 
-                            className="h-8 w-8 bg-slate-600 hover:bg-red-600 text-white border-0"
+                            className={cn(
+                              "h-8 w-8 border-0 transition-colors duration-200",
+                              isDarkMode 
+                                ? "bg-slate-600 hover:bg-red-600 text-white" 
+                                : "bg-gray-300 hover:bg-red-500 text-gray-700 hover:text-white"
+                            )}
                           >
                             <Trash2 className="w-3 h-3" />
                           </Button>
                         </div>
                       </div>
                     ) : (
-                      // Grid Layout (unchanged)
+                      // Grid Layout
                       <div className="flex items-start space-x-3">
-                        <GripVertical className="w-4 h-4 text-slate-500 cursor-move flex-shrink-0 mt-1" />
-                        <div className="w-20 h-20 rounded-lg overflow-hidden bg-slate-700 flex-shrink-0">
+                        <GripVertical className={cn(
+                          "w-4 h-4 cursor-move flex-shrink-0 mt-1 transition-colors duration-200",
+                          isDarkMode ? "text-slate-500" : "text-gray-400"
+                        )} />
+                        <div className={cn(
+                          "w-20 h-20 rounded-lg overflow-hidden flex-shrink-0",
+                          isDarkMode ? "bg-slate-700" : "bg-gray-200"
+                        )}>
                           <img 
                             src={item.image} 
                             alt={item.name}
@@ -683,14 +983,27 @@ export function MenuManagement() {
                           <div className="flex items-start justify-between mb-2">
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center space-x-2 mb-1">
-                                <h3 className="font-semibold text-white truncate">{item.name}</h3>
+                                <h3 className={cn(
+                                  "font-semibold truncate transition-colors duration-200",
+                                  isDarkMode ? "text-white" : "text-gray-900"
+                                )}>
+                                  {item.name}
+                                </h3>
                                 {item.isFeatured && (
                                   <Star className="w-4 h-4 text-yellow-400 fill-current flex-shrink-0" />
                                 )}
                               </div>
-                              <p className="text-sm text-slate-300 mb-2 line-clamp-2">{item.description}</p>
+                              <p className={cn(
+                                "text-sm mb-2 line-clamp-2 transition-colors duration-200",
+                                isDarkMode ? "text-slate-300" : "text-gray-600"
+                              )}>
+                                {item.description}
+                              </p>
                               
-                              <div className="flex items-center space-x-4 text-xs text-slate-400 mb-2">
+                              <div className={cn(
+                                "flex items-center space-x-4 text-xs mb-2 transition-colors duration-200",
+                                isDarkMode ? "text-slate-400" : "text-gray-500"
+                              )}>
                                 {item.prepTime && (
                                   <div className="flex items-center">
                                     <Clock className="w-3 h-3 mr-1" />
@@ -714,20 +1027,33 @@ export function MenuManagement() {
                             <div className="flex items-center space-x-3">
                               <Button 
                                 size="icon" 
-                                className="h-7 w-7 bg-slate-600 hover:bg-blue-600 text-white border-0"
+                                className={cn(
+                                  "h-7 w-7 border-0 transition-colors duration-200",
+                                  isDarkMode 
+                                    ? "bg-slate-600 hover:bg-blue-600 text-white" 
+                                    : "bg-gray-300 hover:bg-blue-500 text-gray-700 hover:text-white"
+                                )}
                               >
                                 <Edit className="w-3 h-3" />
                               </Button>
                               <Button 
                                 size="icon" 
-                                className="h-7 w-7 bg-slate-600 hover:bg-red-600 text-white border-0"
+                                className={cn(
+                                  "h-7 w-7 border-0 transition-colors duration-200",
+                                  isDarkMode 
+                                    ? "bg-slate-600 hover:bg-red-600 text-white" 
+                                    : "bg-gray-300 hover:bg-red-500 text-gray-700 hover:text-white"
+                                )}
                               >
                                 <Trash2 className="w-3 h-3" />
                               </Button>
                             </div>
                             
                             <div className="flex items-center">
-                              <DollarSign className="w-3 h-3 mr-1 text-slate-400" />
+                              <DollarSign className={cn(
+                                "w-3 h-3 mr-1 transition-colors duration-200",
+                                isDarkMode ? "text-slate-400" : "text-gray-500"
+                              )} />
                               {editingPrice === item.id ? (
                                 <div className="flex items-center space-x-1">
                                   <Input
@@ -781,9 +1107,20 @@ export function MenuManagement() {
 
               {filteredItems.length === 0 && (
                 <div className="text-center py-12">
-                  <ChefHat className="w-12 h-12 text-slate-500 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-white mb-2">Öğe bulunamadı</h3>
-                  <p className="text-slate-400 mb-4">
+                  <ChefHat className={cn(
+                    "w-12 h-12 mx-auto mb-4 transition-colors duration-200",
+                    isDarkMode ? "text-slate-500" : "text-gray-400"
+                  )} />
+                  <h3 className={cn(
+                    "text-lg font-medium mb-2 transition-colors duration-200",
+                    isDarkMode ? "text-white" : "text-gray-900"
+                  )}>
+                    Öğe bulunamadı
+                  </h3>
+                  <p className={cn(
+                    "mb-4 transition-colors duration-200",
+                    isDarkMode ? "text-slate-400" : "text-gray-600"
+                  )}>
                     {searchTerm 
                       ? `"${searchTerm}" ile eşleşen öğe bulunamadı.` 
                       : "Bu kategoride henüz öğe yok."}

@@ -22,6 +22,7 @@ import { cn } from '@/lib/utils';
 
 export function DashboardOverview() {
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [isDarkMode, setIsDarkMode] = useState(true);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -29,6 +30,12 @@ export function DashboardOverview() {
     }, 1000);
 
     return () => clearInterval(timer);
+  }, []);
+
+  // Check theme on mount
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme');
+    setIsDarkMode(savedTheme === 'dark' || !savedTheme);
   }, []);
 
   const metrics = [
@@ -75,23 +82,42 @@ export function DashboardOverview() {
   return (
     <div className="space-y-6">
       {/* Welcome Header */}
-      <div className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 backdrop-blur-xl rounded-xl p-6 border border-blue-500/20">
+      <div className={cn(
+        "backdrop-blur-xl rounded-xl p-6 border transition-colors duration-200",
+        isDarkMode 
+          ? "bg-blue-500/20 border-blue-500/20" 
+          : "bg-blue-50 border-blue-200"
+      )}>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold mb-2 text-white">
+            <h1 className={cn(
+              "text-2xl font-bold mb-2 transition-colors duration-200",
+              isDarkMode ? "text-white" : "text-gray-900"
+            )}>
               Günaydın, Ahmet Bey!
             </h1>
-            <p className="text-blue-200">Restoranınızda bugün neler oluyor</p>
+            <p className={cn(
+              "transition-colors duration-200",
+              isDarkMode ? "text-blue-200" : "text-blue-700"
+            )}>
+              Restoranınızda bugün neler oluyor
+            </p>
           </div>
           <div className="mt-4 sm:mt-0 text-right">
-            <div className="text-2xl font-bold text-white">
+            <div className={cn(
+              "text-2xl font-bold transition-colors duration-200",
+              isDarkMode ? "text-white" : "text-gray-900"
+            )}>
               {currentTime.toLocaleDateString('tr-TR', { 
                 weekday: 'long',
                 month: 'long', 
                 day: 'numeric' 
               })}
             </div>
-            <div className="text-blue-200">
+            <div className={cn(
+              "transition-colors duration-200",
+              isDarkMode ? "text-blue-200" : "text-blue-700"
+            )}>
               {currentTime.toLocaleTimeString('tr-TR', { 
                 hour: '2-digit', 
                 minute: '2-digit'
@@ -109,9 +135,17 @@ export function DashboardOverview() {
           const TrendIcon = isPositive ? TrendingUp : TrendingDown;
           
           return (
-            <Card key={index} className="bg-slate-800/50 backdrop-blur-xl border-slate-700/50 hover:bg-slate-800/70 transition-all duration-300 hover:scale-105">
+            <Card key={index} className={cn(
+              "backdrop-blur-xl border transition-all duration-300 hover:scale-105",
+              isDarkMode 
+                ? "bg-slate-800/50 border-slate-700/50 hover:bg-slate-800/70" 
+                : "bg-white/80 border-gray-200/50 hover:bg-white"
+            )}>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-slate-300">
+                <CardTitle className={cn(
+                  "text-sm font-medium transition-colors duration-200",
+                  isDarkMode ? "text-slate-300" : "text-gray-600"
+                )}>
                   {metric.title}
                 </CardTitle>
                 <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br", metric.color)}>
@@ -119,13 +153,17 @@ export function DashboardOverview() {
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-white mb-1">
+                <div className={cn(
+                  "text-2xl font-bold mb-1 transition-colors duration-200",
+                  isDarkMode ? "text-white" : "text-gray-900"
+                )}>
                   {metric.value}
                 </div>
                 <div className={cn(
-                  "flex items-center text-xs",
+                  "flex items-center text-xs transition-colors duration-200",
                   metric.trend === 'up' ? "text-green-400" : 
-                  metric.trend === 'down' ? "text-red-400" : "text-slate-400"
+                  metric.trend === 'down' ? "text-red-400" : 
+                  isDarkMode ? "text-slate-400" : "text-gray-500"
                 )}>
                   {metric.trend !== 'neutral' && (
                     <TrendIcon className="w-3 h-3 mr-1" />
@@ -140,14 +178,27 @@ export function DashboardOverview() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Content Stats */}
-        <Card className="bg-slate-800/50 backdrop-blur-xl border-slate-700/50">
+        <Card className={cn(
+          "backdrop-blur-xl border transition-colors duration-200",
+          isDarkMode 
+            ? "bg-slate-800/50 border-slate-700/50" 
+            : "bg-white/80 border-gray-200/50"
+        )}>
           <CardHeader>
-            <CardTitle className="flex items-center justify-between text-white">
+            <CardTitle className={cn(
+              "flex items-center justify-between transition-colors duration-200",
+              isDarkMode ? "text-white" : "text-gray-900"
+            )}>
               <span className="flex items-center">
                 <Megaphone className="w-5 h-5 mr-2 text-blue-400" />
                 İçerik İstatistikleri
               </span>
-              <Button variant="outline" size="sm" className="border-slate-600 hover:bg-slate-700 text-slate-300">
+              <Button variant="outline" size="sm" className={cn(
+                "transition-colors duration-200",
+                isDarkMode 
+                  ? "border-slate-600 hover:bg-slate-700 text-slate-300" 
+                  : "border-gray-300 hover:bg-gray-100 text-gray-700"
+              )}>
                 Yönet
               </Button>
             </CardTitle>
@@ -157,21 +208,42 @@ export function DashboardOverview() {
               {contentStats.map((stat, index) => {
                 const Icon = stat.icon;
                 return (
-                  <div key={index} className="flex items-center justify-between p-3 rounded-lg bg-slate-700/30 hover:bg-slate-700/50 transition-colors">
+                  <div key={index} className={cn(
+                    "flex items-center justify-between p-3 rounded-lg transition-colors duration-200",
+                    isDarkMode 
+                      ? "bg-slate-700/30 hover:bg-slate-700/50" 
+                      : "bg-gray-50 hover:bg-gray-100"
+                  )}>
                     <div className="flex items-center space-x-3">
                       <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-purple-500 rounded-lg flex items-center justify-center">
                         <Icon className="w-4 h-4 text-white" />
                       </div>
                       <div>
-                        <div className="font-medium text-white">{stat.name}</div>
-                        <div className="text-sm text-slate-300">{stat.count} aktif</div>
+                        <div className={cn(
+                          "font-medium transition-colors duration-200",
+                          isDarkMode ? "text-white" : "text-gray-900"
+                        )}>
+                          {stat.name}
+                        </div>
+                        <div className={cn(
+                          "text-sm transition-colors duration-200",
+                          isDarkMode ? "text-slate-300" : "text-gray-600"
+                        )}>
+                          {stat.count} aktif
+                        </div>
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="font-semibold text-white">
+                      <div className={cn(
+                        "font-semibold transition-colors duration-200",
+                        isDarkMode ? "text-white" : "text-gray-900"
+                      )}>
                         {stat.views || stat.clicks || stat.likes}
                       </div>
-                      <div className="text-xs text-slate-400">
+                      <div className={cn(
+                        "text-xs transition-colors duration-200",
+                        isDarkMode ? "text-slate-400" : "text-gray-500"
+                      )}>
                         {stat.views ? 'görüntülenme' : stat.clicks ? 'tıklama' : 'beğeni'}
                       </div>
                     </div>
@@ -183,44 +255,111 @@ export function DashboardOverview() {
         </Card>
 
         {/* Menu Overview */}
-        <Card className="bg-slate-800/50 backdrop-blur-xl border-slate-700/50">
+        <Card className={cn(
+          "backdrop-blur-xl border transition-colors duration-200",
+          isDarkMode 
+            ? "bg-slate-800/50 border-slate-700/50" 
+            : "bg-white/80 border-gray-200/50"
+        )}>
           <CardHeader>
-            <CardTitle className="flex items-center justify-between text-white">
+            <CardTitle className={cn(
+              "flex items-center justify-between transition-colors duration-200",
+              isDarkMode ? "text-white" : "text-gray-900"
+            )}>
               <span className="flex items-center">
                 <ChefHat className="w-5 h-5 mr-2 text-blue-400" />
                 Menü Özeti
               </span>
-              <Button variant="outline" size="sm" className="border-slate-600 hover:bg-slate-700 text-slate-300">
+              <Button variant="outline" size="sm" className={cn(
+                "transition-colors duration-200",
+                isDarkMode 
+                  ? "border-slate-600 hover:bg-slate-700 text-slate-300" 
+                  : "border-gray-300 hover:bg-gray-100 text-gray-700"
+              )}>
                 Düzenle
               </Button>
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div className="flex items-center justify-between p-3 rounded-lg bg-slate-700/30">
+              <div className={cn(
+                "flex items-center justify-between p-3 rounded-lg transition-colors duration-200",
+                isDarkMode ? "bg-slate-700/30" : "bg-gray-50"
+              )}>
                 <div>
-                  <div className="font-medium text-white">Başlangıçlar</div>
-                  <div className="text-sm text-slate-300">8 öğe</div>
+                  <div className={cn(
+                    "font-medium transition-colors duration-200",
+                    isDarkMode ? "text-white" : "text-gray-900"
+                  )}>
+                    Başlangıçlar
+                  </div>
+                  <div className={cn(
+                    "text-sm transition-colors duration-200",
+                    isDarkMode ? "text-slate-300" : "text-gray-600"
+                  )}>
+                    8 öğe
+                  </div>
                 </div>
-                <Badge className="bg-green-500/20 text-green-300 border-green-500/30">
+                <Badge className={cn(
+                  "transition-colors duration-200",
+                  isDarkMode 
+                    ? "bg-green-500/20 text-green-300 border-green-500/30" 
+                    : "bg-green-100 text-green-800 border-green-200"
+                )}>
                   Aktif
                 </Badge>
               </div>
-              <div className="flex items-center justify-between p-3 rounded-lg bg-slate-700/30">
+              <div className={cn(
+                "flex items-center justify-between p-3 rounded-lg transition-colors duration-200",
+                isDarkMode ? "bg-slate-700/30" : "bg-gray-50"
+              )}>
                 <div>
-                  <div className="font-medium text-white">Ana Yemekler</div>
-                  <div className="text-sm text-slate-300">15 öğe</div>
+                  <div className={cn(
+                    "font-medium transition-colors duration-200",
+                    isDarkMode ? "text-white" : "text-gray-900"
+                  )}>
+                    Ana Yemekler
+                  </div>
+                  <div className={cn(
+                    "text-sm transition-colors duration-200",
+                    isDarkMode ? "text-slate-300" : "text-gray-600"
+                  )}>
+                    15 öğe
+                  </div>
                 </div>
-                <Badge className="bg-green-500/20 text-green-300 border-green-500/30">
+                <Badge className={cn(
+                  "transition-colors duration-200",
+                  isDarkMode 
+                    ? "bg-green-500/20 text-green-300 border-green-500/30" 
+                    : "bg-green-100 text-green-800 border-green-200"
+                )}>
                   Aktif
                 </Badge>
               </div>
-              <div className="flex items-center justify-between p-3 rounded-lg bg-slate-700/30">
+              <div className={cn(
+                "flex items-center justify-between p-3 rounded-lg transition-colors duration-200",
+                isDarkMode ? "bg-slate-700/30" : "bg-gray-50"
+              )}>
                 <div>
-                  <div className="font-medium text-white">Tatlılar</div>
-                  <div className="text-sm text-slate-300">6 öğe</div>
+                  <div className={cn(
+                    "font-medium transition-colors duration-200",
+                    isDarkMode ? "text-white" : "text-gray-900"
+                  )}>
+                    Tatlılar
+                  </div>
+                  <div className={cn(
+                    "text-sm transition-colors duration-200",
+                    isDarkMode ? "text-slate-300" : "text-gray-600"
+                  )}>
+                    6 öğe
+                  </div>
                 </div>
-                <Badge className="bg-yellow-500/20 text-yellow-300 border-yellow-500/30">
+                <Badge className={cn(
+                  "transition-colors duration-200",
+                  isDarkMode 
+                    ? "bg-yellow-500/20 text-yellow-300 border-yellow-500/30" 
+                    : "bg-yellow-100 text-yellow-800 border-yellow-200"
+                )}>
                   2 Pasif
                 </Badge>
               </div>
@@ -230,9 +369,19 @@ export function DashboardOverview() {
       </div>
 
       {/* Quick Actions */}
-      <Card className="bg-slate-800/50 backdrop-blur-xl border-slate-700/50">
+      <Card className={cn(
+        "backdrop-blur-xl border transition-colors duration-200",
+        isDarkMode 
+          ? "bg-slate-800/50 border-slate-700/50" 
+          : "bg-white/80 border-gray-200/50"
+      )}>
         <CardHeader>
-          <CardTitle className="text-white">Hızlı İşlemler</CardTitle>
+          <CardTitle className={cn(
+            "transition-colors duration-200",
+            isDarkMode ? "text-white" : "text-gray-900"
+          )}>
+            Hızlı İşlemler
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
