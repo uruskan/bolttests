@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { 
@@ -24,15 +25,12 @@ import {
   Monitor,
   Sun,
   Moon,
-  ChevronRight,
-  Image as ImageIcon,
-  ToggleLeft,
-  ToggleRight,
-  Layers,
-  Paintbrush,
   AlignLeft,
   AlignCenter,
-  AlignRight
+  AlignRight,
+  Bold,
+  Italic,
+  ImageIcon
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { 
@@ -101,6 +99,15 @@ export function ThemeCustomization() {
     setFontSize([16]);
     setDensity([16]);
     setBorderRadius([8]);
+  };
+
+  const getAlignmentIcon = (alignment) => {
+    switch (alignment) {
+      case 'left': return AlignLeft;
+      case 'center': return AlignCenter;
+      case 'right': return AlignRight;
+      default: return AlignLeft;
+    }
   };
 
   return (
@@ -291,332 +298,420 @@ export function ThemeCustomization() {
               </Card>
             </div>
           ) : (
-            // Advanced Mode
-            <div className="space-y-6">
-              {/* Colors */}
-              <Card className="bg-card border-border">
-                <CardHeader>
-                  <CardTitle className="flex items-center text-foreground">
-                    <Palette className="w-5 h-5 mr-2" />
-                    Renk Ayarları
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    {Object.entries(currentTheme.advancedSettings.colors).map(([key, value]) => (
-                      <div key={key}>
-                        <Label className="capitalize text-foreground">
-                          {key.replace(/([A-Z])/g, ' $1')}
-                        </Label>
-                        <div className="flex items-center space-x-3 mt-2">
-                          <input
-                            type="color"
-                            value={value}
-                            onChange={(e) => updateAdvancedSetting(`colors.${key}`, e.target.value)}
-                            className="w-12 h-12 rounded-lg border border-border cursor-pointer"
-                          />
-                          <div>
-                            <div className="font-medium text-foreground">{key}</div>
-                            <div className="text-sm text-muted-foreground">{value}</div>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
+            // Advanced Mode with Tabs
+            <Tabs defaultValue="colors" className="w-full">
+              <TabsList className="grid w-full grid-cols-4 bg-muted border border-border">
+                <TabsTrigger 
+                  value="colors" 
+                  className="flex items-center data-[state=active]:bg-background data-[state=active]:text-foreground"
+                >
+                  <Palette className="w-4 h-4 mr-2" />
+                  Colors
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="typography" 
+                  className="flex items-center data-[state=active]:bg-background data-[state=active]:text-foreground"
+                >
+                  <Type className="w-4 h-4 mr-2" />
+                  Typography
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="layout" 
+                  className="flex items-center data-[state=active]:bg-background data-[state=active]:text-foreground"
+                >
+                  <Layout className="w-4 h-4 mr-2" />
+                  Layout
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="advanced" 
+                  className="flex items-center data-[state=active]:bg-background data-[state=active]:text-foreground"
+                >
+                  <Settings className="w-4 h-4 mr-2" />
+                  Advanced
+                </TabsTrigger>
+              </TabsList>
 
-              {/* Typography */}
-              <Card className="bg-card border-border">
-                <CardHeader>
-                  <CardTitle className="flex items-center text-foreground">
-                    <Type className="w-5 h-5 mr-2" />
-                    Yazı Tipi Ayarları
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-6">
-                    {Object.entries(currentTheme.advancedSettings.typography).map(([key, settings]) => (
-                      <div key={key} className="border rounded-lg p-4 border-border">
-                        <h4 className="font-medium mb-4 capitalize text-foreground">
-                          {key.replace(/([A-Z])/g, ' $1')}
-                        </h4>
-                        <div className="grid grid-cols-2 gap-4">
-                          <div>
-                            <Label className="text-foreground">Font Family</Label>
-                            <Select 
-                              value={settings.fontFamily}
-                              onValueChange={(value) => updateAdvancedSetting(`typography.${key}.fontFamily`, value)}
-                            >
-                              <SelectTrigger className="mt-1 bg-background border-border text-foreground">
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent className="bg-background border-border">
-                                {availableFonts.map((font) => (
-                                  <SelectItem key={font} value={font}>{font}</SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          <div>
-                            <Label className="text-foreground">Font Size</Label>
-                            <Input 
-                              value={settings.fontSize}
-                              onChange={(e) => updateAdvancedSetting(`typography.${key}.fontSize`, e.target.value)}
-                              className="mt-1 bg-background border-border text-foreground"
+              <TabsContent value="colors" className="space-y-6">
+                <Card className="bg-card border-border">
+                  <CardHeader>
+                    <CardTitle className="text-foreground">Renk Ayarları</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                      {Object.entries(currentTheme.advancedSettings.colors).map(([key, value]) => (
+                        <div key={key}>
+                          <Label className="capitalize text-foreground">
+                            {key.replace(/([A-Z])/g, ' $1')}
+                          </Label>
+                          <div className="flex items-center space-x-3 mt-2">
+                            <input
+                              type="color"
+                              value={value}
+                              onChange={(e) => updateAdvancedSetting(`colors.${key}`, e.target.value)}
+                              className="w-12 h-12 rounded-lg border border-border cursor-pointer"
                             />
-                          </div>
-                          <div>
-                            <Label className="text-foreground">Font Weight</Label>
-                            <Select 
-                              value={settings.fontWeight}
-                              onValueChange={(value) => updateAdvancedSetting(`typography.${key}.fontWeight`, value)}
-                            >
-                              <SelectTrigger className="mt-1 bg-background border-border text-foreground">
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent className="bg-background border-border">
-                                <SelectItem value="300">Light (300)</SelectItem>
-                                <SelectItem value="400">Regular (400)</SelectItem>
-                                <SelectItem value="500">Medium (500)</SelectItem>
-                                <SelectItem value="600">Semi Bold (600)</SelectItem>
-                                <SelectItem value="700">Bold (700)</SelectItem>
-                                <SelectItem value="800">Extra Bold (800)</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          <div>
-                            <Label className="text-foreground">Alignment</Label>
-                            <Select 
-                              value={settings.alignment}
-                              onValueChange={(value) => updateAdvancedSetting(`typography.${key}.alignment`, value)}
-                            >
-                              <SelectTrigger className="mt-1 bg-background border-border text-foreground">
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent className="bg-background border-border">
-                                <SelectItem value="left">Left</SelectItem>
-                                <SelectItem value="center">Center</SelectItem>
-                                <SelectItem value="right">Right</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Layout & Components */}
-              <Card className="bg-card border-border">
-                <CardHeader>
-                  <CardTitle className="flex items-center text-foreground">
-                    <Layout className="w-5 h-5 mr-2" />
-                    Düzen Ayarları
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div>
-                    <Label className="text-foreground">Kenar Yuvarlaklığı: {borderRadius[0]}px</Label>
-                    <Slider
-                      value={borderRadius}
-                      onValueChange={setBorderRadius}
-                      max={24}
-                      min={0}
-                      step={2}
-                      className="mt-2"
-                    />
-                  </div>
-                  
-                  <div>
-                    <Label className="text-foreground">Sayfa Blokları Sırası</Label>
-                    <div className="mt-2 space-y-2">
-                      {currentTheme.advancedSettings.layout.blocks.map((block, index) => (
-                        <div key={block} className="flex items-center justify-between p-3 rounded-lg bg-accent/30">
-                          <span className="capitalize text-foreground">
-                            {block.replace(/([A-Z])/g, ' $1')}
-                          </span>
-                          <div className="flex items-center space-x-2">
-                            <Badge variant="outline" className="text-xs border-border text-muted-foreground">
-                              {index + 1}
-                            </Badge>
+                            <div>
+                              <div className="font-medium text-foreground">{key}</div>
+                              <div className="text-sm text-muted-foreground">{value}</div>
+                            </div>
                           </div>
                         </div>
                       ))}
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              </TabsContent>
 
-              {/* Component Settings */}
-              <Card className="bg-card border-border">
-                <CardHeader>
-                  <CardTitle className="text-foreground">Bileşen Ayarları</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <div className="font-medium text-foreground">Öne Çıkan Ürünler Bölümü</div>
-                        <div className="text-sm text-muted-foreground">Ana sayfada öne çıkan ürünleri göster</div>
+              <TabsContent value="typography" className="space-y-6">
+                <Card className="bg-card border-border">
+                  <CardContent className="p-0">
+                    <Tabs defaultValue="restaurantName" orientation="vertical" className="flex">
+                      <TabsList className="flex flex-col h-auto w-48 bg-muted/30 rounded-none border-r border-border">
+                        <TabsTrigger 
+                          value="restaurantName" 
+                          className="w-full justify-start data-[state=active]:bg-background"
+                        >
+                          Restaurant Name
+                        </TabsTrigger>
+                        <TabsTrigger 
+                          value="restaurantSlogan" 
+                          className="w-full justify-start data-[state=active]:bg-background"
+                        >
+                          Restaurant Slogan
+                        </TabsTrigger>
+                        <TabsTrigger 
+                          value="categoryName" 
+                          className="w-full justify-start data-[state=active]:bg-background"
+                        >
+                          Categories
+                        </TabsTrigger>
+                        <TabsTrigger 
+                          value="productName" 
+                          className="w-full justify-start data-[state=active]:bg-background"
+                        >
+                          Product Names
+                        </TabsTrigger>
+                        <TabsTrigger 
+                          value="productPrice" 
+                          className="w-full justify-start data-[state=active]:bg-background"
+                        >
+                          Prices
+                        </TabsTrigger>
+                        <TabsTrigger 
+                          value="productDescription" 
+                          className="w-full justify-start data-[state=active]:bg-background"
+                        >
+                          Descriptions
+                        </TabsTrigger>
+                      </TabsList>
+
+                      <div className="flex-1 p-6">
+                        {Object.entries(currentTheme.advancedSettings.typography).map(([key, settings]) => (
+                          <TabsContent key={key} value={key} className="mt-0">
+                            <div className="space-y-6">
+                              <div>
+                                <h3 className="text-lg font-semibold mb-4 capitalize text-foreground">
+                                  {key.replace(/([A-Z])/g, ' $1')}
+                                </h3>
+                              </div>
+
+                              <div className="grid grid-cols-1 gap-6">
+                                <div>
+                                  <Label className="text-foreground">Font Family</Label>
+                                  <Select 
+                                    value={settings.fontFamily}
+                                    onValueChange={(value) => updateAdvancedSetting(`typography.${key}.fontFamily`, value)}
+                                  >
+                                    <SelectTrigger className="mt-1 bg-background border-border text-foreground">
+                                      <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent className="bg-background border-border">
+                                      {availableFonts.map((font) => (
+                                        <SelectItem key={font} value={font}>{font}</SelectItem>
+                                      ))}
+                                    </SelectContent>
+                                  </Select>
+                                </div>
+
+                                <div>
+                                  <Label className="text-foreground">
+                                    Size: {settings.fontSize}
+                                  </Label>
+                                  <div className="mt-2 flex items-center space-x-4">
+                                    <Slider
+                                      value={[parseInt(settings.fontSize)]}
+                                      onValueChange={(value) => updateAdvancedSetting(`typography.${key}.fontSize`, `${value[0]}px`)}
+                                      max={48}
+                                      min={8}
+                                      step={1}
+                                      className="flex-1"
+                                    />
+                                    <span className="text-sm text-muted-foreground w-12 text-right">
+                                      {settings.fontSize}
+                                    </span>
+                                  </div>
+                                </div>
+
+                                <div className="flex items-center space-x-4">
+                                  <div className="flex items-center space-x-2 bg-muted rounded-lg p-1">
+                                    <Button
+                                      variant={settings.alignment === 'left' ? 'default' : 'ghost'}
+                                      size="sm"
+                                      onClick={() => updateAdvancedSetting(`typography.${key}.alignment`, 'left')}
+                                    >
+                                      <AlignLeft className="w-4 h-4" />
+                                    </Button>
+                                    <Button
+                                      variant={settings.alignment === 'center' ? 'default' : 'ghost'}
+                                      size="sm"
+                                      onClick={() => updateAdvancedSetting(`typography.${key}.alignment`, 'center')}
+                                    >
+                                      <AlignCenter className="w-4 h-4" />
+                                    </Button>
+                                    <Button
+                                      variant={settings.alignment === 'right' ? 'default' : 'ghost'}
+                                      size="sm"
+                                      onClick={() => updateAdvancedSetting(`typography.${key}.alignment`, 'right')}
+                                    >
+                                      <AlignRight className="w-4 h-4" />
+                                    </Button>
+                                  </div>
+
+                                  <div className="flex items-center space-x-2 bg-muted rounded-lg p-1">
+                                    <Button
+                                      variant={parseInt(settings.fontWeight) >= 600 ? 'default' : 'ghost'}
+                                      size="sm"
+                                      onClick={() => updateAdvancedSetting(`typography.${key}.fontWeight`, parseInt(settings.fontWeight) >= 600 ? '400' : '700')}
+                                    >
+                                      <Bold className="w-4 h-4" />
+                                    </Button>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                    >
+                                      <Italic className="w-4 h-4" />
+                                    </Button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </TabsContent>
+                        ))}
                       </div>
-                      <Switch
-                        checked={currentTheme.advancedSettings.components.featuredSection.enabled}
-                        onCheckedChange={(checked) => updateAdvancedSetting('components.featuredSection.enabled', checked)}
-                      />
-                    </div>
+                    </Tabs>
+                  </CardContent>
+                </Card>
+              </TabsContent>
 
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <div className="font-medium text-foreground">Reklam Butonu</div>
-                        <div className="text-sm text-muted-foreground">Kampanyalar butonunu göster</div>
-                      </div>
-                      <Switch
-                        checked={currentTheme.advancedSettings.components.advertisementButton.enabled}
-                        onCheckedChange={(checked) => updateAdvancedSetting('components.advertisementButton.enabled', checked)}
-                      />
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <div className="font-medium text-foreground">Sosyal Medya İkonları</div>
-                        <div className="text-sm text-muted-foreground">Header'da sosyal medya ikonlarını göster</div>
-                      </div>
-                      <Switch
-                        checked={currentTheme.advancedSettings.components.header.socialIcons.enabled}
-                        onCheckedChange={(checked) => updateAdvancedSetting('components.header.socialIcons.enabled', checked)}
-                      />
-                    </div>
-
+              <TabsContent value="layout" className="space-y-6">
+                <Card className="bg-card border-border">
+                  <CardHeader>
+                    <CardTitle className="text-foreground">Düzen Ayarları</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
                     <div>
-                      <Label className="text-foreground">Logo Boyutu</Label>
-                      <Select 
-                        value={currentTheme.advancedSettings.components.header.logoSize}
-                        onValueChange={(value) => updateAdvancedSetting('components.header.logoSize', value)}
-                      >
-                        <SelectTrigger className="mt-1 bg-background border-border text-foreground">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent className="bg-background border-border">
-                          <SelectItem value="small">Küçük</SelectItem>
-                          <SelectItem value="medium">Orta</SelectItem>
-                          <SelectItem value="large">Büyük</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div>
-                      <Label className="text-foreground">İkon Paketi</Label>
-                      <Select 
-                        value={currentTheme.advancedSettings.components.header.socialIcons.iconPack}
-                        onValueChange={(value) => updateAdvancedSetting('components.header.socialIcons.iconPack', value)}
-                      >
-                        <SelectTrigger className="mt-1 bg-background border-border text-foreground">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent className="bg-background border-border">
-                          {Object.entries(socialIconPacks).map(([key, name]) => (
-                            <SelectItem key={key} value={key}>{name}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div>
-                      <Label className="text-foreground">Kategori Animasyonu</Label>
-                      <Select 
-                        value={currentTheme.advancedSettings.components.categoryAnimation.type}
-                        onValueChange={(value) => updateAdvancedSetting('components.categoryAnimation.type', value)}
-                      >
-                        <SelectTrigger className="mt-1 bg-background border-border text-foreground">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent className="bg-background border-border">
-                          {Object.entries(categoryAnimationTypes).map(([key, name]) => (
-                            <SelectItem key={key} value={key}>{name}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Background Images */}
-              <Card className="bg-card border-border">
-                <CardHeader>
-                  <CardTitle className="flex items-center text-foreground">
-                    <ImageIcon className="w-5 h-5 mr-2" />
-                    Arka Plan Resimleri
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div>
-                    <Label className="text-foreground">Genel Arka Plan</Label>
-                    <Input 
-                      placeholder="Firebase Storage URL"
-                      value={currentTheme.advancedSettings.backgrounds.global.url || ''}
-                      onChange={(e) => updateAdvancedSetting('backgrounds.global.url', e.target.value)}
-                      className="mt-1 bg-background border-border text-foreground"
-                    />
-                    <div className="mt-2">
-                      <Label className="text-foreground">Opaklık: {Math.round(currentTheme.advancedSettings.backgrounds.global.opacity * 100)}%</Label>
+                      <Label className="text-foreground">Kenar Yuvarlaklığı: {borderRadius[0]}px</Label>
                       <Slider
-                        value={[currentTheme.advancedSettings.backgrounds.global.opacity]}
-                        onValueChange={(value) => updateAdvancedSetting('backgrounds.global.opacity', value[0])}
-                        max={1}
+                        value={borderRadius}
+                        onValueChange={setBorderRadius}
+                        max={24}
                         min={0}
-                        step={0.1}
+                        step={2}
                         className="mt-2"
                       />
                     </div>
-                  </div>
-
-                  <div>
-                    <Label className="text-foreground">Header Arka Planı</Label>
-                    <Input 
-                      placeholder="Firebase Storage URL"
-                      value={currentTheme.advancedSettings.backgrounds.sections.header.url || ''}
-                      onChange={(e) => updateAdvancedSetting('backgrounds.sections.header.url', e.target.value)}
-                      className="mt-1 bg-background border-border text-foreground"
-                    />
-                    <div className="mt-2">
-                      <Label className="text-foreground">Opaklık: {Math.round(currentTheme.advancedSettings.backgrounds.sections.header.opacity * 100)}%</Label>
-                      <Slider
-                        value={[currentTheme.advancedSettings.backgrounds.sections.header.opacity]}
-                        onValueChange={(value) => updateAdvancedSetting('backgrounds.sections.header.opacity', value[0])}
-                        max={1}
-                        min={0}
-                        step={0.1}
-                        className="mt-2"
-                      />
+                    
+                    <div>
+                      <Label className="text-foreground">Sayfa Blokları Sırası</Label>
+                      <div className="mt-2 space-y-2">
+                        {currentTheme.advancedSettings.layout.blocks.map((block, index) => (
+                          <div key={block} className="flex items-center justify-between p-3 rounded-lg bg-accent/30">
+                            <span className="capitalize text-foreground">
+                              {block.replace(/([A-Z])/g, ' $1')}
+                            </span>
+                            <div className="flex items-center space-x-2">
+                              <Badge variant="outline" className="text-xs border-border text-muted-foreground">
+                                {index + 1}
+                              </Badge>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
 
-                  <div>
-                    <Label className="text-foreground">Kategoriler Arka Planı</Label>
-                    <Input 
-                      placeholder="Firebase Storage URL"
-                      value={currentTheme.advancedSettings.backgrounds.sections.categories.url || ''}
-                      onChange={(e) => updateAdvancedSetting('backgrounds.sections.categories.url', e.target.value)}
-                      className="mt-1 bg-background border-border text-foreground"
-                    />
-                    <div className="mt-2">
-                      <Label className="text-foreground">Opaklık: {Math.round(currentTheme.advancedSettings.backgrounds.sections.categories.opacity * 100)}%</Label>
-                      <Slider
-                        value={[currentTheme.advancedSettings.backgrounds.sections.categories.opacity]}
-                        onValueChange={(value) => updateAdvancedSetting('backgrounds.sections.categories.opacity', value[0])}
-                        max={1}
-                        min={0}
-                        step={0.1}
-                        className="mt-2"
-                      />
+              <TabsContent value="advanced" className="space-y-6">
+                {/* Component Settings */}
+                <Card className="bg-card border-border">
+                  <CardHeader>
+                    <CardTitle className="text-foreground">Bileşen Ayarları</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <div className="font-medium text-foreground">Öne Çıkan Ürünler Bölümü</div>
+                          <div className="text-sm text-muted-foreground">Ana sayfada öne çıkan ürünleri göster</div>
+                        </div>
+                        <Switch
+                          checked={currentTheme.advancedSettings.components.featuredSection.enabled}
+                          onCheckedChange={(checked) => updateAdvancedSetting('components.featuredSection.enabled', checked)}
+                        />
+                      </div>
+
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <div className="font-medium text-foreground">Reklam Butonu</div>
+                          <div className="text-sm text-muted-foreground">Kampanyalar butonunu göster</div>
+                        </div>
+                        <Switch
+                          checked={currentTheme.advancedSettings.components.advertisementButton.enabled}
+                          onCheckedChange={(checked) => updateAdvancedSetting('components.advertisementButton.enabled', checked)}
+                        />
+                      </div>
+
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <div className="font-medium text-foreground">Sosyal Medya İkonları</div>
+                          <div className="text-sm text-muted-foreground">Header'da sosyal medya ikonlarını göster</div>
+                        </div>
+                        <Switch
+                          checked={currentTheme.advancedSettings.components.header.socialIcons.enabled}
+                          onCheckedChange={(checked) => updateAdvancedSetting('components.header.socialIcons.enabled', checked)}
+                        />
+                      </div>
+
+                      <div>
+                        <Label className="text-foreground">Logo Boyutu</Label>
+                        <Select 
+                          value={currentTheme.advancedSettings.components.header.logoSize}
+                          onValueChange={(value) => updateAdvancedSetting('components.header.logoSize', value)}
+                        >
+                          <SelectTrigger className="mt-1 bg-background border-border text-foreground">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent className="bg-background border-border">
+                            <SelectItem value="small">Küçük</SelectItem>
+                            <SelectItem value="medium">Orta</SelectItem>
+                            <SelectItem value="large">Büyük</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div>
+                        <Label className="text-foreground">İkon Paketi</Label>
+                        <Select 
+                          value={currentTheme.advancedSettings.components.header.socialIcons.iconPack}
+                          onValueChange={(value) => updateAdvancedSetting('components.header.socialIcons.iconPack', value)}
+                        >
+                          <SelectTrigger className="mt-1 bg-background border-border text-foreground">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent className="bg-background border-border">
+                            {Object.entries(socialIconPacks).map(([key, name]) => (
+                              <SelectItem key={key} value={key}>{name}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div>
+                        <Label className="text-foreground">Kategori Animasyonu</Label>
+                        <Select 
+                          value={currentTheme.advancedSettings.components.categoryAnimation.type}
+                          onValueChange={(value) => updateAdvancedSetting('components.categoryAnimation.type', value)}
+                        >
+                          <SelectTrigger className="mt-1 bg-background border-border text-foreground">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent className="bg-background border-border">
+                            {Object.entries(categoryAnimationTypes).map(([key, name]) => (
+                              <SelectItem key={key} value={key}>{name}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+                  </CardContent>
+                </Card>
+
+                {/* Background Images */}
+                <Card className="bg-card border-border">
+                  <CardHeader>
+                    <CardTitle className="flex items-center text-foreground">
+                      <ImageIcon className="w-5 h-5 mr-2" />
+                      Arka Plan Resimleri
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    <div>
+                      <Label className="text-foreground">Genel Arka Plan</Label>
+                      <Input 
+                        placeholder="Firebase Storage URL"
+                        value={currentTheme.advancedSettings.backgrounds.global.url || ''}
+                        onChange={(e) => updateAdvancedSetting('backgrounds.global.url', e.target.value)}
+                        className="mt-1 bg-background border-border text-foreground"
+                      />
+                      <div className="mt-2">
+                        <Label className="text-foreground">Opaklık: {Math.round(currentTheme.advancedSettings.backgrounds.global.opacity * 100)}%</Label>
+                        <Slider
+                          value={[currentTheme.advancedSettings.backgrounds.global.opacity]}
+                          onValueChange={(value) => updateAdvancedSetting('backgrounds.global.opacity', value[0])}
+                          max={1}
+                          min={0}
+                          step={0.1}
+                          className="mt-2"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <Label className="text-foreground">Header Arka Planı</Label>
+                      <Input 
+                        placeholder="Firebase Storage URL"
+                        value={currentTheme.advancedSettings.backgrounds.sections.header.url || ''}
+                        onChange={(e) => updateAdvancedSetting('backgrounds.sections.header.url', e.target.value)}
+                        className="mt-1 bg-background border-border text-foreground"
+                      />
+                      <div className="mt-2">
+                        <Label className="text-foreground">Opaklık: {Math.round(currentTheme.advancedSettings.backgrounds.sections.header.opacity * 100)}%</Label>
+                        <Slider
+                          value={[currentTheme.advancedSettings.backgrounds.sections.header.opacity]}
+                          onValueChange={(value) => updateAdvancedSetting('backgrounds.sections.header.opacity', value[0])}
+                          max={1}
+                          min={0}
+                          step={0.1}
+                          className="mt-2"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <Label className="text-foreground">Kategoriler Arka Planı</Label>
+                      <Input 
+                        placeholder="Firebase Storage URL"
+                        value={currentTheme.advancedSettings.backgrounds.sections.categories.url || ''}
+                        onChange={(e) => updateAdvancedSetting('backgrounds.sections.categories.url', e.target.value)}
+                        className="mt-1 bg-background border-border text-foreground"
+                      />
+                      <div className="mt-2">
+                        <Label className="text-foreground">Opaklık: {Math.round(currentTheme.advancedSettings.backgrounds.sections.categories.opacity * 100)}%</Label>
+                        <Slider
+                          value={[currentTheme.advancedSettings.backgrounds.sections.categories.opacity]}
+                          onValueChange={(value) => updateAdvancedSetting('backgrounds.sections.categories.opacity', value[0])}
+                          max={1}
+                          min={0}
+                          step={0.1}
+                          className="mt-2"
+                        />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            </Tabs>
           )}
         </div>
 
