@@ -584,7 +584,7 @@ export function MenuManagement() {
                     onDragEnd={handleItemDragEnd}
                   >
                     {viewMode === 'list' ? (
-                      // Ultra Compact List Layout - Similar to your image
+                      // Ultra Compact List Layout - Improved styling
                       <div className="flex items-center space-x-3">
                         <GripVertical className="w-4 h-4 text-slate-500 cursor-move flex-shrink-0" />
                         
@@ -608,7 +608,7 @@ export function MenuManagement() {
                           <p className="text-xs text-slate-400 truncate">{item.description}</p>
                         </div>
                         
-                        {/* Price */}
+                        {/* Price - More prominent styling */}
                         <div className="flex items-center" onClick={(e) => e.stopPropagation()}>
                           {editingPrice === item.id ? (
                             <div className="flex items-center space-x-1">
@@ -619,35 +619,50 @@ export function MenuManagement() {
                                   if (e.key === 'Enter') handlePriceSave(item.id);
                                   if (e.key === 'Escape') handlePriceCancel();
                                 }}
-                                className="w-16 h-6 text-xs bg-slate-600 border-slate-500 text-white px-1"
+                                className="w-20 h-8 text-sm bg-blue-600 border-blue-500 text-white px-2 font-bold"
                                 autoFocus
                               />
-                              <Button size="sm" onClick={() => handlePriceSave(item.id)} className="h-6 px-1 text-xs">
+                              <Button 
+                                size="sm" 
+                                onClick={() => handlePriceSave(item.id)} 
+                                className="h-8 px-2 text-xs bg-green-600 hover:bg-green-700"
+                              >
                                 <Check className="w-3 h-3" />
                               </Button>
-                              <Button size="sm" variant="outline" onClick={handlePriceCancel} className="h-6 px-1 text-xs">
+                              <Button 
+                                size="sm" 
+                                variant="outline" 
+                                onClick={handlePriceCancel} 
+                                className="h-8 px-2 text-xs border-red-500 text-red-400 hover:bg-red-600/20"
+                              >
                                 <X className="w-3 h-3" />
                               </Button>
                             </div>
                           ) : (
-                            <span 
-                              className="cursor-pointer hover:text-blue-400 font-medium text-sm px-2 py-1 rounded bg-slate-600/50 hover:bg-slate-600 min-w-[60px] text-center"
+                            <div 
+                              className="cursor-pointer hover:bg-blue-600 font-bold text-sm px-3 py-2 rounded-lg bg-blue-500 text-white min-w-[80px] text-center transition-all duration-200 hover:scale-105 shadow-lg"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 handlePriceEdit(item.id, item.price);
                               }}
                             >
                               ₺{item.price}
-                            </span>
+                            </div>
                           )}
                         </div>
                         
-                        {/* Action Buttons */}
+                        {/* Action Buttons - Themed styling */}
                         <div className="flex items-center space-x-1" onClick={(e) => e.stopPropagation()}>
-                          <Button variant="outline" size="icon" className="h-6 w-6 border-slate-600 hover:bg-slate-600 text-slate-300">
+                          <Button 
+                            size="icon" 
+                            className="h-8 w-8 bg-slate-600 hover:bg-blue-600 text-white border-0"
+                          >
                             <Edit className="w-3 h-3" />
                           </Button>
-                          <Button variant="outline" size="icon" className="h-6 w-6 border-red-600 hover:bg-red-600/20 text-red-400">
+                          <Button 
+                            size="icon" 
+                            className="h-8 w-8 bg-slate-600 hover:bg-red-600 text-white border-0"
+                          >
                             <Trash2 className="w-3 h-3" />
                           </Button>
                         </div>
@@ -697,10 +712,16 @@ export function MenuManagement() {
 
                           <div className="flex items-center justify-between mt-2" onClick={(e) => e.stopPropagation()}>
                             <div className="flex items-center space-x-3">
-                              <Button variant="outline" size="icon" className="h-7 w-7 border-slate-600 hover:bg-slate-600 text-slate-300">
+                              <Button 
+                                size="icon" 
+                                className="h-7 w-7 bg-slate-600 hover:bg-blue-600 text-white border-0"
+                              >
                                 <Edit className="w-3 h-3" />
                               </Button>
-                              <Button variant="outline" size="icon" className="h-7 w-7 border-red-600 hover:bg-red-600/20 text-red-400">
+                              <Button 
+                                size="icon" 
+                                className="h-7 w-7 bg-slate-600 hover:bg-red-600 text-white border-0"
+                              >
                                 <Trash2 className="w-3 h-3" />
                               </Button>
                             </div>
@@ -716,19 +737,28 @@ export function MenuManagement() {
                                       if (e.key === 'Enter') handlePriceSave(item.id);
                                       if (e.key === 'Escape') handlePriceCancel();
                                     }}
-                                    className="w-16 h-6 text-xs bg-slate-600 border-slate-500 text-white px-1"
+                                    className="w-20 h-8 text-sm bg-blue-600 border-blue-500 text-white px-2 font-bold"
                                     autoFocus
                                   />
-                                  <Button size="sm" onClick={() => handlePriceSave(item.id)} className="h-6 px-1 text-xs">
+                                  <Button 
+                                    size="sm" 
+                                    onClick={() => handlePriceSave(item.id)} 
+                                    className="h-8 px-2 text-xs bg-green-600 hover:bg-green-700"
+                                  >
                                     <Check className="w-3 h-3" />
                                   </Button>
-                                  <Button size="sm" variant="outline" onClick={handlePriceCancel} className="h-6 px-1 text-xs">
+                                  <Button 
+                                    size="sm" 
+                                    variant="outline" 
+                                    onClick={handlePriceCancel} 
+                                    className="h-8 px-2 text-xs border-red-500 text-red-400 hover:bg-red-600/20"
+                                  >
                                     <X className="w-3 h-3" />
                                   </Button>
                                 </div>
                               ) : (
-                                <span 
-                                  className="cursor-pointer hover:text-blue-400 font-medium text-sm px-2 py-1 rounded bg-slate-600/50 hover:bg-slate-600"
+                                <div 
+                                  className="cursor-pointer hover:bg-blue-600 font-bold text-sm px-3 py-2 rounded-lg bg-blue-500 text-white transition-all duration-200 hover:scale-105 shadow-lg"
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     handlePriceEdit(item.id, item.price);
@@ -736,9 +766,9 @@ export function MenuManagement() {
                                 >
                                   ₺{item.price}
                                   {item.originalPrice && (
-                                    <span className="line-through text-slate-500 ml-1 text-xs">₺{item.originalPrice}</span>
+                                    <span className="line-through text-blue-200 ml-1 text-xs">₺{item.originalPrice}</span>
                                   )}
-                                </span>
+                                </div>
                               )}
                             </div>
                           </div>
