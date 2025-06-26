@@ -74,49 +74,39 @@ export function DashboardOverview() {
 
   return (
     <div className="space-y-6">
-      {/* Welcome Header - Fixed theme support */}
-      <div className={cn(
-        "backdrop-blur-xl rounded-xl p-6 border transition-all duration-200",
-        "bg-primary/10 border-primary/20 dark:bg-primary/10 dark:border-primary/20"
+      {/* Welcome Header - Fixed for proper dark mode */}
+      <Card className={cn(
+        "backdrop-blur-xl border transition-all duration-200",
+        "bg-card border-border shadow-sm"
       )}>
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h1 className={cn(
-              "text-2xl font-bold mb-2 transition-colors duration-200",
-              "text-foreground"
-            )}>
-              Günaydın, Ahmet Bey!
-            </h1>
-            <p className={cn(
-              "transition-colors duration-200",
-              "text-primary/80"
-            )}>
-              Restoranınızda bugün neler oluyor
-            </p>
-          </div>
-          <div className="mt-4 sm:mt-0 text-right">
-            <div className={cn(
-              "text-2xl font-bold transition-colors duration-200",
-              "text-foreground"
-            )}>
-              {currentTime.toLocaleDateString('tr-TR', { 
-                weekday: 'long',
-                month: 'long', 
-                day: 'numeric' 
-              })}
+        <CardContent className="p-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h1 className="text-2xl font-bold mb-2 text-foreground">
+                Günaydın, Ahmet Bey!
+              </h1>
+              <p className="text-muted-foreground">
+                Restoranınızda bugün neler oluyor
+              </p>
             </div>
-            <div className={cn(
-              "transition-colors duration-200",
-              "text-primary/80"
-            )}>
-              {currentTime.toLocaleTimeString('tr-TR', { 
-                hour: '2-digit', 
-                minute: '2-digit'
-              })}
+            <div className="mt-4 sm:mt-0 text-right">
+              <div className="text-2xl font-bold text-foreground">
+                {currentTime.toLocaleDateString('tr-TR', { 
+                  weekday: 'long',
+                  month: 'long', 
+                  day: 'numeric' 
+                })}
+              </div>
+              <div className="text-muted-foreground">
+                {currentTime.toLocaleTimeString('tr-TR', { 
+                  hour: '2-digit', 
+                  minute: '2-digit'
+                })}
+              </div>
             </div>
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
 
       {/* Metrics Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
