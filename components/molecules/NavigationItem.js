@@ -18,8 +18,14 @@ export function NavigationItem({
       className={cn(
         "w-full justify-start h-12 text-left font-medium transition-all duration-200",
         isActive 
-          ? "bg-gradient-to-r from-primary/20 to-primary/10 border border-primary/30 shadow-lg shadow-primary/10 text-foreground" 
-          : "text-muted-foreground hover:bg-accent hover:text-foreground hover:shadow-sm"
+          ? cn(
+              "bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 shadow-sm text-blue-700",
+              "dark:bg-gradient-to-r dark:from-primary/20 dark:to-primary/10 dark:border dark:border-primary/30 dark:shadow-lg dark:shadow-primary/10 dark:text-white"
+            )
+          : cn(
+              "text-gray-600 hover:bg-gray-100 hover:text-gray-900 hover:shadow-sm",
+              "dark:text-muted-foreground dark:hover:bg-accent dark:hover:text-foreground dark:hover:shadow-sm"
+            )
       )}
       onClick={() => onClick(id)}
     >
@@ -29,8 +35,14 @@ export function NavigationItem({
         <Badge className={cn(
           "ml-auto text-xs border",
           isActive 
-            ? "bg-primary/20 text-primary border-primary/30"
-            : "bg-muted text-muted-foreground border-border"
+            ? cn(
+                "bg-blue-100 text-blue-700 border-blue-200",
+                "dark:bg-primary/20 dark:text-primary dark:border-primary/30"
+              )
+            : cn(
+                "bg-gray-100 text-gray-600 border-gray-200",
+                "dark:bg-muted dark:text-muted-foreground dark:border-border"
+              )
         )}>
           {badge}
         </Badge>
