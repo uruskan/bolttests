@@ -6,8 +6,9 @@ import { DashboardOverview } from '@/components/dashboard/DashboardOverview';
 import { MenuManagement } from '@/components/menu/MenuManagement';
 import { ContentManagement } from '@/components/content/ContentManagement';
 import { RestaurantSettings } from '@/components/settings/RestaurantSettings';
+import { ThemeCustomization } from '@/components/theme/ThemeCustomization';
 
-type ActiveView = 'dashboard' | 'menu' | 'content' | 'settings';
+type ActiveView = 'dashboard' | 'menu' | 'content' | 'settings' | 'theme';
 
 export default function Home() {
   const [activeView, setActiveView] = useState<ActiveView>('dashboard');
@@ -32,6 +33,8 @@ export default function Home() {
         return <ContentManagement />;
       case 'settings':
         return <RestaurantSettings />;
+      case 'theme':
+        return <ThemeCustomization />;
       default:
         return <DashboardOverview />;
     }

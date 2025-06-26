@@ -11,14 +11,15 @@ import {
   Search,
   User,
   Menu,
-  X
+  X,
+  Palette
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { useState } from 'react';
 
-type ActiveView = 'dashboard' | 'menu' | 'content' | 'settings';
+type ActiveView = 'dashboard' | 'menu' | 'content' | 'settings' | 'theme';
 
 interface MainLayoutProps {
   children: ReactNode;
@@ -30,6 +31,7 @@ const navigationItems = [
   { id: 'dashboard', label: 'Ana Sayfa', icon: LayoutDashboard, badge: null },
   { id: 'menu', label: 'Menü Yönetimi', icon: ChefHat, badge: null },
   { id: 'content', label: 'İçerik Yönetimi', icon: Megaphone, badge: '3' },
+  { id: 'theme', label: 'Tema Özelleştirme', icon: Palette, badge: null },
   { id: 'settings', label: 'Ayarlar', icon: Settings, badge: null },
 ];
 
@@ -67,7 +69,7 @@ export function MainLayout({ children, activeView, onViewChange }: MainLayoutPro
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
                   <Input
-                    placeholder="Menü, sipariş ara..."
+                    placeholder="Menü, içerik ara..."
                     className="pl-10 w-64 bg-slate-800/50 border-slate-600 focus:border-blue-400 text-white placeholder:text-slate-400"
                   />
                 </div>
