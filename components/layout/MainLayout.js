@@ -64,14 +64,14 @@ export function MainLayout({ children, activeView, onViewChange }) {
       "min-h-screen transition-colors duration-300",
       isDarkMode 
         ? "bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900" 
-        : "bg-gradient-to-br from-gray-50 via-white to-gray-100"
+        : "bg-gradient-to-br from-gray-50 via-gray-100 to-blue-50"
     )}>
       {/* Header */}
       <header className={cn(
-        "backdrop-blur-xl border-b sticky top-0 z-50 transition-colors duration-300",
+        "backdrop-blur-xl border-b sticky top-0 z-50 transition-all duration-300",
         isDarkMode 
           ? "bg-slate-900/80 border-slate-700/50" 
-          : "bg-white/80 border-gray-200/50"
+          : "bg-white/90 border-gray-200/50 shadow-light-header"
       )}>
         <div className="px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
@@ -90,7 +90,7 @@ export function MainLayout({ children, activeView, onViewChange }) {
               >
                 {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
               </Button>
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-purple-500 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-purple-500 rounded-lg flex items-center justify-center shadow-lg">
                 <ChefHat className="w-5 h-5 text-white" />
               </div>
               <div>
@@ -120,10 +120,10 @@ export function MainLayout({ children, activeView, onViewChange }) {
                   <Input
                     placeholder="Menü, içerik ara..."
                     className={cn(
-                      "pl-10 w-64 focus:border-blue-400 transition-colors duration-200",
+                      "pl-10 w-64 focus:border-blue-400 transition-all duration-200",
                       isDarkMode 
                         ? "bg-slate-800/50 border-slate-600 text-white placeholder:text-slate-400" 
-                        : "bg-white border-gray-300 text-gray-900 placeholder:text-gray-500"
+                        : "bg-white border-gray-300 text-gray-900 placeholder:text-gray-500 shadow-light-card focus:shadow-light-card-hover"
                     )}
                   />
                 </div>
@@ -182,7 +182,7 @@ export function MainLayout({ children, activeView, onViewChange }) {
           "fixed inset-y-0 left-0 z-40 w-64 backdrop-blur-xl border-r transform transition-all duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0",
           isDarkMode 
             ? "bg-slate-900/90 border-slate-700/50" 
-            : "bg-white/90 border-gray-200/50",
+            : "bg-white/90 border-gray-200/50 shadow-light-elevated",
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         )}>
           <div className="flex flex-col h-full pt-16 lg:pt-0">
@@ -201,7 +201,7 @@ export function MainLayout({ children, activeView, onViewChange }) {
                         ? "bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-blue-500/30 shadow-lg shadow-blue-500/10 text-white" 
                         : isDarkMode 
                           ? "text-slate-300 hover:bg-slate-800/50 hover:text-white"
-                          : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                          : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 hover:shadow-light-card"
                     )}
                     onClick={() => {
                       onViewChange(item.id);
@@ -211,7 +211,14 @@ export function MainLayout({ children, activeView, onViewChange }) {
                     <Icon className="w-5 h-5 mr-3" />
                     {item.label}
                     {item.badge && (
-                      <Badge className="ml-auto bg-blue-500/20 text-blue-300 text-xs border border-blue-500/30">
+                      <Badge className={cn(
+                        "ml-auto text-xs border",
+                        isActive 
+                          ? "bg-blue-500/20 text-blue-300 border-blue-500/30"
+                          : isDarkMode
+                            ? "bg-slate-700 text-slate-300 border-slate-600"
+                            : "bg-blue-100 text-blue-700 border-blue-200"
+                      )}>
                         {item.badge}
                       </Badge>
                     )}

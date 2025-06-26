@@ -338,10 +338,10 @@ export function MenuManagement() {
           <Dialog open={isAddingCategory} onOpenChange={setIsAddingCategory}>
             <DialogTrigger asChild>
               <Button variant="outline" className={cn(
-                "transition-colors duration-200",
+                "transition-all duration-200",
                 isDarkMode 
                   ? "border-slate-600 hover:bg-slate-700 text-slate-300" 
-                  : "border-gray-300 hover:bg-gray-100 text-gray-700"
+                  : "border-gray-300 hover:bg-gray-100 text-gray-700 shadow-light-card hover:shadow-light-card-hover"
               )}>
                 <Plus className="w-4 h-4 mr-2" />
                 Kategori Ekle
@@ -349,7 +349,7 @@ export function MenuManagement() {
             </DialogTrigger>
             <DialogContent className={cn(
               "transition-colors duration-200",
-              isDarkMode ? "bg-slate-800 border-slate-700" : "bg-white border-gray-200"
+              isDarkMode ? "bg-slate-800 border-slate-700" : "bg-white border-gray-200 shadow-light-elevated"
             )}>
               <DialogHeader>
                 <DialogTitle className={cn(
@@ -371,10 +371,10 @@ export function MenuManagement() {
                     id="categoryName" 
                     placeholder="ör. Deniz Ürünleri" 
                     className={cn(
-                      "mt-1 transition-colors duration-200",
+                      "mt-1 transition-all duration-200",
                       isDarkMode 
                         ? "bg-slate-700 border-slate-600 text-white" 
-                        : "bg-white border-gray-300 text-gray-900"
+                        : "bg-white border-gray-300 text-gray-900 shadow-light-card focus:shadow-light-card-hover"
                     )} 
                   />
                 </div>
@@ -389,10 +389,10 @@ export function MenuManagement() {
                     id="categoryDescription" 
                     placeholder="Bu kategorinin kısa açıklaması" 
                     className={cn(
-                      "mt-1 h-20 transition-colors duration-200",
+                      "mt-1 h-20 transition-all duration-200",
                       isDarkMode 
                         ? "bg-slate-700 border-slate-600 text-white" 
-                        : "bg-white border-gray-300 text-gray-900"
+                        : "bg-white border-gray-300 text-gray-900 shadow-light-card focus:shadow-light-card-hover"
                     )} 
                   />
                 </div>
@@ -405,7 +405,7 @@ export function MenuManagement() {
                   </Label>
                   <div className={cn(
                     "mt-2 border-2 border-dashed rounded-lg p-6 text-center hover:border-blue-400 transition-colors cursor-pointer",
-                    isDarkMode ? "border-slate-600" : "border-gray-300"
+                    isDarkMode ? "border-slate-600" : "border-gray-300 shadow-light-card hover:shadow-light-card-hover"
                   )}>
                     <Camera className={cn(
                       "w-8 h-8 mx-auto mb-2 transition-colors duration-200",
@@ -439,7 +439,7 @@ export function MenuManagement() {
                 >
                   İptal
                 </Button>
-                <Button className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600">
+                <Button className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 shadow-lg">
                   Kategori Ekle
                 </Button>
               </DialogFooter>
@@ -447,14 +447,14 @@ export function MenuManagement() {
           </Dialog>
           <Dialog open={isAddingItem} onOpenChange={setIsAddingItem}>
             <DialogTrigger asChild>
-              <Button className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600">
+              <Button className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 shadow-lg">
                 <Plus className="w-4 h-4 mr-2" />
                 Öğe Ekle
               </Button>
             </DialogTrigger>
             <DialogContent className={cn(
               "max-w-2xl transition-colors duration-200",
-              isDarkMode ? "bg-slate-800 border-slate-700" : "bg-white border-gray-200"
+              isDarkMode ? "bg-slate-800 border-slate-700" : "bg-white border-gray-200 shadow-light-elevated"
             )}>
               <DialogHeader>
                 <DialogTitle className={cn(
@@ -477,10 +477,10 @@ export function MenuManagement() {
                       id="itemName" 
                       placeholder="ör. Pasta Carbonara" 
                       className={cn(
-                        "mt-1 transition-colors duration-200",
+                        "mt-1 transition-all duration-200",
                         isDarkMode 
                           ? "bg-slate-700 border-slate-600 text-white" 
-                          : "bg-white border-gray-300 text-gray-900"
+                          : "bg-white border-gray-300 text-gray-900 shadow-light-card focus:shadow-light-card-hover"
                       )} 
                     />
                   </div>
@@ -497,10 +497,10 @@ export function MenuManagement() {
                       step="0.01" 
                       placeholder="0.00" 
                       className={cn(
-                        "mt-1 transition-colors duration-200",
+                        "mt-1 transition-all duration-200",
                         isDarkMode 
                           ? "bg-slate-700 border-slate-600 text-white" 
-                          : "bg-white border-gray-300 text-gray-900"
+                          : "bg-white border-gray-300 text-gray-900 shadow-light-card focus:shadow-light-card-hover"
                       )} 
                     />
                   </div>
@@ -515,10 +515,10 @@ export function MenuManagement() {
                       id="prepTime" 
                       placeholder="ör. 15 dk" 
                       className={cn(
-                        "mt-1 transition-colors duration-200",
+                        "mt-1 transition-all duration-200",
                         isDarkMode 
                           ? "bg-slate-700 border-slate-600 text-white" 
-                          : "bg-white border-gray-300 text-gray-900"
+                          : "bg-white border-gray-300 text-gray-900 shadow-light-card focus:shadow-light-card-hover"
                       )} 
                     />
                   </div>
@@ -533,10 +533,10 @@ export function MenuManagement() {
                       id="itemDescription" 
                       placeholder="Yemeği tanımlayın..." 
                       className={cn(
-                        "mt-1 h-20 transition-colors duration-200",
+                        "mt-1 h-20 transition-all duration-200",
                         isDarkMode 
                           ? "bg-slate-700 border-slate-600 text-white" 
-                          : "bg-white border-gray-300 text-gray-900"
+                          : "bg-white border-gray-300 text-gray-900 shadow-light-card focus:shadow-light-card-hover"
                       )} 
                     />
                   </div>
@@ -551,7 +551,7 @@ export function MenuManagement() {
                     </Label>
                     <div className={cn(
                       "mt-2 border-2 border-dashed rounded-lg p-6 text-center hover:border-blue-400 transition-colors cursor-pointer",
-                      isDarkMode ? "border-slate-600" : "border-gray-300"
+                      isDarkMode ? "border-slate-600" : "border-gray-300 shadow-light-card hover:shadow-light-card-hover"
                     )}>
                       <Camera className={cn(
                         "w-8 h-8 mx-auto mb-2 transition-colors duration-200",
@@ -587,7 +587,7 @@ export function MenuManagement() {
                             "cursor-pointer hover:bg-blue-500/20 transition-colors duration-200",
                             isDarkMode 
                               ? "border-slate-600 text-slate-300" 
-                              : "border-gray-300 text-gray-700"
+                              : "border-gray-300 text-gray-700 shadow-light-card hover:shadow-light-card-hover"
                           )}
                         >
                           {option}
@@ -610,7 +610,7 @@ export function MenuManagement() {
                 >
                   İptal
                 </Button>
-                <Button className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600">
+                <Button className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 shadow-lg">
                   Öğe Ekle
                 </Button>
               </DialogFooter>
@@ -623,10 +623,10 @@ export function MenuManagement() {
         {/* Categories Panel */}
         <div className="lg:col-span-1">
           <Card className={cn(
-            "backdrop-blur-xl transition-colors duration-200",
+            "backdrop-blur-xl transition-all duration-200",
             isDarkMode 
               ? "bg-slate-800/50 border-slate-700/50" 
-              : "bg-white/80 border-gray-200/50"
+              : "bg-white/90 border-gray-200/50 shadow-light-elevated"
           )}>
             <CardHeader>
               <CardTitle className={cn(
@@ -650,10 +650,10 @@ export function MenuManagement() {
                       : category.isActive
                         ? isDarkMode 
                           ? "border-green-500/50 hover:border-green-400" 
-                          : "border-green-500 hover:border-green-600"
+                          : "border-green-500 hover:border-green-600 shadow-light-card hover:shadow-light-card-hover"
                         : isDarkMode 
                           ? "border-red-500/50 hover:border-red-400 opacity-60" 
-                          : "border-red-500 hover:border-red-600 opacity-60",
+                          : "border-red-500 hover:border-red-600 opacity-60 shadow-light-card hover:shadow-light-card-hover",
                     draggedCategory === category.id && "opacity-50"
                   )}
                   onClick={() => setSelectedCategory(category.id)}
@@ -769,10 +769,10 @@ export function MenuManagement() {
         {/* Items Panel */}
         <div className="lg:col-span-3">
           <Card className={cn(
-            "backdrop-blur-xl transition-colors duration-200",
+            "backdrop-blur-xl transition-all duration-200",
             isDarkMode 
               ? "bg-slate-800/50 border-slate-700/50" 
-              : "bg-white/80 border-gray-200/50"
+              : "bg-white/90 border-gray-200/50 shadow-light-elevated"
           )}>
             <CardHeader>
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
@@ -793,22 +793,22 @@ export function MenuManagement() {
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       className={cn(
-                        "pl-10 w-64 transition-colors duration-200",
+                        "pl-10 w-64 transition-all duration-200",
                         isDarkMode 
                           ? "bg-slate-700 border-slate-600 text-white" 
-                          : "bg-white border-gray-300 text-gray-900"
+                          : "bg-white border-gray-300 text-gray-900 shadow-light-card focus:shadow-light-card-hover"
                       )}
                     />
                   </div>
                   <div className={cn(
-                    "flex items-center space-x-1 rounded-lg p-1 transition-colors duration-200",
-                    isDarkMode ? "bg-slate-700" : "bg-gray-200"
+                    "flex items-center space-x-1 rounded-lg p-1 transition-all duration-200",
+                    isDarkMode ? "bg-slate-700" : "bg-gray-200 shadow-light-card"
                   )}>
                     <Button
                       variant={viewMode === 'list' ? 'default' : 'ghost'}
                       size="sm"
                       onClick={() => setViewMode('list')}
-                      className={viewMode === 'list' ? 'bg-blue-500' : isDarkMode ? 'text-slate-400 hover:text-white' : 'text-gray-600 hover:text-gray-900'}
+                      className={viewMode === 'list' ? 'bg-blue-500 shadow-lg' : isDarkMode ? 'text-slate-400 hover:text-white' : 'text-gray-600 hover:text-gray-900'}
                     >
                       <List className="w-4 h-4" />
                     </Button>
@@ -816,7 +816,7 @@ export function MenuManagement() {
                       variant={viewMode === 'grid' ? 'default' : 'ghost'}
                       size="sm"
                       onClick={() => setViewMode('grid')}
-                      className={viewMode === 'grid' ? 'bg-blue-500' : isDarkMode ? 'text-slate-400 hover:text-white' : 'text-gray-600 hover:text-gray-900'}
+                      className={viewMode === 'grid' ? 'bg-blue-500 shadow-lg' : isDarkMode ? 'text-slate-400 hover:text-white' : 'text-gray-600 hover:text-gray-900'}
                     >
                       <Grid className="w-4 h-4" />
                     </Button>
@@ -838,10 +838,10 @@ export function MenuManagement() {
                       item.isActive 
                         ? isDarkMode 
                           ? "border-green-500 bg-slate-700/30 hover:border-green-400 hover:bg-slate-700/50" 
-                          : "border-green-500 bg-green-50 hover:border-green-600 hover:bg-green-100"
+                          : "border-green-500 bg-green-50 hover:border-green-600 hover:bg-green-100 shadow-light-card hover:shadow-light-card-hover"
                         : isDarkMode 
                           ? "border-red-500 bg-slate-700/20 opacity-60 hover:border-red-400" 
-                          : "border-red-500 bg-red-50 opacity-60 hover:border-red-600",
+                          : "border-red-500 bg-red-50 opacity-60 hover:border-red-600 shadow-light-card hover:shadow-light-card-hover",
                       draggedItem === item.id && "opacity-50"
                     )}
                     onClick={() => toggleItemStatus(item.id)}
@@ -909,7 +909,7 @@ export function MenuManagement() {
                               <Button 
                                 size="sm" 
                                 onClick={() => handlePriceSave(item.id)} 
-                                className="h-8 px-2 text-xs bg-green-600 hover:bg-green-700"
+                                className="h-8 px-2 text-xs bg-green-600 hover:bg-green-700 shadow-lg"
                               >
                                 <Check className="w-3 h-3" />
                               </Button>
@@ -940,7 +940,7 @@ export function MenuManagement() {
                           <Button 
                             size="icon" 
                             className={cn(
-                              "h-8 w-8 border-0 transition-colors duration-200",
+                              "h-8 w-8 border-0 transition-all duration-200 shadow-lg",
                               isDarkMode 
                                 ? "bg-slate-600 hover:bg-blue-600 text-white" 
                                 : "bg-gray-300 hover:bg-blue-500 text-gray-700 hover:text-white"
@@ -951,7 +951,7 @@ export function MenuManagement() {
                           <Button 
                             size="icon" 
                             className={cn(
-                              "h-8 w-8 border-0 transition-colors duration-200",
+                              "h-8 w-8 border-0 transition-all duration-200 shadow-lg",
                               isDarkMode 
                                 ? "bg-slate-600 hover:bg-red-600 text-white" 
                                 : "bg-gray-300 hover:bg-red-500 text-gray-700 hover:text-white"
@@ -1028,7 +1028,7 @@ export function MenuManagement() {
                               <Button 
                                 size="icon" 
                                 className={cn(
-                                  "h-7 w-7 border-0 transition-colors duration-200",
+                                  "h-7 w-7 border-0 transition-all duration-200 shadow-lg",
                                   isDarkMode 
                                     ? "bg-slate-600 hover:bg-blue-600 text-white" 
                                     : "bg-gray-300 hover:bg-blue-500 text-gray-700 hover:text-white"
@@ -1039,7 +1039,7 @@ export function MenuManagement() {
                               <Button 
                                 size="icon" 
                                 className={cn(
-                                  "h-7 w-7 border-0 transition-colors duration-200",
+                                  "h-7 w-7 border-0 transition-all duration-200 shadow-lg",
                                   isDarkMode 
                                     ? "bg-slate-600 hover:bg-red-600 text-white" 
                                     : "bg-gray-300 hover:bg-red-500 text-gray-700 hover:text-white"
@@ -1069,7 +1069,7 @@ export function MenuManagement() {
                                   <Button 
                                     size="sm" 
                                     onClick={() => handlePriceSave(item.id)} 
-                                    className="h-8 px-2 text-xs bg-green-600 hover:bg-green-700"
+                                    className="h-8 px-2 text-xs bg-green-600 hover:bg-green-700 shadow-lg"
                                   >
                                     <Check className="w-3 h-3" />
                                   </Button>
@@ -1126,7 +1126,7 @@ export function MenuManagement() {
                       : "Bu kategoride henüz öğe yok."}
                   </p>
                   <Button 
-                    className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
+                    className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 shadow-lg"
                     onClick={() => setIsAddingItem(true)}
                   >
                     <Plus className="w-4 h-4 mr-2" />

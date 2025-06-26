@@ -83,10 +83,10 @@ export function DashboardOverview() {
     <div className="space-y-6">
       {/* Welcome Header */}
       <div className={cn(
-        "backdrop-blur-xl rounded-xl p-6 border transition-colors duration-200",
+        "backdrop-blur-xl rounded-xl p-6 border transition-all duration-200",
         isDarkMode 
           ? "bg-blue-500/20 border-blue-500/20" 
-          : "bg-blue-50 border-blue-200"
+          : "bg-blue-50 border-blue-200 shadow-light-elevated"
       )}>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
           <div>
@@ -139,7 +139,7 @@ export function DashboardOverview() {
               "backdrop-blur-xl border transition-all duration-300 hover:scale-105",
               isDarkMode 
                 ? "bg-slate-800/50 border-slate-700/50 hover:bg-slate-800/70" 
-                : "bg-white/80 border-gray-200/50 hover:bg-white"
+                : "bg-white/90 border-gray-200/50 hover:bg-white shadow-light-card hover:shadow-light-card-hover"
             )}>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className={cn(
@@ -148,7 +148,7 @@ export function DashboardOverview() {
                 )}>
                   {metric.title}
                 </CardTitle>
-                <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br", metric.color)}>
+                <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br shadow-lg", metric.color)}>
                   <Icon className="w-4 h-4 text-white" />
                 </div>
               </CardHeader>
@@ -179,10 +179,10 @@ export function DashboardOverview() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Content Stats */}
         <Card className={cn(
-          "backdrop-blur-xl border transition-colors duration-200",
+          "backdrop-blur-xl border transition-all duration-200",
           isDarkMode 
             ? "bg-slate-800/50 border-slate-700/50" 
-            : "bg-white/80 border-gray-200/50"
+            : "bg-white/90 border-gray-200/50 shadow-light-elevated"
         )}>
           <CardHeader>
             <CardTitle className={cn(
@@ -194,10 +194,10 @@ export function DashboardOverview() {
                 İçerik İstatistikleri
               </span>
               <Button variant="outline" size="sm" className={cn(
-                "transition-colors duration-200",
+                "transition-all duration-200",
                 isDarkMode 
                   ? "border-slate-600 hover:bg-slate-700 text-slate-300" 
-                  : "border-gray-300 hover:bg-gray-100 text-gray-700"
+                  : "border-gray-300 hover:bg-gray-100 text-gray-700 shadow-light-card hover:shadow-light-card-hover"
               )}>
                 Yönet
               </Button>
@@ -209,13 +209,13 @@ export function DashboardOverview() {
                 const Icon = stat.icon;
                 return (
                   <div key={index} className={cn(
-                    "flex items-center justify-between p-3 rounded-lg transition-colors duration-200",
+                    "flex items-center justify-between p-3 rounded-lg transition-all duration-200",
                     isDarkMode 
                       ? "bg-slate-700/30 hover:bg-slate-700/50" 
-                      : "bg-gray-50 hover:bg-gray-100"
+                      : "bg-gray-50 hover:bg-gray-100 shadow-light-card hover:shadow-light-card-hover"
                   )}>
                     <div className="flex items-center space-x-3">
-                      <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-purple-500 rounded-lg flex items-center justify-center">
+                      <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-purple-500 rounded-lg flex items-center justify-center shadow-lg">
                         <Icon className="w-4 h-4 text-white" />
                       </div>
                       <div>
@@ -256,10 +256,10 @@ export function DashboardOverview() {
 
         {/* Menu Overview */}
         <Card className={cn(
-          "backdrop-blur-xl border transition-colors duration-200",
+          "backdrop-blur-xl border transition-all duration-200",
           isDarkMode 
             ? "bg-slate-800/50 border-slate-700/50" 
-            : "bg-white/80 border-gray-200/50"
+            : "bg-white/90 border-gray-200/50 shadow-light-elevated"
         )}>
           <CardHeader>
             <CardTitle className={cn(
@@ -271,10 +271,10 @@ export function DashboardOverview() {
                 Menü Özeti
               </span>
               <Button variant="outline" size="sm" className={cn(
-                "transition-colors duration-200",
+                "transition-all duration-200",
                 isDarkMode 
                   ? "border-slate-600 hover:bg-slate-700 text-slate-300" 
-                  : "border-gray-300 hover:bg-gray-100 text-gray-700"
+                  : "border-gray-300 hover:bg-gray-100 text-gray-700 shadow-light-card hover:shadow-light-card-hover"
               )}>
                 Düzenle
               </Button>
@@ -283,8 +283,8 @@ export function DashboardOverview() {
           <CardContent>
             <div className="space-y-4">
               <div className={cn(
-                "flex items-center justify-between p-3 rounded-lg transition-colors duration-200",
-                isDarkMode ? "bg-slate-700/30" : "bg-gray-50"
+                "flex items-center justify-between p-3 rounded-lg transition-all duration-200",
+                isDarkMode ? "bg-slate-700/30" : "bg-gray-50 shadow-light-card"
               )}>
                 <div>
                   <div className={cn(
@@ -310,8 +310,8 @@ export function DashboardOverview() {
                 </Badge>
               </div>
               <div className={cn(
-                "flex items-center justify-between p-3 rounded-lg transition-colors duration-200",
-                isDarkMode ? "bg-slate-700/30" : "bg-gray-50"
+                "flex items-center justify-between p-3 rounded-lg transition-all duration-200",
+                isDarkMode ? "bg-slate-700/30" : "bg-gray-50 shadow-light-card"
               )}>
                 <div>
                   <div className={cn(
@@ -337,8 +337,8 @@ export function DashboardOverview() {
                 </Badge>
               </div>
               <div className={cn(
-                "flex items-center justify-between p-3 rounded-lg transition-colors duration-200",
-                isDarkMode ? "bg-slate-700/30" : "bg-gray-50"
+                "flex items-center justify-between p-3 rounded-lg transition-all duration-200",
+                isDarkMode ? "bg-slate-700/30" : "bg-gray-50 shadow-light-card"
               )}>
                 <div>
                   <div className={cn(
@@ -370,10 +370,10 @@ export function DashboardOverview() {
 
       {/* Quick Actions */}
       <Card className={cn(
-        "backdrop-blur-xl border transition-colors duration-200",
+        "backdrop-blur-xl border transition-all duration-200",
         isDarkMode 
           ? "bg-slate-800/50 border-slate-700/50" 
-          : "bg-white/80 border-gray-200/50"
+          : "bg-white/90 border-gray-200/50 shadow-light-elevated"
       )}>
         <CardHeader>
           <CardTitle className={cn(
@@ -385,19 +385,19 @@ export function DashboardOverview() {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <Button className="h-20 flex flex-col items-center justify-center space-y-2 bg-gradient-to-br from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white">
+            <Button className="h-20 flex flex-col items-center justify-center space-y-2 bg-gradient-to-br from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white shadow-lg hover:shadow-xl transition-all duration-200">
               <ChefHat className="w-6 h-6" />
               <span className="text-sm font-medium">Menü Öğesi Ekle</span>
             </Button>
-            <Button className="h-20 flex flex-col items-center justify-center space-y-2 bg-gradient-to-br from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white">
+            <Button className="h-20 flex flex-col items-center justify-center space-y-2 bg-gradient-to-br from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white shadow-lg hover:shadow-xl transition-all duration-200">
               <Megaphone className="w-6 h-6" />
               <span className="text-sm font-medium">Reklam Oluştur</span>
             </Button>
-            <Button className="h-20 flex flex-col items-center justify-center space-y-2 bg-gradient-to-br from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white">
+            <Button className="h-20 flex flex-col items-center justify-center space-y-2 bg-gradient-to-br from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white shadow-lg hover:shadow-xl transition-all duration-200">
               <Camera className="w-6 h-6" />
               <span className="text-sm font-medium">Hikaye Ekle</span>
             </Button>
-            <Button className="h-20 flex flex-col items-center justify-center space-y-2 bg-gradient-to-br from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white">
+            <Button className="h-20 flex flex-col items-center justify-center space-y-2 bg-gradient-to-br from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white shadow-lg hover:shadow-xl transition-all duration-200">
               <Palette className="w-6 h-6" />
               <span className="text-sm font-medium">Tema Düzenle</span>
             </Button>
