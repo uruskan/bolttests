@@ -270,28 +270,28 @@ export function RestaurantSettings() {
                     
                     <div className="flex items-center space-x-2">
                       <Switch
-                        checked={!businessHours[day.key as keyof typeof businessHours].closed}
+                        checked={!businessHours[day.key].closed}
                         onCheckedChange={(checked) => 
                           setBusinessHours(prev => ({
                             ...prev,
-                            [day.key]: { ...prev[day.key as keyof typeof prev], closed: !checked }
+                            [day.key]: { ...prev[day.key], closed: !checked }
                           }))
                         }
                       />
                       <Label className="text-sm text-slate-300">Açık</Label>
                     </div>
 
-                    {!businessHours[day.key as keyof typeof businessHours].closed && (
+                    {!businessHours[day.key].closed && (
                       <>
                         <div className="flex items-center space-x-2">
                           <Label className="text-sm text-slate-300">Açılış:</Label>
                           <Input
                             type="time"
-                            value={businessHours[day.key as keyof typeof businessHours].open}
+                            value={businessHours[day.key].open}
                             onChange={(e) => 
                               setBusinessHours(prev => ({
                                 ...prev,
-                                [day.key]: { ...prev[day.key as keyof typeof prev], open: e.target.value }
+                                [day.key]: { ...prev[day.key], open: e.target.value }
                               }))
                             }
                             className="w-24 bg-slate-700 border-slate-600 text-white"
@@ -302,11 +302,11 @@ export function RestaurantSettings() {
                           <Label className="text-sm text-slate-300">Kapanış:</Label>
                           <Input
                             type="time"
-                            value={businessHours[day.key as keyof typeof businessHours].close}
+                            value={businessHours[day.key].close}
                             onChange={(e) => 
                               setBusinessHours(prev => ({
                                 ...prev,
-                                [day.key]: { ...prev[day.key as keyof typeof prev], close: e.target.value }
+                                [day.key]: { ...prev[day.key], close: e.target.value }
                               }))
                             }
                             className="w-24 bg-slate-700 border-slate-600 text-white"
@@ -315,7 +315,7 @@ export function RestaurantSettings() {
                       </>
                     )}
 
-                    {businessHours[day.key as keyof typeof businessHours].closed && (
+                    {businessHours[day.key].closed && (
                       <div className="text-sm text-slate-500 italic">Kapalı</div>
                     )}
                   </div>
@@ -333,7 +333,7 @@ export function RestaurantSettings() {
             <CardContent>
               <div className="space-y-6">
                 {[
-                  { key: 'newOrders', label: 'Yeni Siparişler', description: 'Yeni siparişler geldiğinde bildirim al' },
+                  { key: 'newOrders', label: 'QR Kod Taramaları', description: 'Yeni QR kod taramaları hakkında bildirim al' },
                   { key: 'lowStock', label: 'Düşük Stok Uyarıları', description: 'Stok azaldığında uyarı al' },
                   { key: 'staffUpdates', label: 'Personel Güncellemeleri', description: 'Personel programı ve güncellemeleri hakkında bildirim' },
                   { key: 'customerReviews', label: 'Müşteri Yorumları', description: 'Yeni müşteri yorumları hakkında bildirim al' },
@@ -345,7 +345,7 @@ export function RestaurantSettings() {
                       <div className="text-sm text-slate-400 mt-1">{item.description}</div>
                     </div>
                     <Switch
-                      checked={notifications[item.key as keyof typeof notifications]}
+                      checked={notifications[item.key]}
                       onCheckedChange={(checked) => 
                         setNotifications(prev => ({ ...prev, [item.key]: checked }))
                       }

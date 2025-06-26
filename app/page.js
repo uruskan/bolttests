@@ -8,10 +8,8 @@ import { ContentManagement } from '@/components/content/ContentManagement';
 import { RestaurantSettings } from '@/components/settings/RestaurantSettings';
 import { ThemeCustomization } from '@/components/theme/ThemeCustomization';
 
-type ActiveView = 'dashboard' | 'menu' | 'content' | 'settings' | 'theme';
-
 export default function Home() {
-  const [activeView, setActiveView] = useState<ActiveView>('dashboard');
+  const [activeView, setActiveView] = useState('dashboard');
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -31,10 +29,10 @@ export default function Home() {
         return <MenuManagement />;
       case 'content':
         return <ContentManagement />;
-      case 'settings':
-        return <RestaurantSettings />;
       case 'theme':
         return <ThemeCustomization />;
+      case 'settings':
+        return <RestaurantSettings />;
       default:
         return <DashboardOverview />;
     }

@@ -27,35 +27,35 @@ export function ThemeCustomization() {
 
   const presetThemes = [
     {
-      name: 'Warm Italian',
+      name: 'Sıcak İtalyan',
       colors: { primary: '#E11D48', secondary: '#F97316', accent: '#A3907C' },
-      description: 'Rose gold and warm oranges'
+      description: 'Gül altını ve sıcak turuncular'
     },
     {
-      name: 'Classic Elegance',
+      name: 'Klasik Elegans',
       colors: { primary: '#1F2937', secondary: '#6B7280', accent: '#D1D5DB' },
-      description: 'Sophisticated grays'
+      description: 'Sofistike gri tonları'
     },
     {
-      name: 'Mediterranean',
+      name: 'Akdeniz',
       colors: { primary: '#0EA5E9', secondary: '#22C55E', accent: '#FCD34D' },
-      description: 'Ocean blues and olives'
+      description: 'Okyanus mavisi ve zeytin yeşili'
     },
     {
       name: 'Modern Minimalist',
       colors: { primary: '#6366F1', secondary: '#8B5CF6', accent: '#EC4899' },
-      description: 'Clean purples and pinks'
+      description: 'Temiz mor ve pembe tonları'
     }
   ];
 
   const fontOptions = [
-    { name: 'Inter', category: 'Modern Sans-serif', preview: 'The quick brown fox' },
-    { name: 'Playfair Display', category: 'Elegant Serif', preview: 'The quick brown fox' },
-    { name: 'Poppins', category: 'Friendly Sans-serif', preview: 'The quick brown fox' },
-    { name: '  ', category: 'Classic Serif', preview: 'The quick brown fox' }
+    { name: 'Inter', category: 'Modern Sans-serif', preview: 'Hızlı kahverengi tilki' },
+    { name: 'Playfair Display', category: 'Elegant Serif', preview: 'Hızlı kahverengi tilki' },
+    { name: 'Poppins', category: 'Friendly Sans-serif', preview: 'Hızlı kahverengi tilki' },
+    { name: 'Merriweather', category: 'Classic Serif', preview: 'Hızlı kahverengi tilki' }
   ];
 
-  const applyPresetTheme = (theme: typeof presetThemes[0]) => {
+  const applyPresetTheme = (theme) => {
     setPrimaryColor(theme.colors.primary);
     setSecondaryColor(theme.colors.secondary);
     setAccentColor(theme.colors.accent);
@@ -66,21 +66,21 @@ export function ThemeCustomization() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Theme Customization</h1>
-          <p className="text-gray-600 mt-1">Customize your restaurant's brand appearance</p>
+          <h1 className="text-3xl font-bold text-white">Tema Özelleştirme</h1>
+          <p className="text-slate-400 mt-1">Halkın göreceği QR menünüzün görünümünü özelleştirin</p>
         </div>
         <div className="flex items-center space-x-3 mt-4 sm:mt-0">
-          <Button variant="outline" className="border-rose-200 hover:bg-rose-50">
+          <Button variant="outline" className="border-slate-600 hover:bg-slate-700 text-slate-300">
             <Upload className="w-4 h-4 mr-2" />
-            Import Theme
+            Tema İçe Aktar
           </Button>
-          <Button variant="outline" className="border-rose-200 hover:bg-rose-50">
+          <Button variant="outline" className="border-slate-600 hover:bg-slate-700 text-slate-300">
             <Download className="w-4 h-4 mr-2" />
-            Export Theme
+            Tema Dışa Aktar
           </Button>
-          <Button className="bg-gradient-to-r from-rose-500 to-orange-500 hover:from-rose-600 hover:to-orange-600">
+          <Button className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600">
             <Save className="w-4 h-4 mr-2" />
-            Save Changes
+            Değişiklikleri Kaydet
           </Button>
         </div>
       </div>
@@ -89,53 +89,53 @@ export function ThemeCustomization() {
         {/* Theme Controls */}
         <div className="lg:col-span-2 space-y-6">
           <Tabs defaultValue="colors" className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="colors" className="flex items-center">
+            <TabsList className="grid w-full grid-cols-3 bg-slate-800/50 border border-slate-700/50">
+              <TabsTrigger value="colors" className="flex items-center data-[state=active]:bg-blue-500/20 data-[state=active]:text-blue-300">
                 <Palette className="w-4 h-4 mr-2" />
-                Colors
+                Renkler
               </TabsTrigger>
-              <TabsTrigger value="typography" className="flex items-center">
+              <TabsTrigger value="typography" className="flex items-center data-[state=active]:bg-blue-500/20 data-[state=active]:text-blue-300">
                 <Type className="w-4 h-4 mr-2" />
-                Typography
+                Tipografi
               </TabsTrigger>
-              <TabsTrigger value="layout" className="flex items-center">
+              <TabsTrigger value="layout" className="flex items-center data-[state=active]:bg-blue-500/20 data-[state=active]:text-blue-300">
                 <Layout className="w-4 h-4 mr-2" />
-                Layout
+                Düzen
               </TabsTrigger>
             </TabsList>
 
             <TabsContent value="colors" className="space-y-6">
               {/* Preset Themes */}
-              <Card className="bg-white/80 backdrop-blur-sm border-rose-100">
+              <Card className="bg-slate-800/50 backdrop-blur-xl border-slate-700/50">
                 <CardHeader>
-                  <CardTitle>Preset Themes</CardTitle>
+                  <CardTitle className="text-white">Hazır Temalar</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {presetThemes.map((theme) => (
                       <div
                         key={theme.name}
-                        className="border border-gray-200 rounded-lg p-4 cursor-pointer hover:border-rose-300 transition-colors"
+                        className="border border-slate-600 rounded-lg p-4 cursor-pointer hover:border-blue-400 transition-colors"
                         onClick={() => applyPresetTheme(theme)}
                       >
                         <div className="flex items-center space-x-3 mb-2">
                           <div className="flex space-x-1">
                             <div 
-                              className="w-4 h-4 rounded-full border border-gray-300"
+                              className="w-4 h-4 rounded-full border border-slate-500"
                               style={{ backgroundColor: theme.colors.primary }}
                             />
                             <div 
-                              className="w-4 h-4 rounded-full border border-gray-300"
+                              className="w-4 h-4 rounded-full border border-slate-500"
                               style={{ backgroundColor: theme.colors.secondary }}
                             />
                             <div 
-                              className="w-4 h-4 rounded-full border border-gray-300"
+                              className="w-4 h-4 rounded-full border border-slate-500"
                               style={{ backgroundColor: theme.colors.accent }}
                             />
                           </div>
-                          <h3 className="font-medium text-gray-900">{theme.name}</h3>
+                          <h3 className="font-medium text-white">{theme.name}</h3>
                         </div>
-                        <p className="text-sm text-gray-600">{theme.description}</p>
+                        <p className="text-sm text-slate-400">{theme.description}</p>
                       </div>
                     ))}
                   </div>
@@ -143,59 +143,59 @@ export function ThemeCustomization() {
               </Card>
 
               {/* Custom Colors */}
-              <Card className="bg-white/80 backdrop-blur-sm border-rose-100">
+              <Card className="bg-slate-800/50 backdrop-blur-xl border-slate-700/50">
                 <CardHeader>
-                  <CardTitle>Custom Colors</CardTitle>
+                  <CardTitle className="text-white">Özel Renkler</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                     <div>
-                      <Label htmlFor="primaryColor">Primary Color</Label>
+                      <Label htmlFor="primaryColor" className="text-slate-300">Ana Renk</Label>
                       <div className="flex items-center space-x-3 mt-2">
                         <input
                           type="color"
                           id="primaryColor"
                           value={primaryColor}
                           onChange={(e) => setPrimaryColor(e.target.value)}
-                          className="w-12 h-12 rounded-lg border border-gray-300 cursor-pointer"
+                          className="w-12 h-12 rounded-lg border border-slate-600 cursor-pointer"
                         />
                         <div>
-                          <div className="font-medium text-gray-900">Primary</div>
-                          <div className="text-sm text-gray-600">{primaryColor}</div>
+                          <div className="font-medium text-white">Ana Renk</div>
+                          <div className="text-sm text-slate-400">{primaryColor}</div>
                         </div>
                       </div>
                     </div>
 
                     <div>
-                      <Label htmlFor="secondaryColor">Secondary Color</Label>
+                      <Label htmlFor="secondaryColor" className="text-slate-300">İkincil Renk</Label>
                       <div className="flex items-center space-x-3 mt-2">
                         <input
                           type="color"
                           id="secondaryColor"
                           value={secondaryColor}
                           onChange={(e) => setSecondaryColor(e.target.value)}
-                          className="w-12 h-12 rounded-lg border border-gray-300 cursor-pointer"
+                          className="w-12 h-12 rounded-lg border border-slate-600 cursor-pointer"
                         />
                         <div>
-                          <div className="font-medium text-gray-900">Secondary</div>
-                          <div className="text-sm text-gray-600">{secondaryColor}</div>
+                          <div className="font-medium text-white">İkincil</div>
+                          <div className="text-sm text-slate-400">{secondaryColor}</div>
                         </div>
                       </div>
                     </div>
 
                     <div>
-                      <Label htmlFor="accentColor">Accent Color</Label>
+                      <Label htmlFor="accentColor" className="text-slate-300">Vurgu Rengi</Label>
                       <div className="flex items-center space-x-3 mt-2">
                         <input
                           type="color"
                           id="accentColor"
                           value={accentColor}
                           onChange={(e) => setAccentColor(e.target.value)}
-                          className="w-12 h-12 rounded-lg border border-gray-300 cursor-pointer"
+                          className="w-12 h-12 rounded-lg border border-slate-600 cursor-pointer"
                         />
                         <div>
-                          <div className="font-medium text-gray-900">Accent</div>
-                          <div className="text-sm text-gray-600">{accentColor}</div>
+                          <div className="font-medium text-white">Vurgu</div>
+                          <div className="text-sm text-slate-400">{accentColor}</div>
                         </div>
                       </div>
                     </div>
@@ -206,24 +206,24 @@ export function ThemeCustomization() {
 
             <TabsContent value="typography" className="space-y-6">
               {/* Font Selection */}
-              <Card className="bg-white/80 backdrop-blur-sm border-rose-100">
+              <Card className="bg-slate-800/50 backdrop-blur-xl border-slate-700/50">
                 <CardHeader>
-                  <CardTitle>Font Family</CardTitle>
+                  <CardTitle className="text-white">Yazı Tipi Ailesi</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {fontOptions.map((font) => (
                       <div
                         key={font.name}
-                        className="border border-gray-200 rounded-lg p-4 cursor-pointer hover:border-rose-300 transition-colors"
+                        className="border border-slate-600 rounded-lg p-4 cursor-pointer hover:border-blue-400 transition-colors"
                       >
                         <div className="mb-2">
-                          <h3 className="font-medium text-gray-900" style={{ fontFamily: font.name }}>
+                          <h3 className="font-medium text-white" style={{ fontFamily: font.name }}>
                             {font.name}
                           </h3>
-                          <p className="text-sm text-gray-600">{font.category}</p>
+                          <p className="text-sm text-slate-400">{font.category}</p>
                         </div>
-                        <p className="text-lg" style={{ fontFamily: font.name }}>
+                        <p className="text-lg text-slate-300" style={{ fontFamily: font.name }}>
                           {font.preview}
                         </p>
                       </div>
@@ -233,14 +233,14 @@ export function ThemeCustomization() {
               </Card>
 
               {/* Font Size */}
-              <Card className="bg-white/80 backdrop-blur-sm border-rose-100">
+              <Card className="bg-slate-800/50 backdrop-blur-xl border-slate-700/50">
                 <CardHeader>
-                  <CardTitle>Font Size</CardTitle>
+                  <CardTitle className="text-white">Yazı Tipi Boyutu</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
                     <div>
-                      <Label>Base Font Size: {fontSize[0]}px</Label>
+                      <Label className="text-slate-300">Temel Yazı Boyutu: {fontSize[0]}px</Label>
                       <Slider
                         value={fontSize}
                         onValueChange={setFontSize}
@@ -250,9 +250,9 @@ export function ThemeCustomization() {
                         className="mt-2"
                       />
                     </div>
-                    <div className="bg-gray-50 p-4 rounded-lg">
-                      <p style={{ fontSize: `${fontSize[0]}px` }}>
-                        This is how your text will appear with the selected font size.
+                    <div className="bg-slate-700/50 p-4 rounded-lg">
+                      <p style={{ fontSize: `${fontSize[0]}px` }} className="text-white">
+                        Bu metin seçilen yazı boyutuyla nasıl görüneceğini gösterir.
                       </p>
                     </div>
                   </div>
@@ -262,14 +262,14 @@ export function ThemeCustomization() {
 
             <TabsContent value="layout" className="space-y-6">
               {/* Border Radius */}
-              <Card className="bg-white/80 backdrop-blur-sm border-rose-100">
+              <Card className="bg-slate-800/50 backdrop-blur-xl border-slate-700/50">
                 <CardHeader>
-                  <CardTitle>Border Radius</CardTitle>
+                  <CardTitle className="text-white">Kenar Yuvarlaklığı</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
                     <div>
-                      <Label>Corner Roundness: {borderRadius[0]}px</Label>
+                      <Label className="text-slate-300">Köşe Yuvarlaklığı: {borderRadius[0]}px</Label>
                       <Slider
                         value={borderRadius}
                         onValueChange={setBorderRadius}
@@ -281,15 +281,15 @@ export function ThemeCustomization() {
                     </div>
                     <div className="flex space-x-4">
                       <div 
-                        className="w-16 h-16 bg-gradient-to-br from-rose-400 to-orange-400"
+                        className="w-16 h-16 bg-gradient-to-br from-blue-400 to-purple-500"
                         style={{ borderRadius: `${borderRadius[0]}px` }}
                       />
                       <div 
-                        className="w-16 h-16 border-2 border-gray-300"
+                        className="w-16 h-16 border-2 border-slate-500"
                         style={{ borderRadius: `${borderRadius[0]}px` }}
                       />
                       <div 
-                        className="w-16 h-16 bg-gray-100"
+                        className="w-16 h-16 bg-slate-600"
                         style={{ borderRadius: `${borderRadius[0]}px` }}
                       />
                     </div>
@@ -298,14 +298,14 @@ export function ThemeCustomization() {
               </Card>
 
               {/* Spacing */}
-              <Card className="bg-white/80 backdrop-blur-sm border-rose-100">
+              <Card className="bg-slate-800/50 backdrop-blur-xl border-slate-700/50">
                 <CardHeader>
-                  <CardTitle>Spacing</CardTitle>
+                  <CardTitle className="text-white">Boşluk</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
                     <div>
-                      <Label>Base Spacing: {spacing[0]}px</Label>
+                      <Label className="text-slate-300">Temel Boşluk: {spacing[0]}px</Label>
                       <Slider
                         value={spacing}
                         onValueChange={setSpacing}
@@ -315,12 +315,12 @@ export function ThemeCustomization() {
                         className="mt-2"
                       />
                     </div>
-                    <div className="bg-gray-50 p-4 rounded-lg">
+                    <div className="bg-slate-700/50 p-4 rounded-lg">
                       <div 
-                        className="bg-white border border-gray-200 rounded-lg"
+                        className="bg-slate-800 border border-slate-600 rounded-lg text-white"
                         style={{ padding: `${spacing[0]}px` }}
                       >
-                        <p>This card uses your selected spacing value for padding.</p>
+                        <p>Bu kart seçilen boşluk değerini kullanır.</p>
                       </div>
                     </div>
                   </div>
@@ -332,11 +332,11 @@ export function ThemeCustomization() {
 
         {/* Live Preview */}
         <div className="lg:col-span-1">
-          <Card className="bg-white/80 backdrop-blur-sm border-rose-100 sticky top-6">
+          <Card className="bg-slate-800/50 backdrop-blur-xl border-slate-700/50 sticky top-6">
             <CardHeader>
-              <CardTitle className="flex items-center">
+              <CardTitle className="flex items-center text-white">
                 <Eye className="w-5 h-5 mr-2" />
-                Live Preview
+                QR Menü Önizlemesi
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -352,64 +352,58 @@ export function ThemeCustomization() {
                   <h3 className="font-bold text-lg" style={{ fontSize: `${fontSize[0] + 4}px` }}>
                     Bella Vista
                   </h3>
-                  <p className="text-sm opacity-90">Italian Cuisine</p>
+                  <p className="text-sm opacity-90">İtalyan Mutfağı</p>
                 </div>
 
-                {/* Preview Card */}
+                {/* Preview Menu Item */}
                 <div 
-                  className="border border-gray-200 bg-white"
+                  className="border border-slate-600 bg-slate-800"
                   style={{ 
                     borderRadius: `${borderRadius[0]}px`,
                     padding: `${spacing[0]}px`
                   }}
                 >
-                  <h4 className="font-semibold mb-2" style={{ fontSize: `${fontSize[0] + 2}px` }}>
-                    Menu Item
+                  <h4 className="font-semibold mb-2 text-white" style={{ fontSize: `${fontSize[0] + 2}px` }}>
+                    Pasta Carbonara
                   </h4>
-                  <p className="text-gray-600 mb-3" style={{ fontSize: `${fontSize[0]}px` }}>
-                    Delicious pasta with fresh ingredients
+                  <p className="text-slate-300 mb-3" style={{ fontSize: `${fontSize[0]}px` }}>
+                    Taze malzemelerle lezzetli makarna
                   </p>
-                  <button
-                    className="text-white px-4 py-2 rounded font-medium"
-                    style={{ 
-                      backgroundColor: primaryColor,
-                      borderRadius: `${borderRadius[0] / 2}px`,
-                      fontSize: `${fontSize[0] - 2}px`
-                    }}
-                  >
-                    Order Now
-                  </button>
+                  <div className="flex items-center justify-between">
+                    <span className="text-lg font-bold" style={{ color: primaryColor }}>
+                      ₺89.99
+                    </span>
+                    <button
+                      className="text-white px-3 py-1 rounded text-sm font-medium"
+                      style={{ 
+                        backgroundColor: primaryColor,
+                        borderRadius: `${borderRadius[0] / 2}px`,
+                        fontSize: `${fontSize[0] - 2}px`
+                      }}
+                    >
+                      Detay
+                    </button>
+                  </div>
                 </div>
 
-                {/* Preview Buttons */}
-                <div className="space-y-2">
-                  <button
-                    className="w-full text-white py-2 px-4 rounded font-medium"
-                    style={{ 
-                      backgroundColor: primaryColor,
-                      borderRadius: `${borderRadius[0]}px`,
-                      fontSize: `${fontSize[0]}px`
-                    }}
-                  >
-                    Primary Button
-                  </button>
-                  <button
-                    className="w-full border-2 py-2 px-4 rounded font-medium"
-                    style={{ 
-                      borderColor: primaryColor,
-                      color: primaryColor,
-                      borderRadius: `${borderRadius[0]}px`,
-                      fontSize: `${fontSize[0]}px`
-                    }}
-                  >
-                    Secondary Button
-                  </button>
+                {/* Preview Category */}
+                <div 
+                  className="border border-slate-600 bg-slate-800"
+                  style={{ 
+                    borderRadius: `${borderRadius[0]}px`,
+                    padding: `${spacing[0]}px`
+                  }}
+                >
+                  <h4 className="font-semibold text-white mb-2" style={{ fontSize: `${fontSize[0] + 2}px` }}>
+                    Ana Yemekler
+                  </h4>
+                  <p className="text-slate-400 text-sm">8 öğe</p>
                 </div>
 
                 {/* Reset Button */}
                 <Button 
                   variant="outline" 
-                  className="w-full mt-6"
+                  className="w-full mt-6 border-slate-600 text-slate-300"
                   onClick={() => {
                     setPrimaryColor('#E11D48');
                     setSecondaryColor('#F97316');
@@ -420,7 +414,7 @@ export function ThemeCustomization() {
                   }}
                 >
                   <RotateCcw className="w-4 h-4 mr-2" />
-                  Reset to Default
+                  Varsayılana Sıfırla
                 </Button>
               </div>
             </CardContent>

@@ -22,58 +22,87 @@ import {
   Grid,
   List,
   Eye,
-  EyeOff
+  EyeOff,
+  Camera,
+  Check,
+  X
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-interface MenuItem {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  originalPrice?: number;
-  category: string;
-  image?: string;
-  isActive: boolean;
-  isFeatured: boolean;
-  prepTime?: string;
-  dietary: string[];
-}
-
-interface Category {
-  id: string;
-  name: string;
-  description: string;
-  order: number;
-  itemCount: number;
-  isActive: boolean;
-}
-
 export function MenuManagement() {
-  const [selectedCategory, setSelectedCategory] = useState<string>('appetizers');
+  const [selectedCategory, setSelectedCategory] = useState('appetizers');
   const [searchTerm, setSearchTerm] = useState('');
-  const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
+  const [viewMode, setViewMode] = useState('list');
   const [isAddingCategory, setIsAddingCategory] = useState(false);
   const [isAddingItem, setIsAddingItem] = useState(false);
-  const [editingPrice, setEditingPrice] = useState<string | null>(null);
+  const [editingPrice, setEditingPrice] = useState(null);
   const [tempPrice, setTempPrice] = useState('');
 
-  const categories: Category[] = [
-    { id: 'appetizers', name: 'Başlangıçlar', description: 'Lezzetli başlangıç tarifleri', order: 1, itemCount: 8, isActive: true },
-    { id: 'pasta', name: 'Makarnalar', description: 'Ev yapımı taze makarnalar', order: 2, itemCount: 12, isActive: true },
-    { id: 'pizza', name: 'Pizzalar', description: 'Odun ateşinde ince hamur', order: 3, itemCount: 10, isActive: true },
-    { id: 'mains', name: 'Ana Yemekler', description: 'Doyurucu İtalyan yemekleri', order: 4, itemCount: 15, isActive: true },
-    { id: 'desserts', name: 'Tatlılar', description: 'Tatlı son', order: 5, itemCount: 6, isActive: true },
-    { id: 'beverages', name: 'İçecekler', description: 'İçecekler ve şaraplar', order: 6, itemCount: 20, isActive: false },
+  const categories = [
+    { 
+      id: 'appetizers', 
+      name: 'Başlangıçlar', 
+      description: 'Lezzetli başlangıç tarifleri', 
+      order: 1, 
+      itemCount: 8, 
+      isActive: true,
+      image: 'https://images.pexels.com/photos/1099680/pexels-photo-1099680.jpeg?auto=compress&cs=tinysrgb&w=400'
+    },
+    { 
+      id: 'pasta', 
+      name: 'Makarnalar', 
+      description: 'Ev yapımı taze makarnalar', 
+      order: 2, 
+      itemCount: 12, 
+      isActive: true,
+      image: 'https://images.pexels.com/photos/4518843/pexels-photo-4518843.jpeg?auto=compress&cs=tinysrgb&w=400'
+    },
+    { 
+      id: 'pizza', 
+      name: 'Pizzalar', 
+      description: 'Odun ateşinde ince hamur', 
+      order: 3, 
+      itemCount: 10, 
+      isActive: true,
+      image: 'https://images.pexels.com/photos/2147491/pexels-photo-2147491.jpeg?auto=compress&cs=tinysrgb&w=400'
+    },
+    { 
+      id: 'mains', 
+      name: 'Ana Yemekler', 
+      description: 'Doyurucu İtalyan yemekleri', 
+      order: 4, 
+      itemCount: 15, 
+      isActive: true,
+      image: 'https://images.pexels.com/photos/8753999/pexels-photo-8753999.jpeg?auto=compress&cs=tinysrgb&w=400'
+    },
+    { 
+      id: 'desserts', 
+      name: 'Tatlılar', 
+      description: 'Tatlı son', 
+      order: 5, 
+      itemCount: 6, 
+      isActive: true,
+      image: 'https://images.pexels.com/photos/1126359/pexels-photo-1126359.jpeg?auto=compress&cs=tinysrgb&w=400'
+    },
+    { 
+      id: 'beverages', 
+      name: 'İçecekler', 
+      description: 'İçecekler ve şaraplar', 
+      order: 6, 
+      itemCount: 20, 
+      isActive: false,
+      image: 'https://images.pexels.com/photos/1407846/pexels-photo-1407846.jpeg?auto=compress&cs=tinysrgb&w=400'
+    },
   ];
 
-  const menuItems: MenuItem[] = [
+  const menuItems = [
     {
       id: '1',
       name: 'Bruschetta Classica',
       description: 'Taze domates, fesleğen ve sarımsakla kızarmış ekmek',
       price: 45.99,
       category: 'appetizers',
+      image: 'https://images.pexels.com/photos/1099680/pexels-photo-1099680.jpeg?auto=compress&cs=tinysrgb&w=400',
       prepTime: '10 dk',
       dietary: ['vegetarian'],
       isFeatured: true,
@@ -85,6 +114,7 @@ export function MenuManagement() {
       description: 'Şarküteri, peynir ve marine sebze seçkisi',
       price: 68.99,
       category: 'appetizers',
+      image: 'https://images.pexels.com/photos/1438672/pexels-photo-1438672.jpeg?auto=compress&cs=tinysrgb&w=400',
       prepTime: '5 dk',
       dietary: [],
       isFeatured: false,
@@ -97,6 +127,7 @@ export function MenuManagement() {
       price: 52.99,
       originalPrice: 59.99,
       category: 'appetizers',
+      image: 'https://images.pexels.com/photos/4518843/pexels-photo-4518843.jpeg?auto=compress&cs=tinysrgb&w=400',
       prepTime: '15 dk',
       dietary: ['vegetarian'],
       isFeatured: true,
@@ -108,6 +139,7 @@ export function MenuManagement() {
       description: 'Marinara soslu altın renginde kızarmış kalamar halkaları',
       price: 61.99,
       category: 'appetizers',
+      image: 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=400',
       prepTime: '12 dk',
       dietary: [],
       isFeatured: false,
@@ -122,7 +154,7 @@ export function MenuManagement() {
       item.description.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-  const getDietaryBadgeColor = (dietary: string) => {
+  const getDietaryBadgeColor = (dietary) => {
     switch (dietary) {
       case 'vegetarian': return 'bg-green-500/20 text-green-300 border-green-500/30';
       case 'vegan': return 'bg-green-500/20 text-green-300 border-green-500/30';
@@ -132,13 +164,12 @@ export function MenuManagement() {
     }
   };
 
-  const handlePriceEdit = (itemId: string, currentPrice: number) => {
+  const handlePriceEdit = (itemId, currentPrice) => {
     setEditingPrice(itemId);
     setTempPrice(currentPrice.toString());
   };
 
-  const handlePriceSave = (itemId: string) => {
-    // Here you would update the price via API
+  const handlePriceSave = (itemId) => {
     console.log(`Updating price for item ${itemId} to ${tempPrice}`);
     setEditingPrice(null);
     setTempPrice('');
@@ -149,9 +180,12 @@ export function MenuManagement() {
     setTempPrice('');
   };
 
-  const toggleItemStatus = (itemId: string) => {
-    // Here you would toggle the item status via API
+  const toggleItemStatus = (itemId) => {
     console.log(`Toggling status for item ${itemId}`);
+  };
+
+  const toggleCategoryStatus = (categoryId) => {
+    console.log(`Toggling status for category ${categoryId}`);
   };
 
   return (
@@ -182,6 +216,14 @@ export function MenuManagement() {
                 <div>
                   <Label htmlFor="categoryDescription" className="text-slate-300">Açıklama</Label>
                   <Textarea id="categoryDescription" placeholder="Bu kategorinin kısa açıklaması" className="mt-1 h-20 bg-slate-700 border-slate-600 text-white" />
+                </div>
+                <div>
+                  <Label className="text-slate-300">Kategori Resmi</Label>
+                  <div className="mt-2 border-2 border-dashed border-slate-600 rounded-lg p-6 text-center hover:border-blue-400 transition-colors cursor-pointer">
+                    <Camera className="w-8 h-8 text-slate-400 mx-auto mb-2" />
+                    <p className="text-sm text-slate-300">Resim yüklemek için tıklayın</p>
+                    <p className="text-xs text-slate-500 mt-1">PNG, JPG 5MB'a kadar</p>
+                  </div>
                 </div>
               </div>
               <DialogFooter>
@@ -219,11 +261,19 @@ export function MenuManagement() {
                     <Label htmlFor="prepTime" className="text-slate-300">Hazırlık Süresi</Label>
                     <Input id="prepTime" placeholder="ör. 15 dk" className="mt-1 bg-slate-700 border-slate-600 text-white" />
                   </div>
+                  <div>
+                    <Label htmlFor="itemDescription" className="text-slate-300">Açıklama</Label>
+                    <Textarea id="itemDescription" placeholder="Yemeği tanımlayın..." className="mt-1 h-20 bg-slate-700 border-slate-600 text-white" />
+                  </div>
                 </div>
                 <div className="space-y-4">
                   <div>
-                    <Label htmlFor="itemDescription" className="text-slate-300">Açıklama</Label>
-                    <Textarea id="itemDescription" placeholder="Yemeği tanımlayın..." className="mt-1 h-24 bg-slate-700 border-slate-600 text-white" />
+                    <Label className="text-slate-300">Ürün Resmi</Label>
+                    <div className="mt-2 border-2 border-dashed border-slate-600 rounded-lg p-6 text-center hover:border-blue-400 transition-colors cursor-pointer">
+                      <Camera className="w-8 h-8 text-slate-400 mx-auto mb-2" />
+                      <p className="text-sm text-slate-300">Resim yüklemek için tıklayın</p>
+                      <p className="text-xs text-slate-500 mt-1">PNG, JPG 5MB'a kadar</p>
+                    </div>
                   </div>
                   <div>
                     <Label className="text-slate-300">Diyet Seçenekleri</Label>
@@ -262,38 +312,65 @@ export function MenuManagement() {
             </CardHeader>
             <CardContent className="space-y-2">
               {categories.map((category) => (
-                <Button
+                <div
                   key={category.id}
-                  variant="ghost"
                   className={cn(
-                    "w-full justify-start h-auto p-3 text-left transition-all duration-200",
+                    "border rounded-lg p-3 cursor-pointer transition-all duration-200 relative",
                     selectedCategory === category.id
-                      ? "bg-gradient-to-r from-blue-500/20 to-purple-500/20 text-white border border-blue-500/30"
-                      : "text-slate-300 hover:bg-slate-700/50 hover:text-white"
+                      ? "bg-gradient-to-r from-blue-500/20 to-purple-500/20 border-blue-500/30"
+                      : "border-slate-600 hover:border-slate-500 hover:bg-slate-700/30"
                   )}
                   onClick={() => setSelectedCategory(category.id)}
                 >
-                  <div className="flex items-center justify-between w-full">
-                    <div>
-                      <div className="font-medium">{category.name}</div>
-                      <div className={cn(
-                        "text-xs mt-1",
+                  <div className="flex items-start space-x-3">
+                    <div className="w-12 h-12 rounded-lg overflow-hidden bg-slate-700 flex-shrink-0">
+                      <img 
+                        src={category.image} 
+                        alt={category.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between mb-1">
+                        <h3 className={cn(
+                          "font-medium truncate",
+                          selectedCategory === category.id ? "text-white" : "text-slate-300"
+                        )}>
+                          {category.name}
+                        </h3>
+                        <div className="flex items-center space-x-1">
+                          <Badge variant="secondary" className="text-xs bg-slate-700 text-slate-300">
+                            {category.itemCount}
+                          </Badge>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-6 w-6 p-0"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleCategoryStatus(category.id);
+                            }}
+                          >
+                            {category.isActive ? (
+                              <Eye className="w-3 h-3 text-green-400" />
+                            ) : (
+                              <EyeOff className="w-3 h-3 text-slate-500" />
+                            )}
+                          </Button>
+                        </div>
+                      </div>
+                      <p className={cn(
+                        "text-xs truncate",
                         selectedCategory === category.id ? "text-blue-200" : "text-slate-500"
                       )}>
                         {category.description}
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Badge variant="secondary" className="text-xs bg-slate-700 text-slate-300">
-                        {category.itemCount}
-                      </Badge>
-                      {!category.isActive && (
-                        <EyeOff className="w-4 h-4 text-slate-500" />
-                      )}
-                      <Move className="w-4 h-4 opacity-50" />
+                      </p>
                     </div>
                   </div>
-                </Button>
+                  <div className="absolute top-2 right-2">
+                    <Move className="w-3 h-3 text-slate-500 opacity-50" />
+                  </div>
+                </div>
               ))}
             </CardContent>
           </Card>
@@ -347,91 +424,112 @@ export function MenuManagement() {
                   <div 
                     key={item.id} 
                     className={cn(
-                      "bg-slate-700/30 rounded-lg p-4 transition-all duration-200 border cursor-pointer",
+                      "bg-slate-700/30 rounded-lg p-4 transition-all duration-200 border",
                       item.isActive 
                         ? "border-slate-600 hover:border-blue-500/50 hover:bg-slate-700/50" 
                         : "border-slate-700 opacity-60"
                     )}
-                    onClick={() => toggleItemStatus(item.id)}
                   >
-                    <div className="flex items-start justify-between mb-3">
-                      <div className="flex-1">
-                        <div className="flex items-center space-x-2 mb-1">
-                          <h3 className="font-semibold text-white">{item.name}</h3>
-                          {item.isFeatured && (
-                            <Badge className="bg-yellow-500/20 text-yellow-300 border-yellow-500/30">
-                              <Star className="w-3 h-3 mr-1" />
-                              Öne Çıkan
-                            </Badge>
-                          )}
-                          {!item.isActive && (
-                            <Badge variant="destructive" className="text-xs bg-red-500/20 text-red-300 border-red-500/30">
-                              Pasif
-                            </Badge>
-                          )}
-                        </div>
-                        <p className="text-sm text-slate-300 mb-2">{item.description}</p>
-                        
-                        <div className="flex items-center space-x-4 text-xs text-slate-400 mb-2">
-                          <div className="flex items-center">
-                            <DollarSign className="w-3 h-3 mr-1" />
-                            {editingPrice === item.id ? (
-                              <div className="flex items-center space-x-2" onClick={(e) => e.stopPropagation()}>
-                                <Input
-                                  value={tempPrice}
-                                  onChange={(e) => setTempPrice(e.target.value)}
-                                  onKeyDown={(e) => {
-                                    if (e.key === 'Enter') handlePriceSave(item.id);
-                                    if (e.key === 'Escape') handlePriceCancel();
-                                  }}
-                                  className="w-20 h-6 text-xs bg-slate-600 border-slate-500 text-white"
-                                  autoFocus
-                                />
-                                <Button size="sm" onClick={() => handlePriceSave(item.id)} className="h-6 px-2 text-xs">
-                                  ✓
-                                </Button>
-                              </div>
-                            ) : (
-                              <span 
-                                className="cursor-pointer hover:text-blue-400 font-medium"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handlePriceEdit(item.id, item.price);
-                                }}
-                              >
-                                ₺{item.price}
-                                {item.originalPrice && (
-                                  <span className="line-through text-slate-500 ml-1">₺{item.originalPrice}</span>
-                                )}
-                              </span>
-                            )}
-                          </div>
-                          {item.prepTime && (
-                            <div className="flex items-center">
-                              <Clock className="w-3 h-3 mr-1" />
-                              {item.prepTime}
-                            </div>
-                          )}
-                        </div>
-
-                        {item.dietary.length > 0 && (
-                          <div className="flex flex-wrap gap-1">
-                            {item.dietary.map((diet) => (
-                              <Badge key={diet} className={cn("text-xs border", getDietaryBadgeColor(diet))}>
-                                {diet}
-                              </Badge>
-                            ))}
-                          </div>
-                        )}
+                    <div className="flex items-start space-x-4">
+                      <div className="w-20 h-20 rounded-lg overflow-hidden bg-slate-700 flex-shrink-0">
+                        <img 
+                          src={item.image} 
+                          alt={item.name}
+                          className="w-full h-full object-cover"
+                        />
                       </div>
                       
-                      <div className="flex items-center space-x-2 ml-4" onClick={(e) => e.stopPropagation()}>
-                        <Button variant="outline" size="icon" className="h-8 w-8 border-slate-600 hover:bg-slate-600 text-slate-300">
-                          <Edit className="w-4 h-4" />
-                        </Button>
-                        <Button variant="outline" size="icon" className="h-8 w-8 border-red-600 hover:bg-red-600/20 text-red-400">
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
+                      <div className="flex-1">
+                        <div className="flex items-start justify-between mb-2">
+                          <div className="flex-1">
+                            <div className="flex items-center space-x-2 mb-1">
+                              <h3 className="font-semibold text-white">{item.name}</h3>
+                              {item.isFeatured && (
+                                <Badge className="bg-yellow-500/20 text-yellow-300 border-yellow-500/30">
+                                  <Star className="w-3 h-3 mr-1" />
+                                  Öne Çıkan
+                                </Badge>
+                              )}
+                            </div>
+                            <p className="text-sm text-slate-300 mb-2">{item.description}</p>
+                            
+                            <div className="flex items-center space-x-4 text-xs text-slate-400 mb-2">
+                              <div className="flex items-center">
+                                <DollarSign className="w-3 h-3 mr-1" />
+                                {editingPrice === item.id ? (
+                                  <div className="flex items-center space-x-2" onClick={(e) => e.stopPropagation()}>
+                                    <Input
+                                      value={tempPrice}
+                                      onChange={(e) => setTempPrice(e.target.value)}
+                                      onKeyDown={(e) => {
+                                        if (e.key === 'Enter') handlePriceSave(item.id);
+                                        if (e.key === 'Escape') handlePriceCancel();
+                                      }}
+                                      className="w-20 h-6 text-xs bg-slate-600 border-slate-500 text-white"
+                                      autoFocus
+                                    />
+                                    <Button size="sm" onClick={() => handlePriceSave(item.id)} className="h-6 px-2 text-xs">
+                                      <Check className="w-3 h-3" />
+                                    </Button>
+                                    <Button size="sm" variant="outline" onClick={handlePriceCancel} className="h-6 px-2 text-xs">
+                                      <X className="w-3 h-3" />
+                                    </Button>
+                                  </div>
+                                ) : (
+                                  <span 
+                                    className="cursor-pointer hover:text-blue-400 font-medium"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handlePriceEdit(item.id, item.price);
+                                    }}
+                                  >
+                                    ₺{item.price}
+                                    {item.originalPrice && (
+                                      <span className="line-through text-slate-500 ml-1">₺{item.originalPrice}</span>
+                                    )}
+                                  </span>
+                                )}
+                              </div>
+                              {item.prepTime && (
+                                <div className="flex items-center">
+                                  <Clock className="w-3 h-3 mr-1" />
+                                  {item.prepTime}
+                                </div>
+                              )}
+                            </div>
+
+                            {item.dietary.length > 0 && (
+                              <div className="flex flex-wrap gap-1 mb-2">
+                                {item.dietary.map((diet) => (
+                                  <Badge key={diet} className={cn("text-xs border", getDietaryBadgeColor(diet))}>
+                                    {diet}
+                                  </Badge>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-2">
+                            <Switch
+                              checked={item.isActive}
+                              onCheckedChange={() => toggleItemStatus(item.id)}
+                            />
+                            <Label className="text-sm text-slate-300">
+                              {item.isActive ? 'Aktif' : 'Pasif'}
+                            </Label>
+                          </div>
+                          
+                          <div className="flex items-center space-x-2">
+                            <Button variant="outline" size="icon" className="h-8 w-8 border-slate-600 hover:bg-slate-600 text-slate-300">
+                              <Edit className="w-4 h-4" />
+                            </Button>
+                            <Button variant="outline" size="icon" className="h-8 w-8 border-red-600 hover:bg-red-600/20 text-red-400">
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>

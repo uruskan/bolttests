@@ -8,15 +8,15 @@ import {
   TrendingUp, 
   TrendingDown, 
   DollarSign, 
-  ShoppingCart, 
   Users, 
   Star,
-  Clock,
   ChefHat,
-  Utensils,
   Eye,
   Heart,
-  Megaphone
+  Megaphone,
+  Palette,
+  Settings,
+  Camera
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -33,27 +33,27 @@ export function DashboardOverview() {
 
   const metrics = [
     {
-      title: "Bugünkü Gelir",
-      value: "₺2,847",
-      change: "+12.5%",
+      title: "Toplam Menü Öğesi",
+      value: "127",
+      change: "+5 bu hafta",
       trend: "up",
-      icon: DollarSign,
+      icon: ChefHat,
       color: "from-green-400 to-emerald-500"
     },
     {
-      title: "Bugünkü Siparişler",
-      value: "87",
-      change: "+8.2%",
-      trend: "up", 
-      icon: ShoppingCart,
+      title: "Aktif Kategoriler",
+      value: "8",
+      change: "Tümü aktif",
+      trend: "neutral", 
+      icon: Users,
       color: "from-blue-400 to-blue-500"
     },
     {
-      title: "Aktif Masalar",
-      value: "24/32",
-      change: "%75 dolu",
-      trend: "neutral",
-      icon: Utensils,
+      title: "QR Kod Taramaları",
+      value: "2,847",
+      change: "+12.5% bu ay",
+      trend: "up",
+      icon: Eye,
       color: "from-orange-400 to-orange-500"
     },
     {
@@ -66,28 +66,11 @@ export function DashboardOverview() {
     }
   ];
 
-  const recentOrders = [
-    { id: "#1247", table: "Masa 8", items: "Pasta Carbonara, Şarap", status: "hazırlanıyor", time: "2 dk önce", total: "₺142.50" },
-    { id: "#1246", table: "Masa 3", items: "Margherita Pizza, Salata", status: "hazır", time: "5 dk önce", total: "₺98.90" },
-    { id: "#1245", table: "Masa 12", items: "Risotto, Tiramisu", status: "servis edildi", time: "12 dk önce", total: "₺135.70" },
-    { id: "#1244", table: "Paket Servis", items: "Lazanya, Sarımsaklı Ekmek", status: "teslim edildi", time: "18 dk önce", total: "₺101.20" },
-  ];
-
   const contentStats = [
     { name: "Aktif Hikayeler", count: 3, views: 234, icon: Eye },
     { name: "Aktif Reklamlar", count: 2, clicks: 156, icon: Megaphone },
     { name: "Öne Çıkan Ürünler", count: 5, likes: 89, icon: Heart },
   ];
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'hazırlanıyor': return 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30';
-      case 'hazır': return 'bg-green-500/20 text-green-300 border-green-500/30';
-      case 'servis edildi': return 'bg-blue-500/20 text-blue-300 border-blue-500/30';
-      case 'teslim edildi': return 'bg-slate-500/20 text-slate-300 border-slate-500/30';
-      default: return 'bg-slate-500/20 text-slate-300 border-slate-500/30';
-    }
-  };
 
   return (
     <div className="space-y-6">
@@ -156,45 +139,6 @@ export function DashboardOverview() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Recent Orders */}
-        <Card className="bg-slate-800/50 backdrop-blur-xl border-slate-700/50">
-          <CardHeader>
-            <CardTitle className="flex items-center justify-between text-white">
-              <span className="flex items-center">
-                <Clock className="w-5 h-5 mr-2 text-blue-400" />
-                Son Siparişler
-              </span>
-              <Button variant="outline" size="sm" className="border-slate-600 hover:bg-slate-700 text-slate-300">
-                Tümünü Gör
-              </Button>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {recentOrders.map((order) => (
-                <div key={order.id} className="flex items-center justify-between p-3 rounded-lg bg-slate-700/30 hover:bg-slate-700/50 transition-colors">
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-2 mb-1">
-                      <span className="font-medium text-white">{order.id}</span>
-                      <Badge variant="outline" className="text-xs border-slate-600 text-slate-300">
-                        {order.table}
-                      </Badge>
-                      <Badge className={cn("text-xs border", getStatusColor(order.status))}>
-                        {order.status}
-                      </Badge>
-                    </div>
-                    <p className="text-sm text-slate-300 mb-1">{order.items}</p>
-                    <p className="text-xs text-slate-400">{order.time}</p>
-                  </div>
-                  <div className="text-right">
-                    <div className="font-semibold text-white">{order.total}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
         {/* Content Stats */}
         <Card className="bg-slate-800/50 backdrop-blur-xl border-slate-700/50">
           <CardHeader>
@@ -237,6 +181,52 @@ export function DashboardOverview() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Menu Overview */}
+        <Card className="bg-slate-800/50 backdrop-blur-xl border-slate-700/50">
+          <CardHeader>
+            <CardTitle className="flex items-center justify-between text-white">
+              <span className="flex items-center">
+                <ChefHat className="w-5 h-5 mr-2 text-blue-400" />
+                Menü Özeti
+              </span>
+              <Button variant="outline" size="sm" className="border-slate-600 hover:bg-slate-700 text-slate-300">
+                Düzenle
+              </Button>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between p-3 rounded-lg bg-slate-700/30">
+                <div>
+                  <div className="font-medium text-white">Başlangıçlar</div>
+                  <div className="text-sm text-slate-300">8 öğe</div>
+                </div>
+                <Badge className="bg-green-500/20 text-green-300 border-green-500/30">
+                  Aktif
+                </Badge>
+              </div>
+              <div className="flex items-center justify-between p-3 rounded-lg bg-slate-700/30">
+                <div>
+                  <div className="font-medium text-white">Ana Yemekler</div>
+                  <div className="text-sm text-slate-300">15 öğe</div>
+                </div>
+                <Badge className="bg-green-500/20 text-green-300 border-green-500/30">
+                  Aktif
+                </Badge>
+              </div>
+              <div className="flex items-center justify-between p-3 rounded-lg bg-slate-700/30">
+                <div>
+                  <div className="font-medium text-white">Tatlılar</div>
+                  <div className="text-sm text-slate-300">6 öğe</div>
+                </div>
+                <Badge className="bg-yellow-500/20 text-yellow-300 border-yellow-500/30">
+                  2 Pasif
+                </Badge>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Quick Actions */}
@@ -255,12 +245,12 @@ export function DashboardOverview() {
               <span className="text-sm font-medium">Reklam Oluştur</span>
             </Button>
             <Button variant="outline" className="h-20 flex flex-col items-center justify-center space-y-2 border-slate-600 hover:bg-slate-700 text-slate-300">
-              <Eye className="w-6 h-6" />
+              <Camera className="w-6 h-6" />
               <span className="text-sm font-medium">Hikaye Ekle</span>
             </Button>
             <Button variant="outline" className="h-20 flex flex-col items-center justify-center space-y-2 border-slate-600 hover:bg-slate-700 text-slate-300">
-              <Star className="w-6 h-6" />
-              <span className="text-sm font-medium">Raporları Gör</span>
+              <Palette className="w-6 h-6" />
+              <span className="text-sm font-medium">Tema Düzenle</span>
             </Button>
           </div>
         </CardContent>

@@ -19,14 +19,6 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { useState } from 'react';
 
-type ActiveView = 'dashboard' | 'menu' | 'content' | 'settings' | 'theme';
-
-interface MainLayoutProps {
-  children: ReactNode;
-  activeView: ActiveView;
-  onViewChange: (view: ActiveView) => void;
-}
-
 const navigationItems = [
   { id: 'dashboard', label: 'Ana Sayfa', icon: LayoutDashboard, badge: null },
   { id: 'menu', label: 'Menü Yönetimi', icon: ChefHat, badge: null },
@@ -35,7 +27,7 @@ const navigationItems = [
   { id: 'settings', label: 'Ayarlar', icon: Settings, badge: null },
 ];
 
-export function MainLayout({ children, activeView, onViewChange }: MainLayoutProps) {
+export function MainLayout({ children, activeView, onViewChange }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
@@ -113,7 +105,7 @@ export function MainLayout({ children, activeView, onViewChange }: MainLayoutPro
                         : "text-slate-300 hover:bg-slate-800/50 hover:text-white"
                     )}
                     onClick={() => {
-                      onViewChange(item.id as ActiveView);
+                      onViewChange(item.id);
                       setSidebarOpen(false);
                     }}
                   >
