@@ -8,7 +8,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
-import { Switch } from '@/components/ui/switch';
 import { 
   Plus, 
   Search, 
@@ -18,7 +17,6 @@ import {
   DollarSign,
   Clock,
   Star,
-  Move,
   Grid,
   List,
   Eye,
@@ -39,6 +37,8 @@ export function MenuManagement() {
   const [editingPrice, setEditingPrice] = useState(null);
   const [tempPrice, setTempPrice] = useState('');
   const [draggedCategory, setDraggedCategory] = useState(null);
+  const [draggedItem, setDraggedItem] = useState(null);
+  const [editingCategory, setEditingCategory] = useState(null);
 
   const [categories, setCategories] = useState([
     { 
@@ -108,7 +108,8 @@ export function MenuManagement() {
       prepTime: '10 dk',
       dietary: ['vegetarian'],
       isFeatured: true,
-      isActive: true
+      isActive: true,
+      order: 1
     },
     {
       id: '2', 
@@ -120,7 +121,8 @@ export function MenuManagement() {
       prepTime: '5 dk',
       dietary: [],
       isFeatured: false,
-      isActive: true
+      isActive: true,
+      order: 2
     },
     {
       id: '3',
@@ -133,7 +135,8 @@ export function MenuManagement() {
       prepTime: '15 dk',
       dietary: ['vegetarian'],
       isFeatured: true,
-      isActive: false
+      isActive: false,
+      order: 3
     },
     {
       id: '4',
@@ -145,7 +148,8 @@ export function MenuManagement() {
       prepTime: '12 dk',
       dietary: [],
       isFeatured: false,
-      isActive: true
+      isActive: true,
+      order: 4
     },
   ]);
 
@@ -154,7 +158,8 @@ export function MenuManagement() {
     .filter(item => 
       item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.description.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    )
+    .sort((a, b) => a.order - b.order);
 
   const getDietaryBadgeColor = (dietary) => {
     switch (dietary) {
@@ -235,6 +240,63 @@ export function MenuManagement() {
 
   const handleCategoryDragEnd = () => {
     setDraggedCategory(null);
+  };
+
+  // Drag and drop handlers for menu items
+  const handleItemDragStart = (e, itemId) => {
+    setDraggedItem(itemId);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  const handleItemDragOver = (e) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  };
+
+  const handleItemDrop = (e, targetItemId) => {
+    e.preventDefault();
+    
+    if (draggedItem && draggedItem !== targetItemId) {
+      const categoryItems = menuItems.filter(item => item.category === selectedCategory);
+      const draggedIndex = categoryItems.findIndex(item => item.id === draggedItem);
+      const targetIndex = categoryItems.findIndex(item => item.id === targetItemId);
+      
+      const newCategoryItems = [...categoryItems];
+      const [draggedItemObj] = newCategoryItems.splice(draggedIndex, 1);
+      newCategoryItems.splice(targetIndex, 0, draggedItemObj);
+      
+      // Update order values for this category
+      const updatedCategoryItems = newCategoryItems.map((item, index) => ({
+        ...item,
+        order: index + 1
+      }));
+      
+      // Update the main menu items array
+      setMenuItems(prev => prev.map(item => {
+        if (item.category === selectedCategory) {
+          const updatedItem = updatedCategoryItems.find(updated => updated.id === item.id);
+          return updatedItem || item;
+        }
+        return item;
+      }));
+    }
+    
+    setDraggedItem(null);
+  };
+
+  const handleItemDragEnd = () => {
+    setDraggedItem(null);
+  };
+
+  const deleteCategory = (categoryId) => {
+    setCategories(prev => prev.filter(cat => cat.id !== categoryId));
+    // If deleting the currently selected category, switch to the first available one
+    if (selectedCategory === categoryId) {
+      const remainingCategories = categories.filter(cat => cat.id !== categoryId);
+      if (remainingCategories.length > 0) {
+        setSelectedCategory(remainingCategories[0].id);
+      }
+    }
   };
 
   return (
@@ -366,10 +428,12 @@ export function MenuManagement() {
                 <div
                   key={category.id}
                   className={cn(
-                    "border rounded-lg p-3 cursor-pointer transition-all duration-200 relative",
+                    "border-2 rounded-lg p-3 cursor-pointer transition-all duration-200 relative",
                     selectedCategory === category.id
-                      ? "bg-gradient-to-r from-blue-500/20 to-purple-500/20 border-blue-500/30"
-                      : "border-slate-600 hover:border-slate-500 hover:bg-slate-700/30",
+                      ? "bg-gradient-to-r from-blue-500/20 to-purple-500/20 border-blue-500/50"
+                      : category.isActive
+                        ? "border-green-500/50 hover:border-green-400"
+                        : "border-red-500/50 hover:border-red-400 opacity-60",
                     draggedCategory === category.id && "opacity-50"
                   )}
                   onClick={() => setSelectedCategory(category.id)}
@@ -400,6 +464,16 @@ export function MenuManagement() {
                           <Badge variant="secondary" className="text-xs bg-slate-700 text-slate-300">
                             {category.itemCount}
                           </Badge>
+                        </div>
+                      </div>
+                      <p className={cn(
+                        "text-xs truncate mb-2",
+                        selectedCategory === category.id ? "text-blue-200" : "text-slate-500"
+                      )}>
+                        {category.description}
+                      </p>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-1">
                           <Button
                             variant="ghost"
                             size="icon"
@@ -412,17 +486,33 @@ export function MenuManagement() {
                             {category.isActive ? (
                               <Eye className="w-3 h-3 text-green-400" />
                             ) : (
-                              <EyeOff className="w-3 h-3 text-slate-500" />
+                              <EyeOff className="w-3 h-3 text-red-400" />
                             )}
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-6 w-6 p-0"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setEditingCategory(category.id);
+                            }}
+                          >
+                            <Edit className="w-3 h-3 text-slate-400 hover:text-blue-400" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-6 w-6 p-0"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              deleteCategory(category.id);
+                            }}
+                          >
+                            <Trash2 className="w-3 h-3 text-slate-400 hover:text-red-400" />
                           </Button>
                         </div>
                       </div>
-                      <p className={cn(
-                        "text-xs truncate",
-                        selectedCategory === category.id ? "text-blue-200" : "text-slate-500"
-                      )}>
-                        {category.description}
-                      </p>
                     </div>
                   </div>
                 </div>
@@ -482,11 +572,18 @@ export function MenuManagement() {
                       "rounded-lg p-4 transition-all duration-200 border-2 cursor-pointer",
                       item.isActive 
                         ? "border-green-500 bg-slate-700/30 hover:border-green-400 hover:bg-slate-700/50" 
-                        : "border-red-500 bg-slate-700/20 opacity-60 hover:border-red-400"
+                        : "border-red-500 bg-slate-700/20 opacity-60 hover:border-red-400",
+                      draggedItem === item.id && "opacity-50"
                     )}
                     onClick={() => toggleItemStatus(item.id)}
+                    draggable
+                    onDragStart={(e) => handleItemDragStart(e, item.id)}
+                    onDragOver={handleItemDragOver}
+                    onDrop={(e) => handleItemDrop(e, item.id)}
+                    onDragEnd={handleItemDragEnd}
                   >
                     <div className="flex items-start space-x-4">
+                      <GripVertical className="w-4 h-4 text-slate-500 cursor-move mt-1 flex-shrink-0" />
                       <div className="w-20 h-20 rounded-lg overflow-hidden bg-slate-700 flex-shrink-0">
                         <img 
                           src={item.image} 
@@ -501,10 +598,7 @@ export function MenuManagement() {
                             <div className="flex items-center space-x-2 mb-1">
                               <h3 className="font-semibold text-white">{item.name}</h3>
                               {item.isFeatured && (
-                                <Badge className="bg-yellow-500/20 text-yellow-300 border-yellow-500/30">
-                                  <Star className="w-3 h-3 mr-1" />
-                                  Öne Çıkan
-                                </Badge>
+                                <Star className="w-4 h-4 text-yellow-400 fill-current" />
                               )}
                             </div>
                             <p className="text-sm text-slate-300 mb-2">{item.description}</p>
@@ -566,14 +660,8 @@ export function MenuManagement() {
                           </div>
                         </div>
 
-                        <div className="flex items-center justify-between">
+                        <div className="flex items-center justify-end" onClick={(e) => e.stopPropagation()}>
                           <div className="flex items-center space-x-2">
-                            <Badge className={item.isActive ? "bg-green-500/20 text-green-300 border-green-500/30" : "bg-red-500/20 text-red-300 border-red-500/30"}>
-                              {item.isActive ? 'Aktif' : 'Pasif'}
-                            </Badge>
-                          </div>
-                          
-                          <div className="flex items-center space-x-2" onClick={(e) => e.stopPropagation()}>
                             <Button variant="outline" size="icon" className="h-8 w-8 border-slate-600 hover:bg-slate-600 text-slate-300">
                               <Edit className="w-4 h-4" />
                             </Button>
