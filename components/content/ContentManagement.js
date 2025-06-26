@@ -185,10 +185,10 @@ export function ContentManagement() {
 
   const getPriorityColor = (priority) => {
     switch (priority) {
-      case 1: return 'bg-red-500/20 text-red-300 border-red-500/30';
-      case 2: return 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30';
-      case 3: return 'bg-green-500/20 text-green-300 border-green-500/30';
-      default: return 'bg-slate-500/20 text-slate-300 border-slate-500/30';
+      case 1: return 'bg-red-100 text-red-800 border-red-200 dark:bg-red-500/20 dark:text-red-300 dark:border-red-500/30';
+      case 2: return 'bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-500/20 dark:text-yellow-300 dark:border-yellow-500/30';
+      case 3: return 'bg-green-100 text-green-800 border-green-200 dark:bg-green-500/20 dark:text-green-300 dark:border-green-500/30';
+      default: return 'bg-gray-100 text-gray-800 border-gray-200 dark:bg-slate-500/20 dark:text-slate-300 dark:border-slate-500/30';
     }
   };
 
@@ -302,14 +302,28 @@ export function ContentManagement() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-white">İçerik Yönetimi</h1>
-          <p className="text-slate-400 mt-1">Hikayeler, reklamlar ve öne çıkan ürünler</p>
+          <h1 className={cn(
+            "text-3xl font-bold transition-colors duration-200",
+            "text-gray-900 dark:text-white"
+          )}>
+            İçerik Yönetimi
+          </h1>
+          <p className={cn(
+            "mt-1 transition-colors duration-200",
+            "text-gray-600 dark:text-slate-400"
+          )}>
+            Hikayeler, reklamlar ve öne çıkan ürünler
+          </p>
         </div>
         <div className="flex items-center space-x-3 mt-4 sm:mt-0">
           <Button
             variant="outline"
             onClick={() => setShowArchived(!showArchived)}
-            className="border-slate-600 hover:bg-slate-700 text-slate-300"
+            className={cn(
+              "transition-all duration-200",
+              "border-gray-300 hover:bg-gray-100 text-gray-700",
+              "dark:border-slate-600 dark:hover:bg-slate-700 dark:text-slate-300"
+            )}
           >
             {showArchived ? <ArchiveRestore className="w-4 h-4 mr-2" /> : <Archive className="w-4 h-4 mr-2" />}
             {showArchived ? 'Aktif İçerikleri Göster' : 'Arşivi Göster'}
@@ -318,16 +332,41 @@ export function ContentManagement() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3 bg-slate-800/50 border border-slate-700/50">
-          <TabsTrigger value="stories" className="flex items-center data-[state=active]:bg-blue-500/20 data-[state=active]:text-blue-300">
+        <TabsList className={cn(
+          "grid w-full grid-cols-3 transition-colors duration-200",
+          "bg-gray-100 border border-gray-200",
+          "dark:bg-slate-800/50 dark:border dark:border-slate-700/50"
+        )}>
+          <TabsTrigger 
+            value="stories" 
+            className={cn(
+              "flex items-center transition-all duration-200",
+              "data-[state=active]:bg-white data-[state=active]:text-blue-600",
+              "dark:data-[state=active]:bg-blue-500/20 dark:data-[state=active]:text-blue-300"
+            )}
+          >
             <Camera className="w-4 h-4 mr-2" />
             Hikayeler
           </TabsTrigger>
-          <TabsTrigger value="ads" className="flex items-center data-[state=active]:bg-blue-500/20 data-[state=active]:text-blue-300">
+          <TabsTrigger 
+            value="ads" 
+            className={cn(
+              "flex items-center transition-all duration-200",
+              "data-[state=active]:bg-white data-[state=active]:text-blue-600",
+              "dark:data-[state=active]:bg-blue-500/20 dark:data-[state=active]:text-blue-300"
+            )}
+          >
             <Megaphone className="w-4 h-4 mr-2" />
             Reklamlar
           </TabsTrigger>
-          <TabsTrigger value="featured" className="flex items-center data-[state=active]:bg-blue-500/20 data-[state=active]:text-blue-300">
+          <TabsTrigger 
+            value="featured" 
+            className={cn(
+              "flex items-center transition-all duration-200",
+              "data-[state=active]:bg-white data-[state=active]:text-blue-600",
+              "dark:data-[state=active]:bg-blue-500/20 dark:data-[state=active]:text-blue-300"
+            )}
+          >
             <Star className="w-4 h-4 mr-2" />
             Öne Çıkanlar
           </TabsTrigger>
@@ -337,33 +376,61 @@ export function ContentManagement() {
         <TabsContent value="stories" className="space-y-6">
           <div className="flex justify-between items-center">
             <div>
-              <h2 className="text-xl font-semibold text-white">
+              <h2 className={cn(
+                "text-xl font-semibold transition-colors duration-200",
+                "text-gray-900 dark:text-white"
+              )}>
                 {showArchived ? 'Arşivlenmiş Hikayeler' : 'Aktif Hikayeler'}
               </h2>
-              <p className="text-slate-400">
+              <p className={cn(
+                "transition-colors duration-200",
+                "text-gray-600 dark:text-slate-400"
+              )}>
                 {showArchived ? 'Süresi dolmuş hikayeler' : '24 saat süreyle aktif kalır'}
               </p>
             </div>
             {!showArchived && (
               <Dialog open={isAddingStory} onOpenChange={setIsAddingStory}>
                 <DialogTrigger asChild>
-                  <Button className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600">
+                  <Button className={cn(
+                    "transition-all duration-200",
+                    "bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700"
+                  )}>
                     <Plus className="w-4 h-4 mr-2" />
                     Hikaye Oluştur
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="max-w-2xl bg-slate-800 border-slate-700">
+                <DialogContent className={cn(
+                  "max-w-2xl transition-colors duration-200",
+                  "bg-white border-gray-200",
+                  "dark:bg-slate-800 dark:border-slate-700"
+                )}>
                   <DialogHeader>
-                    <DialogTitle className="text-white">Yeni Hikaye Oluştur</DialogTitle>
+                    <DialogTitle className={cn(
+                      "transition-colors duration-200",
+                      "text-gray-900 dark:text-white"
+                    )}>
+                      Yeni Hikaye Oluştur
+                    </DialogTitle>
                   </DialogHeader>
                   <div className="space-y-6">
                     <div>
-                      <Label className="text-slate-300">Hikaye Türü</Label>
+                      <Label className={cn(
+                        "transition-colors duration-200",
+                        "text-gray-700 dark:text-slate-300"
+                      )}>
+                        Hikaye Türü
+                      </Label>
                       <div className="flex space-x-2 mt-2">
                         <Button
                           variant={selectedStoryType === 'image' ? 'default' : 'outline'}
                           onClick={() => setSelectedStoryType('image')}
-                          className={selectedStoryType === 'image' ? 'bg-gradient-to-r from-blue-500 to-purple-500' : 'border-slate-600 text-slate-300'}
+                          className={cn(
+                            "transition-all duration-200",
+                            selectedStoryType === 'image' 
+                              ? 'bg-gradient-to-r from-blue-500 to-indigo-600' 
+                              : 'border-gray-300 text-gray-700 dark:border-slate-600 dark:text-slate-300'
+                          )}
                         >
                           <ImageIcon className="w-4 h-4 mr-2" />
                           Resim
@@ -371,7 +438,12 @@ export function ContentManagement() {
                         <Button
                           variant={selectedStoryType === 'video' ? 'default' : 'outline'}
                           onClick={() => setSelectedStoryType('video')}
-                          className={selectedStoryType === 'video' ? 'bg-gradient-to-r from-blue-500 to-purple-500' : 'border-slate-600 text-slate-300'}
+                          className={cn(
+                            "transition-all duration-200",
+                            selectedStoryType === 'video' 
+                              ? 'bg-gradient-to-r from-blue-500 to-indigo-600' 
+                              : 'border-gray-300 text-gray-700 dark:border-slate-600 dark:text-slate-300'
+                          )}
                         >
                           <Play className="w-4 h-4 mr-2" />
                           Video
@@ -380,12 +452,25 @@ export function ContentManagement() {
                     </div>
 
                     <div>
-                      <Label className="text-slate-300">Süre</Label>
+                      <Label className={cn(
+                        "transition-colors duration-200",
+                        "text-gray-700 dark:text-slate-300"
+                      )}>
+                        Süre
+                      </Label>
                       <Select value={storyDuration} onValueChange={setStoryDuration}>
-                        <SelectTrigger className="mt-2 bg-slate-700 border-slate-600 text-white">
+                        <SelectTrigger className={cn(
+                          "mt-2 transition-all duration-200",
+                          "bg-white border-gray-300 text-gray-900",
+                          "dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                        )}>
                           <SelectValue />
                         </SelectTrigger>
-                        <SelectContent className="bg-slate-700 border-slate-600">
+                        <SelectContent className={cn(
+                          "transition-colors duration-200",
+                          "bg-white border-gray-200",
+                          "dark:bg-slate-700 dark:border-slate-600"
+                        )}>
                           <SelectItem value="24h">24 Saat</SelectItem>
                           <SelectItem value="never">Süresiz</SelectItem>
                           <SelectItem value="custom">Özel Gün Sayısı</SelectItem>
@@ -395,7 +480,11 @@ export function ContentManagement() {
                         <Input 
                           type="number" 
                           placeholder="Gün sayısı" 
-                          className="mt-2 bg-slate-700 border-slate-600 text-white" 
+                          className={cn(
+                            "mt-2 transition-all duration-200",
+                            "bg-white border-gray-300 text-gray-900",
+                            "dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                          )} 
                         />
                       )}
                     </div>
@@ -403,27 +492,67 @@ export function ContentManagement() {
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-4">
                         <div>
-                          <Label htmlFor="storyTitle" className="text-slate-300">Hikaye Başlığı</Label>
-                          <Input id="storyTitle" placeholder="ör. Taze Makarna Yapımı" className="mt-1 bg-slate-700 border-slate-600 text-white" />
+                          <Label htmlFor="storyTitle" className={cn(
+                            "transition-colors duration-200",
+                            "text-gray-700 dark:text-slate-300"
+                          )}>
+                            Hikaye Başlığı
+                          </Label>
+                          <Input 
+                            id="storyTitle" 
+                            placeholder="ör. Taze Makarna Yapımı" 
+                            className={cn(
+                              "mt-1 transition-all duration-200",
+                              "bg-white border-gray-300 text-gray-900",
+                              "dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                            )} 
+                          />
                         </div>
                         <div>
-                          <Label htmlFor="storyDescription" className="text-slate-300">Açıklama</Label>
+                          <Label htmlFor="storyDescription" className={cn(
+                            "transition-colors duration-200",
+                            "text-gray-700 dark:text-slate-300"
+                          )}>
+                            Açıklama
+                          </Label>
                           <Textarea 
                             id="storyDescription" 
                             placeholder="Bu hikayede neler oluyor..." 
-                            className="mt-1 h-24 bg-slate-700 border-slate-600 text-white" 
+                            className={cn(
+                              "mt-1 h-24 transition-all duration-200",
+                              "bg-white border-gray-300 text-gray-900",
+                              "dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                            )} 
                           />
                         </div>
                       </div>
                       <div className="space-y-4">
                         <div>
-                          <Label className="text-slate-300">{selectedStoryType === 'image' ? 'Resim' : 'Video'} Yükle</Label>
-                          <div className="mt-2 border-2 border-dashed border-slate-600 rounded-lg p-6 text-center hover:border-blue-400 transition-colors cursor-pointer">
-                            <Camera className="w-8 h-8 text-slate-400 mx-auto mb-2" />
-                            <p className="text-sm text-slate-300">
+                          <Label className={cn(
+                            "transition-colors duration-200",
+                            "text-gray-700 dark:text-slate-300"
+                          )}>
+                            {selectedStoryType === 'image' ? 'Resim' : 'Video'} Yükle
+                          </Label>
+                          <div className={cn(
+                            "mt-2 border-2 border-dashed rounded-lg p-6 text-center hover:border-blue-400 transition-colors cursor-pointer",
+                            "border-gray-300 bg-gray-50",
+                            "dark:border-slate-600 dark:bg-slate-700/30"
+                          )}>
+                            <Camera className={cn(
+                              "w-8 h-8 mx-auto mb-2 transition-colors duration-200",
+                              "text-gray-400 dark:text-slate-400"
+                            )} />
+                            <p className={cn(
+                              "text-sm transition-colors duration-200",
+                              "text-gray-600 dark:text-slate-300"
+                            )}>
                               Tıklayın veya sürükleyip bırakın
                             </p>
-                            <p className="text-xs text-slate-500 mt-1">
+                            <p className={cn(
+                              "text-xs mt-1 transition-colors duration-200",
+                              "text-gray-500 dark:text-slate-500"
+                            )}>
                               {selectedStoryType === 'image' ? 'PNG, JPG 10MB\'a kadar' : 'MP4, MOV 50MB\'a kadar'}
                             </p>
                           </div>
@@ -432,10 +561,21 @@ export function ContentManagement() {
                     </div>
                   </div>
                   <DialogFooter>
-                    <Button variant="outline" onClick={() => setIsAddingStory(false)} className="border-slate-600 text-slate-300">
+                    <Button 
+                      variant="outline" 
+                      onClick={() => setIsAddingStory(false)} 
+                      className={cn(
+                        "transition-all duration-200",
+                        "border-gray-300 text-gray-700",
+                        "dark:border-slate-600 dark:text-slate-300"
+                      )}
+                    >
                       İptal
                     </Button>
-                    <Button className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600">
+                    <Button className={cn(
+                      "transition-all duration-200",
+                      "bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700"
+                    )}>
                       Hikaye Oluştur
                     </Button>
                   </DialogFooter>
@@ -449,7 +589,9 @@ export function ContentManagement() {
               <div 
                 key={story.id} 
                 className={cn(
-                  "bg-slate-800/30 rounded-lg p-4 border border-slate-700 transition-all duration-200",
+                  "rounded-lg p-4 border transition-all duration-200",
+                  "bg-white border-gray-200",
+                  "dark:bg-slate-800/30 dark:border-slate-700",
                   draggedStory === story.id && "opacity-50"
                 )}
                 draggable
@@ -460,8 +602,11 @@ export function ContentManagement() {
               >
                 <div className="flex items-start space-x-4">
                   <div className="flex items-center space-x-2">
-                    <GripVertical className="w-4 h-4 text-slate-500 cursor-move" />
-                    <div className="w-16 h-16 rounded-lg overflow-hidden bg-slate-700 flex-shrink-0">
+                    <GripVertical className={cn(
+                      "w-4 h-4 cursor-move transition-colors duration-200",
+                      "text-gray-400 dark:text-slate-500"
+                    )} />
+                    <div className="w-16 h-16 rounded-lg overflow-hidden bg-muted flex-shrink-0">
                       <img 
                         src={story.thumbnail} 
                         alt={story.title}
@@ -473,9 +618,22 @@ export function ContentManagement() {
                   <div className="flex-1">
                     <div className="flex items-start justify-between mb-2">
                       <div>
-                        <h3 className="font-semibold text-white mb-1">{story.title}</h3>
-                        <p className="text-slate-300 text-sm mb-2">{story.content}</p>
-                        <div className="flex items-center space-x-4 text-xs text-slate-400">
+                        <h3 className={cn(
+                          "font-semibold mb-1 transition-colors duration-200",
+                          "text-gray-900 dark:text-white"
+                        )}>
+                          {story.title}
+                        </h3>
+                        <p className={cn(
+                          "text-sm mb-2 transition-colors duration-200",
+                          "text-gray-600 dark:text-slate-300"
+                        )}>
+                          {story.content}
+                        </p>
+                        <div className={cn(
+                          "flex items-center space-x-4 text-xs transition-colors duration-200",
+                          "text-gray-500 dark:text-slate-400"
+                        )}>
                           <span>{getTimeSince(story.createdAt)}</span>
                           <span className="flex items-center">
                             <Eye className="w-3 h-3 mr-1" />
@@ -501,15 +659,35 @@ export function ContentManagement() {
                         <Button
                           variant="outline"
                           size="icon"
-                          className="h-8 w-8 border-slate-600 hover:bg-slate-600 text-slate-300"
+                          className={cn(
+                            "h-8 w-8 transition-all duration-200",
+                            "border-gray-300 hover:bg-gray-100 text-gray-600",
+                            "dark:border-slate-600 dark:hover:bg-slate-600 dark:text-slate-300"
+                          )}
                           onClick={() => toggleArchive(story.id, 'story')}
                         >
                           {story.archived ? <ArchiveRestore className="w-4 h-4" /> : <Archive className="w-4 h-4" />}
                         </Button>
-                        <Button variant="outline" size="icon" className="h-8 w-8 border-slate-600 hover:bg-slate-600 text-slate-300">
+                        <Button 
+                          variant="outline" 
+                          size="icon" 
+                          className={cn(
+                            "h-8 w-8 transition-all duration-200",
+                            "border-gray-300 hover:bg-gray-100 text-gray-600",
+                            "dark:border-slate-600 dark:hover:bg-slate-600 dark:text-slate-300"
+                          )}
+                        >
                           <Edit className="w-4 h-4" />
                         </Button>
-                        <Button variant="outline" size="icon" className="h-8 w-8 border-red-600 hover:bg-red-600/20 text-red-400">
+                        <Button 
+                          variant="outline" 
+                          size="icon" 
+                          className={cn(
+                            "h-8 w-8 transition-all duration-200",
+                            "border-red-300 hover:bg-red-50 text-red-600",
+                            "dark:border-red-600 dark:hover:bg-red-600/20 dark:text-red-400"
+                          )}
+                        >
                           <Trash2 className="w-4 h-4" />
                         </Button>
                       </div>
@@ -525,31 +703,64 @@ export function ContentManagement() {
         <TabsContent value="ads" className="space-y-6">
           <div className="flex justify-between items-center">
             <div>
-              <h2 className="text-xl font-semibold text-white">
+              <h2 className={cn(
+                "text-xl font-semibold transition-colors duration-200",
+                "text-gray-900 dark:text-white"
+              )}>
                 {showArchived ? 'Arşivlenmiş Reklamlar' : 'Aktif Reklamlar'}
               </h2>
-              <p className="text-slate-400">Zamanlı reklamlar ve promosyonlar</p>
+              <p className={cn(
+                "transition-colors duration-200",
+                "text-gray-600 dark:text-slate-400"
+              )}>
+                Zamanlı reklamlar ve promosyonlar
+              </p>
             </div>
             {!showArchived && (
               <Dialog open={isAddingAd} onOpenChange={setIsAddingAd}>
                 <DialogTrigger asChild>
-                  <Button className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600">
+                  <Button className={cn(
+                    "transition-all duration-200",
+                    "bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700"
+                  )}>
                     <Plus className="w-4 h-4 mr-2" />
                     Reklam Oluştur
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="max-w-2xl bg-slate-800 border-slate-700">
+                <DialogContent className={cn(
+                  "max-w-2xl transition-colors duration-200",
+                  "bg-white border-gray-200",
+                  "dark:bg-slate-800 dark:border-slate-700"
+                )}>
                   <DialogHeader>
-                    <DialogTitle className="text-white">Yeni Reklam Oluştur</DialogTitle>
+                    <DialogTitle className={cn(
+                      "transition-colors duration-200",
+                      "text-gray-900 dark:text-white"
+                    )}>
+                      Yeni Reklam Oluştur
+                    </DialogTitle>
                   </DialogHeader>
                   <div className="space-y-6">
                     <div>
-                      <Label className="text-slate-300">Görüntüleme Türü</Label>
+                      <Label className={cn(
+                        "transition-colors duration-200",
+                        "text-gray-700 dark:text-slate-300"
+                      )}>
+                        Görüntüleme Türü
+                      </Label>
                       <Select defaultValue="banner">
-                        <SelectTrigger className="mt-2 bg-slate-700 border-slate-600 text-white">
+                        <SelectTrigger className={cn(
+                          "mt-2 transition-all duration-200",
+                          "bg-white border-gray-300 text-gray-900",
+                          "dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                        )}>
                           <SelectValue />
                         </SelectTrigger>
-                        <SelectContent className="bg-slate-700 border-slate-600">
+                        <SelectContent className={cn(
+                          "transition-colors duration-200",
+                          "bg-white border-gray-200",
+                          "dark:bg-slate-700 dark:border-slate-600"
+                        )}>
                           <SelectItem value="banner">Banner</SelectItem>
                           <SelectItem value="popup">Pop-up</SelectItem>
                           <SelectItem value="hero-slider">Hero Slider</SelectItem>
@@ -558,12 +769,25 @@ export function ContentManagement() {
                     </div>
 
                     <div>
-                      <Label className="text-slate-300">Süre</Label>
+                      <Label className={cn(
+                        "transition-colors duration-200",
+                        "text-gray-700 dark:text-slate-300"
+                      )}>
+                        Süre
+                      </Label>
                       <Select value={adDuration} onValueChange={setAdDuration}>
-                        <SelectTrigger className="mt-2 bg-slate-700 border-slate-600 text-white">
+                        <SelectTrigger className={cn(
+                          "mt-2 transition-all duration-200",
+                          "bg-white border-gray-300 text-gray-900",
+                          "dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                        )}>
                           <SelectValue />
                         </SelectTrigger>
-                        <SelectContent className="bg-slate-700 border-slate-600">
+                        <SelectContent className={cn(
+                          "transition-colors duration-200",
+                          "bg-white border-gray-200",
+                          "dark:bg-slate-700 dark:border-slate-600"
+                        )}>
                           <SelectItem value="24h">24 Saat</SelectItem>
                           <SelectItem value="never">Süresiz</SelectItem>
                           <SelectItem value="custom">Özel Gün Sayısı</SelectItem>
@@ -573,7 +797,11 @@ export function ContentManagement() {
                         <Input 
                           type="number" 
                           placeholder="Gün sayısı" 
-                          className="mt-2 bg-slate-700 border-slate-600 text-white" 
+                          className={cn(
+                            "mt-2 transition-all duration-200",
+                            "bg-white border-gray-300 text-gray-900",
+                            "dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                          )} 
                         />
                       )}
                     </div>
@@ -581,39 +809,107 @@ export function ContentManagement() {
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-4">
                         <div>
-                          <Label htmlFor="adTitle" className="text-slate-300">Reklam Başlığı</Label>
-                          <Input id="adTitle" placeholder="ör. Happy Hour Özel" className="mt-1 bg-slate-700 border-slate-600 text-white" />
-                        </div>
-                        <div>
-                          <Label htmlFor="adDescription" className="text-slate-300">Açıklama</Label>
-                          <Textarea 
-                            id="adDescription" 
-                            placeholder="Promosyonunuzu tanımlayın..." 
-                            className="mt-1 h-20 bg-slate-700 border-slate-600 text-white" 
+                          <Label htmlFor="adTitle" className={cn(
+                            "transition-colors duration-200",
+                            "text-gray-700 dark:text-slate-300"
+                          )}>
+                            Reklam Başlığı
+                          </Label>
+                          <Input 
+                            id="adTitle" 
+                            placeholder="ör. Happy Hour Özel" 
+                            className={cn(
+                              "mt-1 transition-all duration-200",
+                              "bg-white border-gray-300 text-gray-900",
+                              "dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                            )} 
                           />
                         </div>
                         <div>
-                          <Label htmlFor="linkUrl" className="text-slate-300">Link URL (Opsiyonel)</Label>
-                          <Input id="linkUrl" placeholder="https://website.com/promosyon" className="mt-1 bg-slate-700 border-slate-600 text-white" />
+                          <Label htmlFor="adDescription" className={cn(
+                            "transition-colors duration-200",
+                            "text-gray-700 dark:text-slate-300"
+                          )}>
+                            Açıklama
+                          </Label>
+                          <Textarea 
+                            id="adDescription" 
+                            placeholder="Promosyonunuzu tanımlayın..." 
+                            className={cn(
+                              "mt-1 h-20 transition-all duration-200",
+                              "bg-white border-gray-300 text-gray-900",
+                              "dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                            )} 
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="linkUrl" className={cn(
+                            "transition-colors duration-200",
+                            "text-gray-700 dark:text-slate-300"
+                          )}>
+                            Link URL (Opsiyonel)
+                          </Label>
+                          <Input 
+                            id="linkUrl" 
+                            placeholder="https://website.com/promosyon" 
+                            className={cn(
+                              "mt-1 transition-all duration-200",
+                              "bg-white border-gray-300 text-gray-900",
+                              "dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                            )} 
+                          />
                         </div>
                       </div>
                       <div className="space-y-4">
                         <div>
-                          <Label className="text-slate-300">Resim Yükle</Label>
-                          <div className="mt-2 border-2 border-dashed border-slate-600 rounded-lg p-6 text-center hover:border-blue-400 transition-colors cursor-pointer">
-                            <Megaphone className="w-8 h-8 text-slate-400 mx-auto mb-2" />
-                            <p className="text-sm text-slate-300">Resim yüklemek için tıklayın</p>
-                            <p className="text-xs text-slate-500 mt-1">PNG, JPG 5MB'a kadar</p>
+                          <Label className={cn(
+                            "transition-colors duration-200",
+                            "text-gray-700 dark:text-slate-300"
+                          )}>
+                            Resim Yükle
+                          </Label>
+                          <div className={cn(
+                            "mt-2 border-2 border-dashed rounded-lg p-6 text-center hover:border-blue-400 transition-colors cursor-pointer",
+                            "border-gray-300 bg-gray-50",
+                            "dark:border-slate-600 dark:bg-slate-700/30"
+                          )}>
+                            <Megaphone className={cn(
+                              "w-8 h-8 mx-auto mb-2 transition-colors duration-200",
+                              "text-gray-400 dark:text-slate-400"
+                            )} />
+                            <p className={cn(
+                              "text-sm transition-colors duration-200",
+                              "text-gray-600 dark:text-slate-300"
+                            )}>
+                              Resim yüklemek için tıklayın
+                            </p>
+                            <p className={cn(
+                              "text-xs mt-1 transition-colors duration-200",
+                              "text-gray-500 dark:text-slate-500"
+                            )}>
+                              PNG, JPG 5MB'a kadar
+                            </p>
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
                   <DialogFooter>
-                    <Button variant="outline" onClick={() => setIsAddingAd(false)} className="border-slate-600 text-slate-300">
+                    <Button 
+                      variant="outline" 
+                      onClick={() => setIsAddingAd(false)} 
+                      className={cn(
+                        "transition-all duration-200",
+                        "border-gray-300 text-gray-700",
+                        "dark:border-slate-600 dark:text-slate-300"
+                      )}
+                    >
                       İptal
                     </Button>
-                    <Button className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600">
+                    <Button className={cn(
+                      "transition-all duration-200",
+                      "bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700"
+                    )}>
                       Reklam Oluştur
                     </Button>
                   </DialogFooter>
@@ -627,7 +923,9 @@ export function ContentManagement() {
               <div 
                 key={ad.id} 
                 className={cn(
-                  "bg-slate-800/30 rounded-lg p-4 border border-slate-700 transition-all duration-200",
+                  "rounded-lg p-4 border transition-all duration-200",
+                  "bg-white border-gray-200",
+                  "dark:bg-slate-800/30 dark:border-slate-700",
                   draggedAd === ad.id && "opacity-50"
                 )}
                 draggable
@@ -638,8 +936,11 @@ export function ContentManagement() {
               >
                 <div className="flex items-start space-x-4">
                   <div className="flex items-center space-x-2">
-                    <GripVertical className="w-4 h-4 text-slate-500 cursor-move" />
-                    <div className="w-16 h-16 rounded-lg overflow-hidden bg-slate-700 flex-shrink-0">
+                    <GripVertical className={cn(
+                      "w-4 h-4 cursor-move transition-colors duration-200",
+                      "text-gray-400 dark:text-slate-500"
+                    )} />
+                    <div className="w-16 h-16 rounded-lg overflow-hidden bg-muted flex-shrink-0">
                       <img 
                         src={ad.imageUrl} 
                         alt={ad.title}
@@ -651,9 +952,22 @@ export function ContentManagement() {
                   <div className="flex-1">
                     <div className="flex items-start justify-between mb-2">
                       <div>
-                        <h3 className="font-semibold text-white mb-1">{ad.title}</h3>
-                        <p className="text-slate-300 text-sm mb-2">{ad.description}</p>
-                        <div className="flex items-center space-x-4 text-xs text-slate-400">
+                        <h3 className={cn(
+                          "font-semibold mb-1 transition-colors duration-200",
+                          "text-gray-900 dark:text-white"
+                        )}>
+                          {ad.title}
+                        </h3>
+                        <p className={cn(
+                          "text-sm mb-2 transition-colors duration-200",
+                          "text-gray-600 dark:text-slate-300"
+                        )}>
+                          {ad.description}
+                        </p>
+                        <div className={cn(
+                          "flex items-center space-x-4 text-xs transition-colors duration-200",
+                          "text-gray-500 dark:text-slate-400"
+                        )}>
                           <span>{getTimeSince(ad.createdAt)}</span>
                           <span className="flex items-center">
                             <Target className="w-3 h-3 mr-1" />
@@ -667,7 +981,11 @@ export function ContentManagement() {
                             <TrendingUp className="w-3 h-3 mr-1" />
                             {getClickThroughRate(ad.clicks, ad.impressions)} CTR
                           </span>
-                          <Badge variant="outline" className="text-xs border-slate-600 text-slate-300">
+                          <Badge variant="outline" className={cn(
+                            "text-xs transition-colors duration-200",
+                            "border-gray-300 text-gray-600",
+                            "dark:border-slate-600 dark:text-slate-300"
+                          )}>
                             {ad.displayType}
                           </Badge>
                         </div>
@@ -680,15 +998,35 @@ export function ContentManagement() {
                         <Button
                           variant="outline"
                           size="icon"
-                          className="h-8 w-8 border-slate-600 hover:bg-slate-600 text-slate-300"
+                          className={cn(
+                            "h-8 w-8 transition-all duration-200",
+                            "border-gray-300 hover:bg-gray-100 text-gray-600",
+                            "dark:border-slate-600 dark:hover:bg-slate-600 dark:text-slate-300"
+                          )}
                           onClick={() => toggleArchive(ad.id, 'ad')}
                         >
                           {ad.archived ? <ArchiveRestore className="w-4 h-4" /> : <Archive className="w-4 h-4" />}
                         </Button>
-                        <Button variant="outline" size="icon" className="h-8 w-8 border-slate-600 hover:bg-slate-600 text-slate-300">
+                        <Button 
+                          variant="outline" 
+                          size="icon" 
+                          className={cn(
+                            "h-8 w-8 transition-all duration-200",
+                            "border-gray-300 hover:bg-gray-100 text-gray-600",
+                            "dark:border-slate-600 dark:hover:bg-slate-600 dark:text-slate-300"
+                          )}
+                        >
                           <Edit className="w-4 h-4" />
                         </Button>
-                        <Button variant="outline" size="icon" className="h-8 w-8 border-red-600 hover:bg-red-600/20 text-red-400">
+                        <Button 
+                          variant="outline" 
+                          size="icon" 
+                          className={cn(
+                            "h-8 w-8 transition-all duration-200",
+                            "border-red-300 hover:bg-red-50 text-red-600",
+                            "dark:border-red-600 dark:hover:bg-red-600/20 dark:text-red-400"
+                          )}
+                        >
                           <Trash2 className="w-4 h-4" />
                         </Button>
                       </div>
@@ -704,25 +1042,51 @@ export function ContentManagement() {
         <TabsContent value="featured" className="space-y-6">
           <div className="flex justify-between items-center">
             <div>
-              <h2 className="text-xl font-semibold text-white">Öne Çıkan Ürünler</h2>
-              <p className="text-slate-400">Menüden ürün seçerek öne çıkarın</p>
+              <h2 className={cn(
+                "text-xl font-semibold transition-colors duration-200",
+                "text-gray-900 dark:text-white"
+              )}>
+                Öne Çıkan Ürünler
+              </h2>
+              <p className={cn(
+                "transition-colors duration-200",
+                "text-gray-600 dark:text-slate-400"
+              )}>
+                Menüden ürün seçerek öne çıkarın
+              </p>
             </div>
             <Dialog>
               <DialogTrigger asChild>
-                <Button className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600">
+                <Button className={cn(
+                  "transition-all duration-200",
+                  "bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700"
+                )}>
                   <Plus className="w-4 h-4 mr-2" />
                   Ürün Seç
                 </Button>
               </DialogTrigger>
-              <DialogContent className="max-w-2xl bg-slate-800 border-slate-700">
+              <DialogContent className={cn(
+                "max-w-2xl transition-colors duration-200",
+                "bg-white border-gray-200",
+                "dark:bg-slate-800 dark:border-slate-700"
+              )}>
                 <DialogHeader>
-                  <DialogTitle className="text-white">Öne Çıkaracak Ürün Seçin</DialogTitle>
+                  <DialogTitle className={cn(
+                    "transition-colors duration-200",
+                    "text-gray-900 dark:text-white"
+                  )}>
+                    Öne Çıkaracak Ürün Seçin
+                  </DialogTitle>
                 </DialogHeader>
                 <div className="grid grid-cols-2 gap-4 max-h-96 overflow-y-auto">
                   {menuItems.map((item) => (
                     <div
                       key={item.id}
-                      className="border border-slate-600 rounded-lg p-4 cursor-pointer hover:border-blue-400 transition-colors"
+                      className={cn(
+                        "border rounded-lg p-4 cursor-pointer hover:border-blue-400 transition-colors",
+                        "border-gray-300 bg-white",
+                        "dark:border-slate-600 dark:bg-slate-700/30"
+                      )}
                       onClick={() => addProductToFeatured(item)}
                     >
                       <div className="w-full h-32 rounded-lg overflow-hidden mb-3">
@@ -732,13 +1096,30 @@ export function ContentManagement() {
                           className="w-full h-full object-cover"
                         />
                       </div>
-                      <h3 className="font-medium text-white mb-1">{item.name}</h3>
-                      <p className="text-lg font-bold text-blue-400">₺{item.price}</p>
+                      <h3 className={cn(
+                        "font-medium mb-1 transition-colors duration-200",
+                        "text-gray-900 dark:text-white"
+                      )}>
+                        {item.name}
+                      </h3>
+                      <p className={cn(
+                        "text-lg font-bold transition-colors duration-200",
+                        "text-blue-600 dark:text-blue-400"
+                      )}>
+                        ₺{item.price}
+                      </p>
                     </div>
                   ))}
                 </div>
                 <DialogFooter>
-                  <Button variant="outline" className="border-slate-600 text-slate-300">
+                  <Button 
+                    variant="outline" 
+                    className={cn(
+                      "transition-all duration-200",
+                      "border-gray-300 text-gray-700",
+                      "dark:border-slate-600 dark:text-slate-300"
+                    )}
+                  >
                     İptal
                   </Button>
                 </DialogFooter>
@@ -748,10 +1129,17 @@ export function ContentManagement() {
 
           <div className="space-y-4">
             {featuredProducts.sort((a, b) => a.displayOrder - b.displayOrder).map((product) => (
-              <div key={product.id} className="bg-slate-800/30 rounded-lg p-4 border border-slate-700">
+              <div key={product.id} className={cn(
+                "rounded-lg p-4 border transition-colors duration-200",
+                "bg-white border-gray-200",
+                "dark:bg-slate-800/30 dark:border-slate-700"
+              )}>
                 <div className="flex items-center space-x-4">
-                  <GripVertical className="w-4 h-4 text-slate-500 cursor-move" />
-                  <div className="w-16 h-16 rounded-lg overflow-hidden bg-slate-700 flex-shrink-0">
+                  <GripVertical className={cn(
+                    "w-4 h-4 cursor-move transition-colors duration-200",
+                    "text-gray-400 dark:text-slate-500"
+                  )} />
+                  <div className="w-16 h-16 rounded-lg overflow-hidden bg-muted flex-shrink-0">
                     <img 
                       src={product.productImage} 
                       alt={product.productName}
@@ -762,9 +1150,22 @@ export function ContentManagement() {
                   <div className="flex-1">
                     <div className="flex items-center justify-between">
                       <div>
-                        <h3 className="font-semibold text-white">{product.productName}</h3>
-                        <p className="text-blue-400 font-bold">₺{product.productPrice}</p>
-                        <p className="text-xs text-slate-400">
+                        <h3 className={cn(
+                          "font-semibold transition-colors duration-200",
+                          "text-gray-900 dark:text-white"
+                        )}>
+                          {product.productName}
+                        </h3>
+                        <p className={cn(
+                          "font-bold transition-colors duration-200",
+                          "text-blue-600 dark:text-blue-400"
+                        )}>
+                          ₺{product.productPrice}
+                        </p>
+                        <p className={cn(
+                          "text-xs transition-colors duration-200",
+                          "text-gray-500 dark:text-slate-400"
+                        )}>
                           Eklenme: {product.addedAt.toLocaleDateString('tr-TR')}
                         </p>
                       </div>
@@ -773,7 +1174,11 @@ export function ContentManagement() {
                         <Button 
                           variant="outline" 
                           size="icon" 
-                          className="h-8 w-8 border-red-600 hover:bg-red-600/20 text-red-400"
+                          className={cn(
+                            "h-8 w-8 transition-all duration-200",
+                            "border-red-300 hover:bg-red-50 text-red-600",
+                            "dark:border-red-600 dark:hover:bg-red-600/20 dark:text-red-400"
+                          )}
                           onClick={() => removeFromFeatured(product.id)}
                         >
                           <Trash2 className="w-4 h-4" />
