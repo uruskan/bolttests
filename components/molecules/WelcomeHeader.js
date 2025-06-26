@@ -6,22 +6,21 @@ import { cn } from '@/lib/utils';
 export function WelcomeHeader({ userName, currentTime }) {
   return (
     <Card className={cn(
-      "backdrop-blur-xl border shadow-lg",
-      "bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200",
-      "dark:bg-primary/10 dark:backdrop-blur-xl dark:border-primary/20"
+      "backdrop-blur-xl border shadow-lg transition-all duration-200",
+      "bg-card border-border"
     )}>
       <CardContent className="p-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 className={cn(
               "text-2xl font-bold mb-2 transition-colors duration-200",
-              "text-gray-900 dark:text-foreground"
+              "text-foreground"
             )}>
               Günaydın, {userName}!
             </h1>
             <p className={cn(
               "transition-colors duration-200",
-              "text-blue-700 dark:text-primary/80"
+              "text-muted-foreground"
             )}>
               Restoranınızda bugün neler oluyor
             </p>
@@ -29,7 +28,7 @@ export function WelcomeHeader({ userName, currentTime }) {
           <div className="mt-4 sm:mt-0 text-right">
             <div className={cn(
               "text-2xl font-bold transition-colors duration-200",
-              "text-gray-900 dark:text-foreground"
+              "text-foreground"
             )}>
               {currentTime.toLocaleDateString('tr-TR', { 
                 weekday: 'long',
@@ -39,7 +38,7 @@ export function WelcomeHeader({ userName, currentTime }) {
             </div>
             <div className={cn(
               "transition-colors duration-200",
-              "text-blue-700 dark:text-primary/80"
+              "text-muted-foreground"
             )}>
               {currentTime.toLocaleTimeString('tr-TR', { 
                 hour: '2-digit', 
