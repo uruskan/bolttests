@@ -2,17 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { DivideIcon as LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
-
-interface NavigationItemProps {
-  id: string;
-  label: string;
-  icon: LucideIcon;
-  badge?: string;
-  isActive: boolean;
-  onClick: (id: string) => void;
-}
 
 export function NavigationItem({ 
   id, 
@@ -21,7 +11,7 @@ export function NavigationItem({
   badge, 
   isActive, 
   onClick 
-}: NavigationItemProps) {
+}) {
   return (
     <Button
       variant="ghost"

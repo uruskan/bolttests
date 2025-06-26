@@ -3,13 +3,7 @@
 import { ChefHat } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-interface LogoProps {
-  size?: 'sm' | 'md' | 'lg';
-  showText?: boolean;
-  className?: string;
-}
-
-export function Logo({ size = 'md', showText = true, className }: LogoProps) {
+export function Logo({ size = 'md', showText = true, className }) {
   const sizeClasses = {
     sm: 'w-6 h-6',
     md: 'w-8 h-8',

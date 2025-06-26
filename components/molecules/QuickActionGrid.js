@@ -2,19 +2,8 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { DivideIcon as LucideIcon } from 'lucide-react';
 
-interface QuickAction {
-  icon: LucideIcon;
-  label: string;
-  onClick: () => void;
-}
-
-interface QuickActionGridProps {
-  actions: QuickAction[];
-}
-
-export function QuickActionGrid({ actions }: QuickActionGridProps) {
+export function QuickActionGrid({ actions }) {
   return (
     <Card className="bg-card/50 backdrop-blur-xl border-border/50 shadow-lg">
       <CardHeader>

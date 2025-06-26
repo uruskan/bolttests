@@ -7,12 +7,7 @@ import { Logo } from '@/components/atoms/Logo';
 import { ThemeToggle } from '@/components/atoms/ThemeToggle';
 import { SearchInput } from '@/components/atoms/SearchInput';
 
-interface HeaderProps {
-  sidebarOpen: boolean;
-  onToggleSidebar: () => void;
-}
-
-export function Header({ sidebarOpen, onToggleSidebar }: HeaderProps) {
+export function Header({ sidebarOpen, onToggleSidebar }) {
   return (
     <header className="bg-background/80 backdrop-blur-xl border-b border-border sticky top-0 z-50 shadow-sm">
       <div className="px-4 sm:px-6 lg:px-8">

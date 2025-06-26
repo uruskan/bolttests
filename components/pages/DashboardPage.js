@@ -32,7 +32,7 @@ export function DashboardPage() {
       title: "Toplam Menü Öğesi",
       value: "127",
       change: "+5 bu hafta",
-      trend: "up" as const,
+      trend: "up",
       icon: ChefHat,
       colorClass: "from-green-400 to-emerald-500"
     },
@@ -40,7 +40,7 @@ export function DashboardPage() {
       title: "Aktif Kategoriler",
       value: "8",
       change: "Tümü aktif",
-      trend: "neutral" as const,
+      trend: "neutral",
       icon: Users,
       colorClass: "from-blue-400 to-blue-500"
     },
@@ -48,7 +48,7 @@ export function DashboardPage() {
       title: "QR Kod Taramaları",
       value: "2,847",
       change: "+12.5% bu ay",
-      trend: "up" as const,
+      trend: "up",
       icon: Eye,
       colorClass: "from-orange-400 to-orange-500"
     },
@@ -56,7 +56,7 @@ export function DashboardPage() {
       title: "Müşteri Puanı",
       value: "4.8",
       change: "+0.2 bu hafta",
-      trend: "up" as const,
+      trend: "up",
       icon: Star,
       colorClass: "from-yellow-400 to-yellow-500"
     }

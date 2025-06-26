@@ -1,14 +1,8 @@
 'use client';
 
 import { Card, CardContent } from '@/components/ui/card';
-import { cn } from '@/lib/utils';
 
-interface WelcomeHeaderProps {
-  userName: string;
-  currentTime: Date;
-}
-
-export function WelcomeHeader({ userName, currentTime }: WelcomeHeaderProps) {
+export function WelcomeHeader({ userName, currentTime }) {
   return (
     <Card className="bg-primary/10 backdrop-blur-xl border-primary/20 shadow-lg">
       <CardContent className="p-6">

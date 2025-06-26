@@ -1,19 +1,10 @@
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { TrendingUp, TrendingDown, DivideIcon as LucideIcon } from 'lucide-react';
+import { TrendingUp, TrendingDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-interface MetricCardProps {
-  title: string;
-  value: string;
-  change: string;
-  trend: 'up' | 'down' | 'neutral';
-  icon: LucideIcon;
-  colorClass: string;
-}
-
-export function MetricCard({ title, value, change, trend, icon: Icon, colorClass }: MetricCardProps) {
+export function MetricCard({ title, value, change, trend, icon: Icon, colorClass }) {
   const TrendIcon = trend === 'up' ? TrendingUp : TrendingDown;
 
   return (

@@ -18,15 +18,8 @@ const navigationItems = [
   { id: 'settings', label: 'Ayarlar', icon: Settings, badge: undefined },
 ];
 
-interface SidebarProps {
-  activeView: string;
-  onViewChange: (view: string) => void;
-  sidebarOpen: boolean;
-  onCloseSidebar: () => void;
-}
-
-export function Sidebar({ activeView, onViewChange, sidebarOpen, onCloseSidebar }: SidebarProps) {
-  const handleViewChange = (view: string) => {
+export function Sidebar({ activeView, onViewChange, sidebarOpen, onCloseSidebar }) {
+  const handleViewChange = (view) => {
     onViewChange(view);
     onCloseSidebar();
   };

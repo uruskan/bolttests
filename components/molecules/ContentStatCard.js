@@ -2,24 +2,8 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { DivideIcon as LucideIcon } from 'lucide-react';
 
-interface ContentStat {
-  name: string;
-  count: number;
-  value: number;
-  icon: LucideIcon;
-  valueLabel: string;
-}
-
-interface ContentStatCardProps {
-  title: string;
-  icon: LucideIcon;
-  stats: ContentStat[];
-  onManage?: () => void;
-}
-
-export function ContentStatCard({ title, icon: TitleIcon, stats, onManage }: ContentStatCardProps) {
+export function ContentStatCard({ title, icon: TitleIcon, stats, onManage }) {
   return (
     <Card className="bg-card/50 backdrop-blur-xl border-border/50 shadow-lg">
       <CardHeader>

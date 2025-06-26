@@ -1,16 +1,10 @@
 'use client';
 
-import { useState, ReactNode } from 'react';
+import { useState } from 'react';
 import { Header } from '@/components/organisms/Header';
 import { Sidebar } from '@/components/organisms/Sidebar';
 
-interface DashboardLayoutProps {
-  children: ReactNode;
-  activeView: string;
-  onViewChange: (view: string) => void;
-}
-
-export function DashboardLayout({ children, activeView, onViewChange }: DashboardLayoutProps) {
+export function DashboardLayout({ children, activeView, onViewChange }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
