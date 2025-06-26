@@ -62,20 +62,24 @@ function SortableCategory({ category, onToggleActive }) {
     >
       <div className={cn(
         "flex items-center justify-between p-4 rounded-xl border-2 transition-all duration-200 cursor-pointer",
-        "bg-slate-800/60 border-slate-700/50 hover:border-slate-600/70 hover:bg-slate-800/80"
+        "bg-card hover:bg-accent/50 border-border hover:border-primary/30",
+        "shadow-sm hover:shadow-md"
       )}>
         <div className="flex items-center space-x-4">
           {/* Drag Handle */}
           <div
             {...attributes}
             {...listeners}
-            className="cursor-grab active:cursor-grabbing p-1 rounded hover:bg-slate-700/50 transition-colors"
+            className={cn(
+              "cursor-grab active:cursor-grabbing p-1 rounded hover:bg-accent transition-colors",
+              "text-muted-foreground hover:text-foreground"
+            )}
           >
-            <GripVertical className="w-4 h-4 text-slate-400" />
+            <GripVertical className="w-4 h-4" />
           </div>
           
           {/* Category Image */}
-          <div className="w-12 h-12 rounded-xl overflow-hidden bg-slate-700">
+          <div className="w-12 h-12 rounded-xl overflow-hidden bg-muted">
             <img 
               src={category.image} 
               alt={category.name}
@@ -85,15 +89,15 @@ function SortableCategory({ category, onToggleActive }) {
           
           {/* Category Info */}
           <div>
-            <div className="font-semibold text-white text-lg">{category.name}</div>
-            <div className="text-slate-400 text-sm">{category.description}</div>
+            <div className="font-semibold text-foreground text-lg">{category.name}</div>
+            <div className="text-muted-foreground text-sm">{category.description}</div>
           </div>
         </div>
         
         {/* Right Side */}
         <div className="flex items-center space-x-4">
           <div className="text-right">
-            <div className="text-2xl font-bold text-white">{category.itemCount}</div>
+            <div className="text-2xl font-bold text-foreground">{category.itemCount}</div>
           </div>
           
           {/* Active/Inactive Toggle */}
@@ -105,7 +109,9 @@ function SortableCategory({ category, onToggleActive }) {
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 text-slate-400 hover:text-white hover:bg-slate-700/50"
+              className={cn(
+                "h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-accent"
+              )}
               onClick={() => onToggleActive(category.id)}
             >
               {category.active ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
@@ -113,14 +119,18 @@ function SortableCategory({ category, onToggleActive }) {
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 text-slate-400 hover:text-white hover:bg-slate-700/50"
+              className={cn(
+                "h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-accent"
+              )}
             >
               ✏️
             </Button>
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 text-slate-400 hover:text-red-400 hover:bg-slate-700/50"
+              className={cn(
+                "h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-accent"
+              )}
             >
               🗑️
             </Button>
@@ -185,21 +195,24 @@ function SortableProduct({ product, onToggleActive, onPriceChange }) {
     >
       <div className={cn(
         "flex items-center space-x-4 p-4 rounded-xl border-2 transition-all duration-200",
-        product.featured 
-          ? "bg-green-900/30 border-green-700/50 hover:border-green-600/70"
-          : "bg-slate-800/60 border-slate-700/50 hover:border-slate-600/70 hover:bg-slate-800/80"
+        "bg-card hover:bg-accent/50 border-border hover:border-primary/30",
+        "shadow-sm hover:shadow-md",
+        product.featured && "ring-2 ring-yellow-400/50 bg-yellow-50/50 dark:bg-yellow-900/20"
       )}>
         {/* Drag Handle */}
         <div
           {...attributes}
           {...listeners}
-          className="cursor-grab active:cursor-grabbing p-1 rounded hover:bg-slate-700/50 transition-colors"
+          className={cn(
+            "cursor-grab active:cursor-grabbing p-1 rounded hover:bg-accent transition-colors",
+            "text-muted-foreground hover:text-foreground"
+          )}
         >
-          <GripVertical className="w-4 h-4 text-slate-400" />
+          <GripVertical className="w-4 h-4" />
         </div>
         
         {/* Product Image */}
-        <div className="w-16 h-16 rounded-xl overflow-hidden bg-slate-700 flex-shrink-0">
+        <div className="w-16 h-16 rounded-xl overflow-hidden bg-muted flex-shrink-0">
           <img 
             src={product.image} 
             alt={product.name}
@@ -210,22 +223,22 @@ function SortableProduct({ product, onToggleActive, onPriceChange }) {
         {/* Product Info */}
         <div className="flex-1">
           <div className="flex items-center space-x-2 mb-1">
-            <h3 className="font-semibold text-white text-lg">{product.name}</h3>
+            <h3 className="font-semibold text-foreground text-lg">{product.name}</h3>
             {product.featured && (
-              <Badge className="bg-yellow-500/20 text-yellow-300 border-yellow-500/30">
+              <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-300 dark:border-yellow-700">
                 <Star className="w-3 h-3 mr-1" />
                 ⭐
               </Badge>
             )}
             <Badge className={cn(
               product.active 
-                ? "bg-green-500/20 text-green-300 border-green-500/30"
-                : "bg-red-500/20 text-red-300 border-red-500/30"
+                ? "bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-700"
+                : "bg-red-100 text-red-800 border-red-200 dark:bg-red-900/30 dark:text-red-300 dark:border-red-700"
             )}>
               {product.active ? 'Aktif' : 'Pasif'}
             </Badge>
           </div>
-          <p className="text-slate-400 text-sm">{product.description}</p>
+          <p className="text-muted-foreground text-sm">{product.description}</p>
         </div>
         
         {/* Price and Actions */}
@@ -237,12 +250,12 @@ function SortableProduct({ product, onToggleActive, onPriceChange }) {
                 onChange={(e) => setTempPrice(e.target.value)}
                 onBlur={handlePriceBlur}
                 onKeyDown={handlePriceKeyDown}
-                className="w-24 text-right text-xl font-bold bg-slate-700 border-slate-600 text-blue-400"
+                className="w-24 text-right text-xl font-bold bg-background border-border text-primary"
                 autoFocus
               />
             ) : (
               <div 
-                className="text-2xl font-bold text-blue-400 cursor-pointer hover:text-blue-300 transition-colors"
+                className="text-2xl font-bold text-primary cursor-pointer hover:text-primary/80 transition-colors"
                 onClick={handlePriceClick}
               >
                 ₺{product.price.toFixed(2)}
@@ -253,7 +266,9 @@ function SortableProduct({ product, onToggleActive, onPriceChange }) {
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 text-slate-400 hover:text-white hover:bg-slate-700/50"
+              className={cn(
+                "h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-accent"
+              )}
               onClick={() => onToggleActive(product.id)}
             >
               {product.active ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
@@ -261,21 +276,27 @@ function SortableProduct({ product, onToggleActive, onPriceChange }) {
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 text-slate-400 hover:text-white hover:bg-slate-700/50"
+              className={cn(
+                "h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-accent"
+              )}
             >
               📋
             </Button>
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 text-slate-400 hover:text-white hover:bg-slate-700/50"
+              className={cn(
+                "h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-accent"
+              )}
             >
               ✏️
             </Button>
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 text-slate-400 hover:text-red-400 hover:bg-slate-700/50"
+              className={cn(
+                "h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-accent"
+              )}
             >
               🗑️
             </Button>
@@ -450,17 +471,17 @@ export function MenuManagement() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-white">Menü Yönetimi</h1>
-          <p className="text-slate-400 mt-1">Menü kategorilerinizi ve öğelerinizi düzenleyin</p>
+          <h1 className="text-3xl font-bold text-foreground">Menü Yönetimi</h1>
+          <p className="text-muted-foreground mt-1">Menü kategorilerinizi ve öğelerinizi düzenleyin</p>
         </div>
         <div className="flex items-center space-x-3 mt-4 sm:mt-0">
           <Button 
             variant="outline" 
-            className="border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-white"
+            className="border-border text-muted-foreground hover:bg-accent hover:text-foreground"
           >
             + Kategori Ekle
           </Button>
-          <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+          <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
             + Öğe Ekle
           </Button>
         </div>
@@ -469,9 +490,9 @@ export function MenuManagement() {
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
         {/* Categories Sidebar */}
         <div className="lg:col-span-2">
-          <Card className="bg-slate-800/50 border-slate-700/50 backdrop-blur-xl">
+          <Card className="bg-card border-border">
             <CardHeader>
-              <CardTitle className="text-white flex items-center">
+              <CardTitle className="text-foreground flex items-center">
                 📂 Kategoriler
               </CardTitle>
             </CardHeader>
@@ -491,7 +512,7 @@ export function MenuManagement() {
                       onClick={() => setSelectedCategory(category.id)}
                       className={cn(
                         "cursor-pointer transition-all duration-200",
-                        selectedCategory === category.id && "ring-2 ring-blue-500 ring-offset-2 ring-offset-slate-800"
+                        selectedCategory === category.id && "ring-2 ring-primary ring-offset-2 ring-offset-background"
                       )}
                     >
                       <SortableCategory 
@@ -508,33 +529,33 @@ export function MenuManagement() {
 
         {/* Menu Items */}
         <div className="lg:col-span-3">
-          <Card className="bg-slate-800/50 border-slate-700/50 backdrop-blur-xl">
+          <Card className="bg-card border-border">
             <CardHeader>
               <div className="flex items-center justify-between">
-                <CardTitle className="text-white">
+                <CardTitle className="text-foreground">
                   {selectedCategoryData?.name} ({filteredProducts.length} Öğe)
                 </CardTitle>
                 <div className="flex items-center space-x-2">
                   <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input
                       placeholder="🔍 Öğe ara..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      className="w-48 pl-10 bg-slate-700 border-slate-600 text-white placeholder:text-slate-400"
+                      className="w-48 pl-10 bg-background border-border text-foreground placeholder:text-muted-foreground"
                     />
                   </div>
                   <Button 
                     variant="outline" 
                     size="icon"
-                    className="border-slate-600 text-slate-400 hover:bg-slate-700 hover:text-white"
+                    className="border-border text-muted-foreground hover:bg-accent hover:text-foreground"
                   >
                     <List className="w-4 h-4" />
                   </Button>
                   <Button 
                     variant="outline" 
                     size="icon"
-                    className="border-slate-600 text-slate-400 hover:bg-slate-700 hover:text-white"
+                    className="border-border text-muted-foreground hover:bg-accent hover:text-foreground"
                   >
                     <Grid3X3 className="w-4 h-4" />
                   </Button>
