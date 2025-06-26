@@ -24,11 +24,15 @@ import {
   Monitor,
   Sun,
   Moon,
-  Check,
-  ChevronDown,
-  Move,
+  ChevronRight,
+  Image as ImageIcon,
   ToggleLeft,
-  ToggleRight
+  ToggleRight,
+  Layers,
+  Paintbrush,
+  AlignLeft,
+  AlignCenter,
+  AlignRight
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { 
@@ -45,16 +49,33 @@ export function ThemeCustomization() {
   const [themeMode, setThemeMode] = useState('simple');
   const [currentTheme, setCurrentTheme] = useState(getDefaultThemeBlueprint());
   const [selectedPreset, setSelectedPreset] = useState('elegant-classic');
+  const [selectedColorScheme, setSelectedColorScheme] = useState('rose-gold');
   const [fontSize, setFontSize] = useState([16]);
   const [density, setDensity] = useState([16]);
-  const [activeColorElement, setActiveColorElement] = useState(null);
-  const [activeTypographyElement, setActiveTypographyElement] = useState(null);
+  const [borderRadius, setBorderRadius] = useState([8]);
 
   const applyThemePreset = (presetKey) => {
     const preset = themePresets[presetKey];
     if (preset) {
       setCurrentTheme(preset.blueprint);
       setSelectedPreset(presetKey);
+    }
+  };
+
+  const applyColorScheme = (schemeKey) => {
+    const scheme = colorSchemePresets[schemeKey];
+    if (scheme) {
+      setCurrentTheme(prev => ({
+        ...prev,
+        advancedSettings: {
+          ...prev.advancedSettings,
+          colors: {
+            ...prev.advancedSettings.colors,
+            ...scheme.colors
+          }
+        }
+      }));
+      setSelectedColorScheme(schemeKey);
     }
   };
 
@@ -76,39 +97,14 @@ export function ThemeCustomization() {
   const resetToDefault = () => {
     setCurrentTheme(getDefaultThemeBlueprint());
     setSelectedPreset('elegant-classic');
+    setSelectedColorScheme('rose-gold');
     setFontSize([16]);
     setDensity([16]);
+    setBorderRadius([8]);
   };
 
-  const colorElements = [
-    { key: 'header', label: 'Header', description: 'Header background color' },
-    { key: 'buttons', label: 'Buttons', description: 'Primary button color' },
-    { key: 'productPrice', label: 'Prices', description: 'Product price color' },
-    { key: 'cards', label: 'Cards', description: 'Card background color' },
-    { key: 'restaurantName', label: 'Restaurant Name', description: 'Main title color' },
-    { key: 'productName', label: 'Product Names', description: 'Product title color' }
-  ];
-
-  const typographyElements = [
-    { key: 'restaurantName', label: 'Restaurant Name', sample: 'Bella Vista' },
-    { key: 'restaurantSlogan', label: 'Restaurant Slogan', sample: 'İtalyan Mutfağı' },
-    { key: 'categoryName', label: 'Category Names', sample: 'Ana Yemekler' },
-    { key: 'productName', label: 'Product Names', sample: 'Pasta Carbonara' },
-    { key: 'productPrice', label: 'Product Prices', sample: '₺89.99' },
-    { key: 'productDescription', label: 'Descriptions', sample: 'Taze malzemelerle lezzetli makarna' }
-  ];
-
-  const layoutBlocks = [
-    { key: 'header', label: 'Header', icon: '🏠', enabled: true },
-    { key: 'advertisementHero', label: 'Hero Ads', icon: '📢', enabled: false },
-    { key: 'featuredItems', label: 'Featured Items', icon: '⭐', enabled: true },
-    { key: 'advertisementButton', label: 'Ad Button', icon: '🎯', enabled: true },
-    { key: 'categories', label: 'Categories', icon: '📋', enabled: true },
-    { key: 'footer', label: 'Footer', icon: '📄', enabled: true }
-  ];
-
   return (
-    <div className={cn("space-y-8", isDarkMode && "dark")}>
+    <div className={cn("space-y-6", isDarkMode && "dark")}>
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
         <div>
@@ -120,7 +116,6 @@ export function ThemeCustomization() {
             variant="outline"
             size="icon"
             onClick={() => setIsDarkMode(!isDarkMode)}
-            className="transition-all duration-200"
           >
             {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
           </Button>
@@ -140,11 +135,11 @@ export function ThemeCustomization() {
       </div>
 
       {/* Mode Toggle */}
-      <Card className="backdrop-blur-xl border bg-card">
+      <Card className="bg-card border-border">
         <CardContent className="p-6">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-xl font-semibold mb-2 text-foreground">Özelleştirme Modu</h3>
+              <h3 className="text-lg font-semibold mb-1 text-foreground">Özelleştirme Modu</h3>
               <p className="text-muted-foreground">
                 {themeMode === 'simple' 
                   ? 'Basit mod: Hazır temalar ve hızlı ayarlar' 
@@ -156,7 +151,6 @@ export function ThemeCustomization() {
                 variant={themeMode === 'simple' ? 'default' : 'ghost'}
                 size="sm"
                 onClick={() => setThemeMode('simple')}
-                className="transition-all duration-200"
               >
                 <Wand2 className="w-4 h-4 mr-2" />
                 Basit
@@ -165,7 +159,6 @@ export function ThemeCustomization() {
                 variant={themeMode === 'advanced' ? 'default' : 'ghost'}
                 size="sm"
                 onClick={() => setThemeMode('advanced')}
-                className="transition-all duration-200"
               >
                 <Settings className="w-4 h-4 mr-2" />
                 Gelişmiş
@@ -175,356 +168,450 @@ export function ThemeCustomization() {
         </CardContent>
       </Card>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main Content */}
-        <div className="lg:col-span-2 space-y-8">
+        <div className="lg:col-span-2 space-y-6">
           {themeMode === 'simple' ? (
-            // Simple Mode - Visual Theme Selector
-            <div className="space-y-8">
+            // Simple Mode
+            <div className="space-y-6">
               {/* Theme Presets */}
-              <Card className="backdrop-blur-xl border bg-card">
+              <Card className="bg-card border-border">
                 <CardHeader>
-                  <CardTitle className="text-2xl font-bold text-foreground">Tema Seçin</CardTitle>
-                  <p className="text-muted-foreground">Restoranınıza uygun hazır temalardan birini seçin</p>
+                  <CardTitle className="text-foreground">Tema Presetleri</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {Object.entries(themePresets).map(([key, preset]) => (
                       <div
                         key={key}
                         className={cn(
-                          "group relative cursor-pointer rounded-2xl overflow-hidden transition-all duration-300 hover:scale-105",
+                          "border rounded-lg p-4 cursor-pointer transition-all duration-200",
                           selectedPreset === key 
-                            ? "ring-4 ring-primary shadow-2xl" 
-                            : "hover:shadow-xl"
+                            ? "border-primary bg-primary/5" 
+                            : "border-border hover:border-primary/50"
                         )}
                         onClick={() => applyThemePreset(key)}
                       >
-                        <div className="aspect-[4/3] overflow-hidden">
+                        <div className="w-full h-32 rounded-lg overflow-hidden mb-3 bg-muted">
                           <img 
                             src={preset.preview} 
                             alt={preset.name}
-                            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                            className="w-full h-full object-cover"
                           />
-                          {selectedPreset === key && (
-                            <div className="absolute inset-0 bg-primary/20 flex items-center justify-center">
-                              <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center">
-                                <Check className="w-8 h-8 text-primary-foreground" />
-                              </div>
-                            </div>
-                          )}
                         </div>
-                        <div className="p-6 bg-card">
-                          <h3 className="text-xl font-bold text-foreground mb-2">{preset.name}</h3>
-                          <p className="text-muted-foreground text-sm leading-relaxed">{preset.description}</p>
-                          {selectedPreset === key && (
-                            <Badge className="mt-3 bg-primary text-primary-foreground">
-                              Seçili Tema
-                            </Badge>
-                          )}
-                        </div>
+                        <h3 className="font-medium mb-1 text-foreground">{preset.name}</h3>
+                        <p className="text-sm text-muted-foreground">{preset.description}</p>
+                        {selectedPreset === key && (
+                          <Badge className="mt-2 bg-primary text-primary-foreground">
+                            Seçili
+                          </Badge>
+                        )}
                       </div>
                     ))}
                   </div>
                 </CardContent>
               </Card>
 
-              {/* Quick Global Settings */}
-              <Card className="backdrop-blur-xl border bg-card">
+              {/* Color Schemes */}
+              <Card className="bg-card border-border">
                 <CardHeader>
-                  <CardTitle className="text-xl font-bold text-foreground">Hızlı Ayarlar</CardTitle>
-                  <p className="text-muted-foreground">Genel görünüm ayarlarını hızlıca değiştirin</p>
+                  <CardTitle className="text-foreground">Renk Şemaları</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-8">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <Label className="text-lg font-medium text-foreground">Yazı Boyutu</Label>
-                        <Badge variant="outline" className="text-sm">{fontSize[0]}px</Badge>
+                <CardContent>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {Object.entries(colorSchemePresets).map(([key, scheme]) => (
+                      <div
+                        key={key}
+                        className={cn(
+                          "border rounded-lg p-4 cursor-pointer transition-all duration-200",
+                          selectedColorScheme === key 
+                            ? "border-primary bg-primary/5" 
+                            : "border-border hover:border-primary/50"
+                        )}
+                        onClick={() => applyColorScheme(key)}
+                      >
+                        <div className="flex items-center space-x-3 mb-2">
+                          <div className="flex space-x-1">
+                            <div 
+                              className="w-4 h-4 rounded-full border border-border"
+                              style={{ backgroundColor: scheme.colors.buttons }}
+                            />
+                            <div 
+                              className="w-4 h-4 rounded-full border border-border"
+                              style={{ backgroundColor: scheme.colors.productPrice }}
+                            />
+                            <div 
+                              className="w-4 h-4 rounded-full border border-border"
+                              style={{ backgroundColor: scheme.colors.header }}
+                            />
+                          </div>
+                          <h3 className="font-medium text-foreground">{scheme.name}</h3>
+                        </div>
+                        {selectedColorScheme === key && (
+                          <Badge className="bg-primary text-primary-foreground">
+                            Seçili
+                          </Badge>
+                        )}
                       </div>
-                      <Slider
-                        value={fontSize}
-                        onValueChange={setFontSize}
-                        max={24}
-                        min={12}
-                        step={1}
-                        className="w-full"
-                      />
-                      <div className="flex justify-between text-xs text-muted-foreground">
-                        <span>Küçük</span>
-                        <span>Büyük</span>
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <Label className="text-lg font-medium text-foreground">Boşluk Yoğunluğu</Label>
-                        <Badge variant="outline" className="text-sm">{density[0]}px</Badge>
-                      </div>
-                      <Slider
-                        value={density}
-                        onValueChange={setDensity}
-                        max={32}
-                        min={8}
-                        step={2}
-                        className="w-full"
-                      />
-                      <div className="flex justify-between text-xs text-muted-foreground">
-                        <span>Sıkışık</span>
-                        <span>Geniş</span>
-                      </div>
-                    </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Quick Settings */}
+              <Card className="bg-card border-border">
+                <CardHeader>
+                  <CardTitle className="text-foreground">Hızlı Ayarlar</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div>
+                    <Label className="text-foreground">Yazı Boyutu: {fontSize[0]}px</Label>
+                    <Slider
+                      value={fontSize}
+                      onValueChange={setFontSize}
+                      max={24}
+                      min={12}
+                      step={1}
+                      className="mt-2"
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label className="text-foreground">Boşluk Yoğunluğu: {density[0]}px</Label>
+                    <Slider
+                      value={density}
+                      onValueChange={setDensity}
+                      max={32}
+                      min={8}
+                      step={2}
+                      className="mt-2"
+                    />
                   </div>
                 </CardContent>
               </Card>
             </div>
           ) : (
-            // Advanced Mode - Visual Editor
-            <div className="space-y-8">
-              {/* Colors Section */}
-              <Card className="backdrop-blur-xl border bg-card">
+            // Advanced Mode
+            <div className="space-y-6">
+              {/* Colors */}
+              <Card className="bg-card border-border">
                 <CardHeader>
-                  <CardTitle className="flex items-center text-xl font-bold text-foreground">
-                    <Palette className="w-6 h-6 mr-3 text-primary" />
-                    Renkler
+                  <CardTitle className="flex items-center text-foreground">
+                    <Palette className="w-5 h-5 mr-2" />
+                    Renk Ayarları
                   </CardTitle>
-                  <p className="text-muted-foreground">Her öğenin rengini ayrı ayrı özelleştirin</p>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                    {colorElements.map((element) => (
-                      <div
-                        key={element.key}
-                        className={cn(
-                          "group relative p-4 rounded-xl border-2 cursor-pointer transition-all duration-200 hover:shadow-lg",
-                          activeColorElement === element.key 
-                            ? "border-primary bg-primary/5" 
-                            : "border-border hover:border-primary/50"
-                        )}
-                        onClick={() => setActiveColorElement(activeColorElement === element.key ? null : element.key)}
-                      >
-                        <div className="flex items-center space-x-3 mb-3">
-                          <div 
-                            className="w-8 h-8 rounded-lg border-2 border-white shadow-md"
-                            style={{ backgroundColor: currentTheme.advancedSettings.colors[element.key] }}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    {Object.entries(currentTheme.advancedSettings.colors).map(([key, value]) => (
+                      <div key={key}>
+                        <Label className="capitalize text-foreground">
+                          {key.replace(/([A-Z])/g, ' $1')}
+                        </Label>
+                        <div className="flex items-center space-x-3 mt-2">
+                          <input
+                            type="color"
+                            value={value}
+                            onChange={(e) => updateAdvancedSetting(`colors.${key}`, e.target.value)}
+                            className="w-12 h-12 rounded-lg border border-border cursor-pointer"
                           />
                           <div>
-                            <div className="font-medium text-foreground">{element.label}</div>
-                            <div className="text-xs text-muted-foreground">{element.description}</div>
+                            <div className="font-medium text-foreground">{key}</div>
+                            <div className="text-sm text-muted-foreground">{value}</div>
                           </div>
                         </div>
-                        {activeColorElement === element.key && (
-                          <div className="mt-4">
-                            <input
-                              type="color"
-                              value={currentTheme.advancedSettings.colors[element.key]}
-                              onChange={(e) => updateAdvancedSetting(`colors.${element.key}`, e.target.value)}
-                              className="w-full h-12 rounded-lg border border-border cursor-pointer"
-                            />
-                            <div className="mt-2 text-xs text-center text-muted-foreground font-mono">
-                              {currentTheme.advancedSettings.colors[element.key]}
-                            </div>
-                          </div>
-                        )}
                       </div>
                     ))}
                   </div>
                 </CardContent>
               </Card>
 
-              {/* Typography Section */}
-              <Card className="backdrop-blur-xl border bg-card">
+              {/* Typography */}
+              <Card className="bg-card border-border">
                 <CardHeader>
-                  <CardTitle className="flex items-center text-xl font-bold text-foreground">
-                    <Type className="w-6 h-6 mr-3 text-primary" />
-                    Tipografi
+                  <CardTitle className="flex items-center text-foreground">
+                    <Type className="w-5 h-5 mr-2" />
+                    Yazı Tipi Ayarları
                   </CardTitle>
-                  <p className="text-muted-foreground">Her metin öğesinin yazı tipini özelleştirin</p>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-4">
-                    {typographyElements.map((element) => {
-                      const settings = currentTheme.advancedSettings.typography[element.key];
-                      return (
-                        <div
-                          key={element.key}
-                          className={cn(
-                            "group p-6 rounded-xl border-2 cursor-pointer transition-all duration-200",
-                            activeTypographyElement === element.key 
-                              ? "border-primary bg-primary/5" 
-                              : "border-border hover:border-primary/50 hover:shadow-md"
-                          )}
-                          onClick={() => setActiveTypographyElement(activeTypographyElement === element.key ? null : element.key)}
-                        >
-                          <div className="flex items-center justify-between mb-4">
-                            <div>
-                              <div className="font-medium text-foreground">{element.label}</div>
-                              <div className="text-sm text-muted-foreground">{settings.fontFamily} • {settings.fontSize} • {settings.fontWeight}</div>
-                            </div>
-                            <ChevronDown className={cn(
-                              "w-5 h-5 text-muted-foreground transition-transform duration-200",
-                              activeTypographyElement === element.key && "rotate-180"
-                            )} />
+                  <div className="space-y-6">
+                    {Object.entries(currentTheme.advancedSettings.typography).map(([key, settings]) => (
+                      <div key={key} className="border rounded-lg p-4 border-border">
+                        <h4 className="font-medium mb-4 capitalize text-foreground">
+                          {key.replace(/([A-Z])/g, ' $1')}
+                        </h4>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <Label className="text-foreground">Font Family</Label>
+                            <Select 
+                              value={settings.fontFamily}
+                              onValueChange={(value) => updateAdvancedSetting(`typography.${key}.fontFamily`, value)}
+                            >
+                              <SelectTrigger className="mt-1 bg-background border-border text-foreground">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent className="bg-background border-border">
+                                {availableFonts.map((font) => (
+                                  <SelectItem key={font} value={font}>{font}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
                           </div>
-                          
-                          <div 
-                            className="text-2xl font-medium mb-4"
-                            style={{ 
-                              fontFamily: settings.fontFamily,
-                              fontSize: settings.fontSize,
-                              fontWeight: settings.fontWeight,
-                              textAlign: settings.alignment,
-                              color: currentTheme.advancedSettings.colors[element.key] || currentTheme.advancedSettings.colors.productName
-                            }}
-                          >
-                            {element.sample}
+                          <div>
+                            <Label className="text-foreground">Font Size</Label>
+                            <Input 
+                              value={settings.fontSize}
+                              onChange={(e) => updateAdvancedSetting(`typography.${key}.fontSize`, e.target.value)}
+                              className="mt-1 bg-background border-border text-foreground"
+                            />
                           </div>
-
-                          {activeTypographyElement === element.key && (
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-border">
-                              <div>
-                                <Label className="text-sm font-medium text-foreground">Font Family</Label>
-                                <Select 
-                                  value={settings.fontFamily}
-                                  onValueChange={(value) => updateAdvancedSetting(`typography.${element.key}.fontFamily`, value)}
-                                >
-                                  <SelectTrigger className="mt-1">
-                                    <SelectValue />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    {availableFonts.map((font) => (
-                                      <SelectItem key={font} value={font}>{font}</SelectItem>
-                                    ))}
-                                  </SelectContent>
-                                </Select>
-                              </div>
-                              <div>
-                                <Label className="text-sm font-medium text-foreground">Font Weight</Label>
-                                <Select 
-                                  value={settings.fontWeight}
-                                  onValueChange={(value) => updateAdvancedSetting(`typography.${element.key}.fontWeight`, value)}
-                                >
-                                  <SelectTrigger className="mt-1">
-                                    <SelectValue />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    <SelectItem value="300">Light (300)</SelectItem>
-                                    <SelectItem value="400">Regular (400)</SelectItem>
-                                    <SelectItem value="500">Medium (500)</SelectItem>
-                                    <SelectItem value="600">Semi Bold (600)</SelectItem>
-                                    <SelectItem value="700">Bold (700)</SelectItem>
-                                    <SelectItem value="800">Extra Bold (800)</SelectItem>
-                                  </SelectContent>
-                                </Select>
-                              </div>
-                            </div>
-                          )}
+                          <div>
+                            <Label className="text-foreground">Font Weight</Label>
+                            <Select 
+                              value={settings.fontWeight}
+                              onValueChange={(value) => updateAdvancedSetting(`typography.${key}.fontWeight`, value)}
+                            >
+                              <SelectTrigger className="mt-1 bg-background border-border text-foreground">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent className="bg-background border-border">
+                                <SelectItem value="300">Light (300)</SelectItem>
+                                <SelectItem value="400">Regular (400)</SelectItem>
+                                <SelectItem value="500">Medium (500)</SelectItem>
+                                <SelectItem value="600">Semi Bold (600)</SelectItem>
+                                <SelectItem value="700">Bold (700)</SelectItem>
+                                <SelectItem value="800">Extra Bold (800)</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div>
+                            <Label className="text-foreground">Alignment</Label>
+                            <Select 
+                              value={settings.alignment}
+                              onValueChange={(value) => updateAdvancedSetting(`typography.${key}.alignment`, value)}
+                            >
+                              <SelectTrigger className="mt-1 bg-background border-border text-foreground">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent className="bg-background border-border">
+                                <SelectItem value="left">Left</SelectItem>
+                                <SelectItem value="center">Center</SelectItem>
+                                <SelectItem value="right">Right</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
                         </div>
-                      );
-                    })}
+                      </div>
+                    ))}
                   </div>
                 </CardContent>
               </Card>
 
               {/* Layout & Components */}
-              <Card className="backdrop-blur-xl border bg-card">
+              <Card className="bg-card border-border">
                 <CardHeader>
-                  <CardTitle className="flex items-center text-xl font-bold text-foreground">
-                    <Layout className="w-6 h-6 mr-3 text-primary" />
-                    Düzen ve Bileşenler
+                  <CardTitle className="flex items-center text-foreground">
+                    <Layout className="w-5 h-5 mr-2" />
+                    Düzen Ayarları
                   </CardTitle>
-                  <p className="text-muted-foreground">Sayfa düzenini ve bileşenleri yönetin</p>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                  {/* Layout Blocks */}
                   <div>
-                    <h4 className="text-lg font-semibold text-foreground mb-4">Sayfa Blokları</h4>
-                    <div className="space-y-3">
-                      {layoutBlocks.map((block, index) => (
-                        <div key={block.key} className="flex items-center justify-between p-4 bg-accent/30 rounded-lg">
-                          <div className="flex items-center space-x-3">
-                            <Move className="w-4 h-4 text-muted-foreground cursor-grab" />
-                            <span className="text-2xl">{block.icon}</span>
-                            <div>
-                              <div className="font-medium text-foreground">{block.label}</div>
-                              <div className="text-sm text-muted-foreground">Sıra: {index + 1}</div>
-                            </div>
+                    <Label className="text-foreground">Kenar Yuvarlaklığı: {borderRadius[0]}px</Label>
+                    <Slider
+                      value={borderRadius}
+                      onValueChange={setBorderRadius}
+                      max={24}
+                      min={0}
+                      step={2}
+                      className="mt-2"
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label className="text-foreground">Sayfa Blokları Sırası</Label>
+                    <div className="mt-2 space-y-2">
+                      {currentTheme.advancedSettings.layout.blocks.map((block, index) => (
+                        <div key={block} className="flex items-center justify-between p-3 rounded-lg bg-accent/30">
+                          <span className="capitalize text-foreground">
+                            {block.replace(/([A-Z])/g, ' $1')}
+                          </span>
+                          <div className="flex items-center space-x-2">
+                            <Badge variant="outline" className="text-xs border-border text-muted-foreground">
+                              {index + 1}
+                            </Badge>
                           </div>
-                          <Switch
-                            checked={block.enabled}
-                            onCheckedChange={(checked) => {
-                              // Update block enabled state
-                            }}
-                          />
                         </div>
                       ))}
                     </div>
                   </div>
+                </CardContent>
+              </Card>
 
-                  {/* Component Settings */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-4">
-                      <h4 className="text-lg font-semibold text-foreground">Bileşen Ayarları</h4>
-                      
-                      <div className="flex items-center justify-between p-4 bg-accent/30 rounded-lg">
-                        <div>
-                          <div className="font-medium text-foreground">Sosyal Medya İkonları</div>
-                          <div className="text-sm text-muted-foreground">Header'da sosyal medya ikonlarını göster</div>
-                        </div>
-                        <Switch
-                          checked={currentTheme.advancedSettings.components.header.socialIcons.enabled}
-                          onCheckedChange={(checked) => updateAdvancedSetting('components.header.socialIcons.enabled', checked)}
-                        />
+              {/* Component Settings */}
+              <Card className="bg-card border-border">
+                <CardHeader>
+                  <CardTitle className="text-foreground">Bileşen Ayarları</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="font-medium text-foreground">Öne Çıkan Ürünler Bölümü</div>
+                        <div className="text-sm text-muted-foreground">Ana sayfada öne çıkan ürünleri göster</div>
                       </div>
-
-                      <div className="flex items-center justify-between p-4 bg-accent/30 rounded-lg">
-                        <div>
-                          <div className="font-medium text-foreground">Öne Çıkan Ürünler</div>
-                          <div className="text-sm text-muted-foreground">Ana sayfada öne çıkan ürünleri göster</div>
-                        </div>
-                        <Switch
-                          checked={currentTheme.advancedSettings.components.featuredSection.enabled}
-                          onCheckedChange={(checked) => updateAdvancedSetting('components.featuredSection.enabled', checked)}
-                        />
-                      </div>
+                      <Switch
+                        checked={currentTheme.advancedSettings.components.featuredSection.enabled}
+                        onCheckedChange={(checked) => updateAdvancedSetting('components.featuredSection.enabled', checked)}
+                      />
                     </div>
 
-                    <div className="space-y-4">
-                      <h4 className="text-lg font-semibold text-foreground">Görünüm Ayarları</h4>
-                      
+                    <div className="flex items-center justify-between">
                       <div>
-                        <Label className="text-sm font-medium text-foreground">Logo Boyutu</Label>
-                        <Select 
-                          value={currentTheme.advancedSettings.components.header.logoSize}
-                          onValueChange={(value) => updateAdvancedSetting('components.header.logoSize', value)}
-                        >
-                          <SelectTrigger className="mt-1">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="small">Küçük</SelectItem>
-                            <SelectItem value="medium">Orta</SelectItem>
-                            <SelectItem value="large">Büyük</SelectItem>
-                          </SelectContent>
-                        </Select>
+                        <div className="font-medium text-foreground">Reklam Butonu</div>
+                        <div className="text-sm text-muted-foreground">Kampanyalar butonunu göster</div>
                       </div>
+                      <Switch
+                        checked={currentTheme.advancedSettings.components.advertisementButton.enabled}
+                        onCheckedChange={(checked) => updateAdvancedSetting('components.advertisementButton.enabled', checked)}
+                      />
+                    </div>
 
+                    <div className="flex items-center justify-between">
                       <div>
-                        <Label className="text-sm font-medium text-foreground">İkon Paketi</Label>
-                        <Select 
-                          value={currentTheme.advancedSettings.components.header.socialIcons.iconPack}
-                          onValueChange={(value) => updateAdvancedSetting('components.header.socialIcons.iconPack', value)}
-                        >
-                          <SelectTrigger className="mt-1">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {Object.entries(socialIconPacks).map(([key, name]) => (
-                              <SelectItem key={key} value={key}>{name}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                        <div className="font-medium text-foreground">Sosyal Medya İkonları</div>
+                        <div className="text-sm text-muted-foreground">Header'da sosyal medya ikonlarını göster</div>
                       </div>
+                      <Switch
+                        checked={currentTheme.advancedSettings.components.header.socialIcons.enabled}
+                        onCheckedChange={(checked) => updateAdvancedSetting('components.header.socialIcons.enabled', checked)}
+                      />
+                    </div>
+
+                    <div>
+                      <Label className="text-foreground">Logo Boyutu</Label>
+                      <Select 
+                        value={currentTheme.advancedSettings.components.header.logoSize}
+                        onValueChange={(value) => updateAdvancedSetting('components.header.logoSize', value)}
+                      >
+                        <SelectTrigger className="mt-1 bg-background border-border text-foreground">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="bg-background border-border">
+                          <SelectItem value="small">Küçük</SelectItem>
+                          <SelectItem value="medium">Orta</SelectItem>
+                          <SelectItem value="large">Büyük</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div>
+                      <Label className="text-foreground">İkon Paketi</Label>
+                      <Select 
+                        value={currentTheme.advancedSettings.components.header.socialIcons.iconPack}
+                        onValueChange={(value) => updateAdvancedSetting('components.header.socialIcons.iconPack', value)}
+                      >
+                        <SelectTrigger className="mt-1 bg-background border-border text-foreground">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="bg-background border-border">
+                          {Object.entries(socialIconPacks).map(([key, name]) => (
+                            <SelectItem key={key} value={key}>{name}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div>
+                      <Label className="text-foreground">Kategori Animasyonu</Label>
+                      <Select 
+                        value={currentTheme.advancedSettings.components.categoryAnimation.type}
+                        onValueChange={(value) => updateAdvancedSetting('components.categoryAnimation.type', value)}
+                      >
+                        <SelectTrigger className="mt-1 bg-background border-border text-foreground">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="bg-background border-border">
+                          {Object.entries(categoryAnimationTypes).map(([key, name]) => (
+                            <SelectItem key={key} value={key}>{name}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Background Images */}
+              <Card className="bg-card border-border">
+                <CardHeader>
+                  <CardTitle className="flex items-center text-foreground">
+                    <ImageIcon className="w-5 h-5 mr-2" />
+                    Arka Plan Resimleri
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div>
+                    <Label className="text-foreground">Genel Arka Plan</Label>
+                    <Input 
+                      placeholder="Firebase Storage URL"
+                      value={currentTheme.advancedSettings.backgrounds.global.url || ''}
+                      onChange={(e) => updateAdvancedSetting('backgrounds.global.url', e.target.value)}
+                      className="mt-1 bg-background border-border text-foreground"
+                    />
+                    <div className="mt-2">
+                      <Label className="text-foreground">Opaklık: {Math.round(currentTheme.advancedSettings.backgrounds.global.opacity * 100)}%</Label>
+                      <Slider
+                        value={[currentTheme.advancedSettings.backgrounds.global.opacity]}
+                        onValueChange={(value) => updateAdvancedSetting('backgrounds.global.opacity', value[0])}
+                        max={1}
+                        min={0}
+                        step={0.1}
+                        className="mt-2"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label className="text-foreground">Header Arka Planı</Label>
+                    <Input 
+                      placeholder="Firebase Storage URL"
+                      value={currentTheme.advancedSettings.backgrounds.sections.header.url || ''}
+                      onChange={(e) => updateAdvancedSetting('backgrounds.sections.header.url', e.target.value)}
+                      className="mt-1 bg-background border-border text-foreground"
+                    />
+                    <div className="mt-2">
+                      <Label className="text-foreground">Opaklık: {Math.round(currentTheme.advancedSettings.backgrounds.sections.header.opacity * 100)}%</Label>
+                      <Slider
+                        value={[currentTheme.advancedSettings.backgrounds.sections.header.opacity]}
+                        onValueChange={(value) => updateAdvancedSetting('backgrounds.sections.header.opacity', value[0])}
+                        max={1}
+                        min={0}
+                        step={0.1}
+                        className="mt-2"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label className="text-foreground">Kategoriler Arka Planı</Label>
+                    <Input 
+                      placeholder="Firebase Storage URL"
+                      value={currentTheme.advancedSettings.backgrounds.sections.categories.url || ''}
+                      onChange={(e) => updateAdvancedSetting('backgrounds.sections.categories.url', e.target.value)}
+                      className="mt-1 bg-background border-border text-foreground"
+                    />
+                    <div className="mt-2">
+                      <Label className="text-foreground">Opaklık: {Math.round(currentTheme.advancedSettings.backgrounds.sections.categories.opacity * 100)}%</Label>
+                      <Slider
+                        value={[currentTheme.advancedSettings.backgrounds.sections.categories.opacity]}
+                        onValueChange={(value) => updateAdvancedSetting('backgrounds.sections.categories.opacity', value[0])}
+                        max={1}
+                        min={0}
+                        step={0.1}
+                        className="mt-2"
+                      />
                     </div>
                   </div>
                 </CardContent>
@@ -559,7 +646,7 @@ export function ThemeCustomization() {
                   className="p-4 text-white rounded-lg"
                   style={{ 
                     backgroundColor: currentTheme.advancedSettings.colors.header,
-                    borderRadius: '8px'
+                    borderRadius: `${borderRadius[0]}px`
                   }}
                 >
                   <h3 
@@ -585,12 +672,11 @@ export function ThemeCustomization() {
 
                 {/* Preview Menu Item */}
                 <div 
-                  className="border"
+                  className="border border-border"
                   style={{ 
                     backgroundColor: currentTheme.advancedSettings.colors.cards,
-                    borderRadius: '8px',
-                    padding: `${density[0]}px`,
-                    borderColor: 'hsl(var(--border))'
+                    borderRadius: `${borderRadius[0]}px`,
+                    padding: `${density[0]}px`
                   }}
                 >
                   <h4 
@@ -627,7 +713,7 @@ export function ThemeCustomization() {
                       className="text-white px-3 py-1 rounded text-sm font-medium"
                       style={{ 
                         backgroundColor: currentTheme.advancedSettings.colors.buttons,
-                        borderRadius: '4px',
+                        borderRadius: `${borderRadius[0] / 2}px`,
                         fontSize: `${fontSize[0] - 2}px`
                       }}
                     >
@@ -638,12 +724,11 @@ export function ThemeCustomization() {
 
                 {/* Preview Category */}
                 <div 
-                  className="border"
+                  className="border border-border"
                   style={{ 
                     backgroundColor: currentTheme.advancedSettings.colors.cards,
-                    borderRadius: '8px',
-                    padding: `${density[0]}px`,
-                    borderColor: 'hsl(var(--border))'
+                    borderRadius: `${borderRadius[0]}px`,
+                    padding: `${density[0]}px`
                   }}
                 >
                   <h4 
