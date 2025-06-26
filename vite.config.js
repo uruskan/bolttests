@@ -11,6 +11,10 @@ export default defineConfig({
     },
     extensions: ['.js', '.jsx', '.json']
   },
+  esbuild: {
+    jsx: 'automatic',
+    include: /\.jsx?$/
+  },
   server: {
     port: 3000,
     host: true
