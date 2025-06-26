@@ -24,27 +24,13 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-interface StaffMember {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  role: 'manager' | 'chef' | 'server' | 'host' | 'bartender';
-  status: 'active' | 'inactive' | 'on-break';
-  hiredDate: Date;
-  hourlyRate: number;
-  hoursThisWeek: number;
-  rating: number;
-  avatar?: string;
-}
-
 export function StaffManagement() {
   const [searchTerm, setSearchTerm] = useState('');
-  const [roleFilter, setRoleFilter] = useState<string>('all');
-  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [roleFilter, setRoleFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState('all');
   const [isAddingStaff, setIsAddingStaff] = useState(false);
 
-  const staffMembers: StaffMember[] = [
+  const staffMembers = [
     {
       id: '1',
       name: 'Marco Rossi',
@@ -119,27 +105,27 @@ export function StaffManagement() {
     }
   ];
 
-  const getRoleColor = (role: string) => {
+  const getRoleColor = (role) => {
     switch (role) {
-      case 'manager': return 'bg-purple-100 text-purple-800 border-purple-200';
-      case 'chef': return 'bg-red-100 text-red-800 border-red-200';
-      case 'server': return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'bartender': return 'bg-green-100 text-green-800 border-green-200';
-      case 'host': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'manager': return 'bg-purple-100 text-purple-800 border-purple-200 dark:bg-purple-900/20 dark:text-purple-300 dark:border-purple-800';
+      case 'chef': return 'bg-red-100 text-red-800 border-red-200 dark:bg-red-900/20 dark:text-red-300 dark:border-red-800';
+      case 'server': return 'bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800';
+      case 'bartender': return 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800';
+      case 'host': return 'bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/20 dark:text-yellow-300 dark:border-yellow-800';
+      default: return 'bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-900/20 dark:text-gray-300 dark:border-gray-800';
     }
   };
 
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status) => {
     switch (status) {
-      case 'active': return 'bg-green-100 text-green-800 border-green-200';
-      case 'on-break': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'inactive': return 'bg-red-100 text-red-800 border-red-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'active': return 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800';
+      case 'on-break': return 'bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/20 dark:text-yellow-300 dark:border-yellow-800';
+      case 'inactive': return 'bg-red-100 text-red-800 border-red-200 dark:bg-red-900/20 dark:text-red-300 dark:border-red-800';
+      default: return 'bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-900/20 dark:text-gray-300 dark:border-gray-800';
     }
   };
 
-  const getStatusIcon = (status: string) => {
+  const getStatusIcon = (status) => {
     switch (status) {
       case 'active': return UserCheck;
       case 'on-break': return Clock;
@@ -157,7 +143,7 @@ export function StaffManagement() {
     return matchesSearch && matchesRole && matchesStatus;
   });
 
-  const getYearsOfService = (hiredDate: Date) => {
+  const getYearsOfService = (hiredDate) => {
     const years = (new Date().getTime() - hiredDate.getTime()) / (1000 * 60 * 60 * 24 * 365.25);
     return Math.floor(years);
   };
@@ -178,12 +164,12 @@ export function StaffManagement() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Staff Management</h1>
-          <p className="text-gray-600 mt-1">Manage your restaurant team and schedules</p>
+          <h1 className="text-3xl font-bold text-foreground">Staff Management</h1>
+          <p className="text-muted-foreground mt-1">Manage your restaurant team and schedules</p>
         </div>
         <Dialog open={isAddingStaff} onOpenChange={setIsAddingStaff}>
           <DialogTrigger asChild>
-            <Button className="bg-gradient-to-r from-rose-500 to-orange-500 hover:from-rose-600 hover:to-orange-600 mt-4 sm:mt-0">
+            <Button className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 mt-4 sm:mt-0">
               <Plus className="w-4 h-4 mr-2" />
               Add Staff Member
             </Button>
@@ -237,7 +223,7 @@ export function StaffManagement() {
               <Button variant="outline" onClick={() => setIsAddingStaff(false)}>
                 Cancel
               </Button>
-              <Button className="bg-gradient-to-r from-rose-500 to-orange-500 hover:from-rose-600 hover:to-orange-600">
+              <Button className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70">
                 Add Staff Member
               </Button>
             </DialogFooter>
@@ -247,12 +233,12 @@ export function StaffManagement() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <Card className="bg-white/80 backdrop-blur-sm border-rose-100">
+        <Card className="bg-card/80 backdrop-blur-sm border-border shadow-sm">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Total Staff</p>
-                <p className="text-2xl font-bold text-gray-900">{staffMembers.length}</p>
+                <p className="text-sm text-muted-foreground">Total Staff</p>
+                <p className="text-2xl font-bold text-foreground">{staffMembers.length}</p>
               </div>
               <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
                 <Users className="w-4 h-4 text-white" />
@@ -261,12 +247,12 @@ export function StaffManagement() {
           </CardContent>
         </Card>
 
-        <Card className="bg-white/80 backdrop-blur-sm border-rose-100">
+        <Card className="bg-card/80 backdrop-blur-sm border-border shadow-sm">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Active Now</p>
-                <p className="text-2xl font-bold text-gray-900">{activeStaff}</p>
+                <p className="text-sm text-muted-foreground">Active Now</p>
+                <p className="text-2xl font-bold text-foreground">{activeStaff}</p>
               </div>
               <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
                 <UserCheck className="w-4 h-4 text-white" />
@@ -275,12 +261,12 @@ export function StaffManagement() {
           </CardContent>
         </Card>
 
-        <Card className="bg-white/80 backdrop-blur-sm border-rose-100">
+        <Card className="bg-card/80 backdrop-blur-sm border-border shadow-sm">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Hours This Week</p>
-                <p className="text-2xl font-bold text-gray-900">{totalHours}</p>
+                <p className="text-sm text-muted-foreground">Hours This Week</p>
+                <p className="text-2xl font-bold text-foreground">{totalHours}</p>
               </div>
               <div className="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
                 <Clock className="w-4 h-4 text-white" />
@@ -289,12 +275,12 @@ export function StaffManagement() {
           </CardContent>
         </Card>
 
-        <Card className="bg-white/80 backdrop-blur-sm border-rose-100">
+        <Card className="bg-card/80 backdrop-blur-sm border-border shadow-sm">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Avg Rating</p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-sm text-muted-foreground">Avg Rating</p>
+                <p className="text-2xl font-bold text-foreground">
                   {(staffMembers.reduce((sum, s) => sum + s.rating, 0) / staffMembers.length).toFixed(1)}
                 </p>
               </div>
@@ -307,16 +293,16 @@ export function StaffManagement() {
       </div>
 
       {/* Filters */}
-      <Card className="bg-white/80 backdrop-blur-sm border-rose-100">
+      <Card className="bg-card/80 backdrop-blur-sm border-border shadow-sm">
         <CardContent className="p-4">
           <div className="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-4">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
                 placeholder="Search staff by name or email..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 border-rose-200 focus:border-rose-400"
+                className="pl-10 border-border focus:border-primary"
               />
             </div>
             
@@ -357,15 +343,15 @@ export function StaffManagement() {
           const StatusIcon = getStatusIcon(member.status);
           
           return (
-            <Card key={member.id} className="bg-white/80 backdrop-blur-sm border-rose-100 hover:shadow-lg transition-all duration-300">
+            <Card key={member.id} className="bg-card/80 backdrop-blur-sm border-border hover:shadow-lg transition-all duration-300 shadow-sm">
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between">
                   <div className="flex items-center space-x-3">
-                    <div className="w-12 h-12 bg-gradient-to-br from-rose-400 to-orange-400 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                    <div className="w-12 h-12 bg-gradient-to-br from-primary to-primary/80 rounded-full flex items-center justify-center text-primary-foreground font-bold text-lg">
                       {member.name.split(' ').map(n => n[0]).join('')}
                     </div>
                     <div>
-                      <h3 className="font-semibold text-gray-900">{member.name}</h3>
+                      <h3 className="font-semibold text-foreground">{member.name}</h3>
                       <div className="flex items-center space-x-2 mt-1">
                         <Badge className={cn("text-xs border", getRoleColor(member.role))}>
                           {member.role}
@@ -381,7 +367,7 @@ export function StaffManagement() {
                   <div className="text-right">
                     <div className="flex items-center text-yellow-500 mb-1">
                       <Star className="w-4 h-4 mr-1 fill-current" />
-                      <span className="text-sm font-medium text-gray-900">{member.rating}</span>
+                      <span className="text-sm font-medium text-foreground">{member.rating}</span>
                     </div>
                   </div>
                 </div>
@@ -389,29 +375,29 @@ export function StaffManagement() {
               
               <CardContent>
                 <div className="space-y-3">
-                  <div className="flex items-center text-sm text-gray-600">
+                  <div className="flex items-center text-sm text-muted-foreground">
                     <Mail className="w-4 h-4 mr-2" />
                     {member.email}
                   </div>
                   
-                  <div className="flex items-center text-sm text-gray-600">
+                  <div className="flex items-center text-sm text-muted-foreground">
                     <Phone className="w-4 h-4 mr-2" />
                     {member.phone}
                   </div>
                   
-                  <div className="flex items-center text-sm text-gray-600">
+                  <div className="flex items-center text-sm text-muted-foreground">
                     <Calendar className="w-4 h-4 mr-2" />
                     {getYearsOfService(member.hiredDate)} years of service
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4 mt-4 pt-4 border-t border-gray-100">
+                  <div className="grid grid-cols-2 gap-4 mt-4 pt-4 border-t border-border">
                     <div className="text-center">
-                      <div className="font-semibold text-gray-900">{member.hoursThisWeek}h</div>
-                      <div className="text-xs text-gray-500">This Week</div>
+                      <div className="font-semibold text-foreground">{member.hoursThisWeek}h</div>
+                      <div className="text-xs text-muted-foreground">This Week</div>
                     </div>
                     <div className="text-center">
-                      <div className="font-semibold text-gray-900">${member.hourlyRate}/hr</div>
-                      <div className="text-xs text-gray-500">Hourly Rate</div>
+                      <div className="font-semibold text-foreground">${member.hourlyRate}/hr</div>
+                      <div className="text-xs text-muted-foreground">Hourly Rate</div>
                     </div>
                   </div>
 
@@ -419,12 +405,12 @@ export function StaffManagement() {
                     <Button variant="outline" size="icon" className="h-8 w-8 flex-1">
                       <Edit className="w-4 h-4" />
                     </Button>
-                    <Button variant="outline" size="icon" className="h-8 w-8 flex-1 text-red-600 hover:bg-red-50">
+                    <Button variant="outline" size="icon" className="h-8 w-8 flex-1 text-destructive hover:bg-destructive/10">
                       <Trash2 className="w-4 h-4" />
                     </Button>
                     <Button 
                       size="sm" 
-                      className="flex-2 bg-gradient-to-r from-rose-500 to-orange-500 hover:from-rose-600 hover:to-orange-600"
+                      className="flex-2 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
                     >
                       View Schedule
                     </Button>
@@ -437,17 +423,17 @@ export function StaffManagement() {
       </div>
 
       {filteredStaff.length === 0 && (
-        <Card className="bg-white/80 backdrop-blur-sm border-rose-100">
+        <Card className="bg-card/80 backdrop-blur-sm border-border shadow-sm">
           <CardContent className="py-12 text-center">
-            <Users className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No staff members found</h3>
-            <p className="text-gray-600 mb-4">
+            <Users className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-foreground mb-2">No staff members found</h3>
+            <p className="text-muted-foreground mb-4">
               {searchTerm || roleFilter !== 'all' || statusFilter !== 'all'
                 ? "No staff members match your current filters."
                 : "Add your first staff member to get started."}
             </p>
             <Button 
-              className="bg-gradient-to-r from-rose-500 to-orange-500 hover:from-rose-600 hover:to-orange-600"
+              className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
               onClick={() => setIsAddingStaff(true)}
             >
               <Plus className="w-4 h-4 mr-2" />

@@ -21,37 +21,12 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-interface Order {
-  id: string;
-  customerName: string;
-  customerPhone?: string;
-  type: 'dine-in' | 'takeout' | 'delivery';
-  status: 'pending' | 'preparing' | 'ready' | 'served' | 'completed' | 'cancelled';
-  table?: string;
-  address?: string;
-  items: OrderItem[];
-  subtotal: number;
-  tax: number;
-  total: number;
-  notes?: string;
-  createdAt: Date;
-  estimatedTime: string;
-}
-
-interface OrderItem {
-  id: string;
-  name: string;
-  quantity: number;
-  price: number;
-  modifications?: string[];
-}
-
 export function OrderManagement() {
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [typeFilter, setTypeFilter] = useState<string>('all');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [typeFilter, setTypeFilter] = useState('all');
 
-  const orders: Order[] = [
+  const orders = [
     {
       id: 'ORD-1247',
       customerName: 'Sarah Johnson',
@@ -124,19 +99,19 @@ export function OrderManagement() {
     }
   ];
 
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status) => {
     switch (status) {
-      case 'pending': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'preparing': return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'ready': return 'bg-green-100 text-green-800 border-green-200';
-      case 'served': return 'bg-purple-100 text-purple-800 border-purple-200';
-      case 'completed': return 'bg-gray-100 text-gray-800 border-gray-200';
-      case 'cancelled': return 'bg-red-100 text-red-800 border-red-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'pending': return 'bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/20 dark:text-yellow-300 dark:border-yellow-800';
+      case 'preparing': return 'bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800';
+      case 'ready': return 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800';
+      case 'served': return 'bg-purple-100 text-purple-800 border-purple-200 dark:bg-purple-900/20 dark:text-purple-300 dark:border-purple-800';
+      case 'completed': return 'bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-900/20 dark:text-gray-300 dark:border-gray-800';
+      case 'cancelled': return 'bg-red-100 text-red-800 border-red-200 dark:bg-red-900/20 dark:text-red-300 dark:border-red-800';
+      default: return 'bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-900/20 dark:text-gray-300 dark:border-gray-800';
     }
   };
 
-  const getStatusIcon = (status: string) => {
+  const getStatusIcon = (status) => {
     switch (status) {
       case 'pending': return AlertCircle;
       case 'preparing': return Clock;
@@ -148,16 +123,16 @@ export function OrderManagement() {
     }
   };
 
-  const getTypeColor = (type: string) => {
+  const getTypeColor = (type) => {
     switch (type) {
-      case 'dine-in': return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'takeout': return 'bg-orange-100 text-orange-800 border-orange-200';
-      case 'delivery': return 'bg-green-100 text-green-800 border-green-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'dine-in': return 'bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800';
+      case 'takeout': return 'bg-orange-100 text-orange-800 border-orange-200 dark:bg-orange-900/20 dark:text-orange-300 dark:border-orange-800';
+      case 'delivery': return 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800';
+      default: return 'bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-900/20 dark:text-gray-300 dark:border-gray-800';
     }
   };
 
-  const getTypeIcon = (type: string) => {
+  const getTypeIcon = (type) => {
     switch (type) {
       case 'dine-in': return Utensils;
       case 'takeout': return ShoppingCart;
@@ -175,7 +150,7 @@ export function OrderManagement() {
     return matchesSearch && matchesStatus && matchesType;
   });
 
-  const getTimeSince = (date: Date) => {
+  const getTimeSince = (date) => {
     const minutes = Math.floor((Date.now() - date.getTime()) / 60000);
     if (minutes < 60) return `${minutes}m ago`;
     const hours = Math.floor(minutes / 60);
@@ -194,19 +169,19 @@ export function OrderManagement() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Order Management</h1>
-          <p className="text-gray-600 mt-1">Track and manage customer orders in real-time</p>
+          <h1 className="text-3xl font-bold text-foreground">Order Management</h1>
+          <p className="text-muted-foreground mt-1">Track and manage customer orders in real-time</p>
         </div>
       </div>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <Card className="bg-white/80 backdrop-blur-sm border-yellow-200">
+        <Card className="bg-card/80 backdrop-blur-sm border-yellow-200 dark:border-yellow-800">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-yellow-600">Pending</p>
-                <p className="text-2xl font-bold text-yellow-800">{statusStats.pending}</p>
+                <p className="text-sm text-yellow-600 dark:text-yellow-400">Pending</p>
+                <p className="text-2xl font-bold text-yellow-800 dark:text-yellow-300">{statusStats.pending}</p>
               </div>
               <div className="w-8 h-8 bg-yellow-500 rounded-lg flex items-center justify-center">
                 <AlertCircle className="w-4 h-4 text-white" />
@@ -215,12 +190,12 @@ export function OrderManagement() {
           </CardContent>
         </Card>
 
-        <Card className="bg-white/80 backdrop-blur-sm border-blue-200">
+        <Card className="bg-card/80 backdrop-blur-sm border-blue-200 dark:border-blue-800">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-blue-600">Preparing</p>
-                <p className="text-2xl font-bold text-blue-800">{statusStats.preparing}</p>
+                <p className="text-sm text-blue-600 dark:text-blue-400">Preparing</p>
+                <p className="text-2xl font-bold text-blue-800 dark:text-blue-300">{statusStats.preparing}</p>
               </div>
               <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
                 <Clock className="w-4 h-4 text-white" />
@@ -229,12 +204,12 @@ export function OrderManagement() {
           </CardContent>
         </Card>
 
-        <Card className="bg-white/80 backdrop-blur-sm border-green-200">
+        <Card className="bg-card/80 backdrop-blur-sm border-green-200 dark:border-green-800">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-green-600">Ready</p>
-                <p className="text-2xl font-bold text-green-800">{statusStats.ready}</p>
+                <p className="text-sm text-green-600 dark:text-green-400">Ready</p>
+                <p className="text-2xl font-bold text-green-800 dark:text-green-300">{statusStats.ready}</p>
               </div>
               <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
                 <CheckCircle className="w-4 h-4 text-white" />
@@ -243,12 +218,12 @@ export function OrderManagement() {
           </CardContent>
         </Card>
 
-        <Card className="bg-white/80 backdrop-blur-sm border-purple-200">
+        <Card className="bg-card/80 backdrop-blur-sm border-purple-200 dark:border-purple-800">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-purple-600">Served</p>
-                <p className="text-2xl font-bold text-purple-800">{statusStats.served}</p>
+                <p className="text-sm text-purple-600 dark:text-purple-400">Served</p>
+                <p className="text-2xl font-bold text-purple-800 dark:text-purple-300">{statusStats.served}</p>
               </div>
               <div className="w-8 h-8 bg-purple-500 rounded-lg flex items-center justify-center">
                 <Utensils className="w-4 h-4 text-white" />
@@ -259,22 +234,22 @@ export function OrderManagement() {
       </div>
 
       {/* Filters */}
-      <Card className="bg-white/80 backdrop-blur-sm border-rose-100">
+      <Card className="bg-card/80 backdrop-blur-sm border-border shadow-sm">
         <CardContent className="p-4">
           <div className="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-4">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
                 placeholder="Search orders by ID or customer name..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 border-rose-200 focus:border-rose-400"
+                className="pl-10 border-border focus:border-primary"
               />
             </div>
             
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2">
-                <Filter className="w-4 h-4 text-gray-500" />
+                <Filter className="w-4 h-4 text-muted-foreground" />
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
                   <SelectTrigger className="w-32">
                     <SelectValue />
@@ -312,7 +287,7 @@ export function OrderManagement() {
           const TypeIcon = getTypeIcon(order.type);
           
           return (
-            <Card key={order.id} className="bg-white/80 backdrop-blur-sm border-rose-100 hover:shadow-lg transition-all duration-300">
+            <Card key={order.id} className="bg-card/80 backdrop-blur-sm border-border hover:shadow-lg transition-all duration-300 shadow-sm">
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between">
                   <div>
@@ -327,7 +302,7 @@ export function OrderManagement() {
                         {order.type}
                       </Badge>
                     </div>
-                    <div className="flex items-center space-x-4 text-sm text-gray-600">
+                    <div className="flex items-center space-x-4 text-sm text-muted-foreground">
                       <div className="flex items-center">
                         <User className="w-4 h-4 mr-1" />
                         {order.customerName}
@@ -341,8 +316,8 @@ export function OrderManagement() {
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="font-bold text-lg text-gray-900">${order.total.toFixed(2)}</div>
-                    <div className="text-sm text-gray-600">{getTimeSince(order.createdAt)}</div>
+                    <div className="font-bold text-lg text-foreground">${order.total.toFixed(2)}</div>
+                    <div className="text-sm text-muted-foreground">{getTimeSince(order.createdAt)}</div>
                   </div>
                 </div>
               </CardHeader>
@@ -351,13 +326,13 @@ export function OrderManagement() {
                 <div className="space-y-3">
                   {/* Location/Table Info */}
                   {order.table && (
-                    <div className="flex items-center text-sm text-gray-600">
+                    <div className="flex items-center text-sm text-muted-foreground">
                       <Utensils className="w-4 h-4 mr-2" />
                       {order.table}
                     </div>
                   )}
                   {order.address && (
-                    <div className="flex items-center text-sm text-gray-600">
+                    <div className="flex items-center text-sm text-muted-foreground">
                       <MapPin className="w-4 h-4 mr-2" />
                       {order.address}
                     </div>
@@ -368,32 +343,32 @@ export function OrderManagement() {
                     {order.items.map((item) => (
                       <div key={item.id} className="flex justify-between items-center text-sm">
                         <div className="flex-1">
-                          <span className="text-gray-900">{item.quantity}x {item.name}</span>
+                          <span className="text-foreground">{item.quantity}x {item.name}</span>
                           {item.modifications && item.modifications.length > 0 && (
-                            <div className="text-xs text-gray-500 mt-1">
+                            <div className="text-xs text-muted-foreground mt-1">
                               {item.modifications.join(', ')}
                             </div>
                           )}
                         </div>
-                        <span className="font-medium text-gray-900">${(item.price * item.quantity).toFixed(2)}</span>
+                        <span className="font-medium text-foreground">${(item.price * item.quantity).toFixed(2)}</span>
                       </div>
                     ))}
                   </div>
 
                   {/* Notes */}
                   {order.notes && (
-                    <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-                      <p className="text-sm text-yellow-800">
+                    <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-3">
+                      <p className="text-sm text-yellow-800 dark:text-yellow-300">
                         <strong>Note:</strong> {order.notes}
                       </p>
                     </div>
                   )}
 
                   {/* Action Buttons */}
-                  <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                  <div className="flex items-center justify-between pt-4 border-t border-border">
                     <div className="flex items-center text-sm">
-                      <Clock className="w-4 h-4 mr-1 text-gray-500" />
-                      <span className="text-gray-600">ETA: {order.estimatedTime}</span>
+                      <Clock className="w-4 h-4 mr-1 text-muted-foreground" />
+                      <span className="text-muted-foreground">ETA: {order.estimatedTime}</span>
                     </div>
                     
                     <div className="flex items-center space-x-2">
@@ -417,7 +392,7 @@ export function OrderManagement() {
                           Complete Order
                         </Button>
                       )}
-                      <Button variant="outline" size="sm" className="text-red-600 hover:bg-red-50">
+                      <Button variant="outline" size="sm" className="text-destructive hover:bg-destructive/10">
                         Cancel
                       </Button>
                     </div>
@@ -430,11 +405,11 @@ export function OrderManagement() {
       </div>
 
       {filteredOrders.length === 0 && (
-        <Card className="bg-white/80 backdrop-blur-sm border-rose-100">
+        <Card className="bg-card/80 backdrop-blur-sm border-border shadow-sm">
           <CardContent className="py-12 text-center">
-            <ShoppingCart className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No orders found</h3>
-            <p className="text-gray-600">
+            <ShoppingCart className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-foreground mb-2">No orders found</h3>
+            <p className="text-muted-foreground">
               {searchTerm || statusFilter !== 'all' || typeFilter !== 'all'
                 ? "No orders match your current filters."
                 : "No orders to display at the moment."}

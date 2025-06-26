@@ -25,27 +25,11 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-interface Advertisement {
-  id: string;
-  title: string;
-  description: string;
-  imageUrl: string;
-  linkUrl?: string;
-  startTime: string;
-  endTime: string;
-  priority: number;
-  active: boolean;
-  clicks: number;
-  impressions: number;
-  targetAudience: string;
-  createdAt: Date;
-}
-
 export function AdvertisementManagement() {
   const [isAddingAd, setIsAddingAd] = useState(false);
-  const [activeTab, setActiveTab] = useState<'active' | 'scheduled' | 'archived'>('active');
+  const [activeTab, setActiveTab] = useState('active');
 
-  const advertisements: Advertisement[] = [
+  const advertisements = [
     {
       id: '1',
       title: 'Happy Hour Special',
@@ -95,7 +79,7 @@ export function AdvertisementManagement() {
 
   const activeAds = advertisements.filter(ad => ad.active);
   const scheduledAds = advertisements.filter(ad => !ad.active);
-  const archivedAds: Advertisement[] = [];
+  const archivedAds = [];
 
   const getCurrentAds = () => {
     switch (activeTab) {
@@ -106,21 +90,21 @@ export function AdvertisementManagement() {
     }
   };
 
-  const getClickThroughRate = (clicks: number, impressions: number) => {
+  const getClickThroughRate = (clicks, impressions) => {
     if (impressions === 0) return '0%';
     return ((clicks / impressions) * 100).toFixed(1) + '%';
   };
 
-  const getPriorityColor = (priority: number) => {
+  const getPriorityColor = (priority) => {
     switch (priority) {
-      case 1: return 'bg-red-100 text-red-800 border-red-200';
-      case 2: return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 3: return 'bg-green-100 text-green-800 border-green-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 1: return 'bg-red-100 text-red-800 border-red-200 dark:bg-red-900/20 dark:text-red-300 dark:border-red-800';
+      case 2: return 'bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/20 dark:text-yellow-300 dark:border-yellow-800';
+      case 3: return 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800';
+      default: return 'bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-900/20 dark:text-gray-300 dark:border-gray-800';
     }
   };
 
-  const getPriorityLabel = (priority: number) => {
+  const getPriorityLabel = (priority) => {
     switch (priority) {
       case 1: return 'High';
       case 2: return 'Medium';
@@ -134,12 +118,12 @@ export function AdvertisementManagement() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Advertisement Management</h1>
-          <p className="text-gray-600 mt-1">Manage promotions and special offers</p>
+          <h1 className="text-3xl font-bold text-foreground">Advertisement Management</h1>
+          <p className="text-muted-foreground mt-1">Manage promotions and special offers</p>
         </div>
         <Dialog open={isAddingAd} onOpenChange={setIsAddingAd}>
           <DialogTrigger asChild>
-            <Button className="bg-gradient-to-r from-rose-500 to-orange-500 hover:from-rose-600 hover:to-orange-600 mt-4 sm:mt-0">
+            <Button className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 mt-4 sm:mt-0">
               <Plus className="w-4 h-4 mr-2" />
               Create Advertisement
             </Button>
@@ -171,10 +155,10 @@ export function AdvertisementManagement() {
                 <div className="space-y-4">
                   <div>
                     <Label>Upload Image</Label>
-                    <div className="mt-2 border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-rose-400 transition-colors cursor-pointer">
-                      <Megaphone className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                      <p className="text-sm text-gray-600">Click to upload image</p>
-                      <p className="text-xs text-gray-500 mt-1">PNG, JPG up to 5MB</p>
+                    <div className="mt-2 border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-primary transition-colors cursor-pointer">
+                      <Megaphone className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
+                      <p className="text-sm text-muted-foreground">Click to upload image</p>
+                      <p className="text-xs text-muted-foreground mt-1">PNG, JPG up to 5MB</p>
                     </div>
                   </div>
                 </div>
@@ -213,7 +197,7 @@ export function AdvertisementManagement() {
               <Button variant="outline" onClick={() => setIsAddingAd(false)}>
                 Cancel
               </Button>
-              <Button className="bg-gradient-to-r from-rose-500 to-orange-500 hover:from-rose-600 hover:to-orange-600">
+              <Button className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70">
                 Create Advertisement
               </Button>
             </DialogFooter>
@@ -223,12 +207,12 @@ export function AdvertisementManagement() {
 
       {/* Stats Overview */}
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-        <Card className="bg-white/80 backdrop-blur-sm border-rose-100">
+        <Card className="bg-card/80 backdrop-blur-sm border-border shadow-sm">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Active Ads</p>
-                <p className="text-2xl font-bold text-gray-900">{activeAds.length}</p>
+                <p className="text-sm text-muted-foreground">Active Ads</p>
+                <p className="text-2xl font-bold text-foreground">{activeAds.length}</p>
               </div>
               <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
                 <Megaphone className="w-4 h-4 text-white" />
@@ -237,12 +221,12 @@ export function AdvertisementManagement() {
           </CardContent>
         </Card>
 
-        <Card className="bg-white/80 backdrop-blur-sm border-rose-100">
+        <Card className="bg-card/80 backdrop-blur-sm border-border shadow-sm">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Total Clicks</p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-sm text-muted-foreground">Total Clicks</p>
+                <p className="text-2xl font-bold text-foreground">
                   {advertisements.reduce((sum, ad) => sum + ad.clicks, 0)}
                 </p>
               </div>
@@ -253,12 +237,12 @@ export function AdvertisementManagement() {
           </CardContent>
         </Card>
 
-        <Card className="bg-white/80 backdrop-blur-sm border-rose-100">
+        <Card className="bg-card/80 backdrop-blur-sm border-border shadow-sm">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Impressions</p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-sm text-muted-foreground">Impressions</p>
+                <p className="text-2xl font-bold text-foreground">
                   {advertisements.reduce((sum, ad) => sum + ad.impressions, 0)}
                 </p>
               </div>
@@ -269,12 +253,12 @@ export function AdvertisementManagement() {
           </CardContent>
         </Card>
 
-        <Card className="bg-white/80 backdrop-blur-sm border-rose-100">
+        <Card className="bg-card/80 backdrop-blur-sm border-border shadow-sm">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Avg. CTR</p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-sm text-muted-foreground">Avg. CTR</p>
+                <p className="text-2xl font-bold text-foreground">
                   {getClickThroughRate(
                     advertisements.reduce((sum, ad) => sum + ad.clicks, 0),
                     advertisements.reduce((sum, ad) => sum + ad.impressions, 0)
@@ -290,7 +274,7 @@ export function AdvertisementManagement() {
       </div>
 
       {/* Tab Navigation */}
-      <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg w-fit">
+      <div className="flex space-x-1 bg-muted p-1 rounded-lg w-fit">
         {[
           { id: 'active', label: 'Active', count: activeAds.length },
           { id: 'scheduled', label: 'Scheduled', count: scheduledAds.length },
@@ -302,14 +286,14 @@ export function AdvertisementManagement() {
             className={cn(
               "relative h-9 px-4",
               activeTab === tab.id 
-                ? "bg-white shadow-sm text-gray-900" 
-                : "text-gray-600 hover:text-gray-900"
+                ? "bg-background shadow-sm text-foreground" 
+                : "text-muted-foreground hover:text-foreground"
             )}
-            onClick={() => setActiveTab(tab.id as typeof activeTab)}
+            onClick={() => setActiveTab(tab.id)}
           >
             {tab.label}
             {tab.count > 0 && (
-              <Badge className="ml-2 bg-rose-100 text-rose-800 text-xs px-1.5 py-0.5">
+              <Badge className="ml-2 bg-primary/20 text-primary text-xs px-1.5 py-0.5">
                 {tab.count}
               </Badge>
             )}
@@ -318,14 +302,14 @@ export function AdvertisementManagement() {
       </div>
 
       {/* Advertisement List */}
-      <Card className="bg-white/80 backdrop-blur-sm border-rose-100">
+      <Card className="bg-card/80 backdrop-blur-sm border-border shadow-sm">
         <CardContent className="p-6">
           {getCurrentAds().length > 0 ? (
             <div className="space-y-6">
               {getCurrentAds().map((ad) => (
-                <div key={ad.id} className="border border-gray-200 rounded-lg p-6 hover:border-rose-300 transition-colors">
+                <div key={ad.id} className="border border-border rounded-lg p-6 hover:border-primary/50 transition-colors">
                   <div className="flex items-start space-x-4">
-                    <div className="w-24 h-24 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
+                    <div className="w-24 h-24 rounded-lg overflow-hidden bg-muted flex-shrink-0">
                       <img 
                         src={ad.imageUrl} 
                         alt={ad.title}
@@ -336,10 +320,10 @@ export function AdvertisementManagement() {
                     <div className="flex-1">
                       <div className="flex items-start justify-between mb-2">
                         <div>
-                          <h3 className="text-lg font-semibold text-gray-900 mb-1">{ad.title}</h3>
-                          <p className="text-gray-600 mb-2">{ad.description}</p>
+                          <h3 className="text-lg font-semibold text-foreground mb-1">{ad.title}</h3>
+                          <p className="text-muted-foreground mb-2">{ad.description}</p>
                           
-                          <div className="flex items-center space-x-4 text-sm text-gray-500">
+                          <div className="flex items-center space-x-4 text-sm text-muted-foreground">
                             <div className="flex items-center">
                               <Clock className="w-4 h-4 mr-1" />
                               {ad.startTime} - {ad.endTime}
@@ -361,7 +345,7 @@ export function AdvertisementManagement() {
                           <Badge className={cn("border", getPriorityColor(ad.priority))}>
                             {getPriorityLabel(ad.priority)}
                           </Badge>
-                          <Badge className={ad.active ? "bg-green-100 text-green-800 border-green-200" : "bg-gray-100 text-gray-800 border-gray-200"}>
+                          <Badge className={ad.active ? "bg-green-100 text-green-800 border-green-200 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800" : "bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-900/20 dark:text-gray-300 dark:border-gray-800"}>
                             {ad.active ? 'Active' : 'Inactive'}
                           </Badge>
                         </div>
@@ -370,16 +354,16 @@ export function AdvertisementManagement() {
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-6 text-sm">
                           <div className="text-center">
-                            <div className="font-semibold text-gray-900">{ad.impressions.toLocaleString()}</div>
-                            <div className="text-gray-500">Impressions</div>
+                            <div className="font-semibold text-foreground">{ad.impressions.toLocaleString()}</div>
+                            <div className="text-muted-foreground">Impressions</div>
                           </div>
                           <div className="text-center">
-                            <div className="font-semibold text-gray-900">{ad.clicks.toLocaleString()}</div>
-                            <div className="text-gray-500">Clicks</div>
+                            <div className="font-semibold text-foreground">{ad.clicks.toLocaleString()}</div>
+                            <div className="text-muted-foreground">Clicks</div>
                           </div>
                           <div className="text-center">
-                            <div className="font-semibold text-gray-900">{getClickThroughRate(ad.clicks, ad.impressions)}</div>
-                            <div className="text-gray-500">CTR</div>
+                            <div className="font-semibold text-foreground">{getClickThroughRate(ad.clicks, ad.impressions)}</div>
+                            <div className="text-muted-foreground">CTR</div>
                           </div>
                         </div>
                         
@@ -390,7 +374,7 @@ export function AdvertisementManagement() {
                           <Button variant="outline" size="icon" className="h-8 w-8">
                             <Edit className="w-4 h-4" />
                           </Button>
-                          <Button variant="outline" size="icon" className="h-8 w-8 text-red-600 hover:bg-red-50">
+                          <Button variant="outline" size="icon" className="h-8 w-8 text-destructive hover:bg-destructive/10">
                             <Trash2 className="w-4 h-4" />
                           </Button>
                         </div>
@@ -402,17 +386,17 @@ export function AdvertisementManagement() {
             </div>
           ) : (
             <div className="text-center py-12">
-              <Megaphone className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
+              <Megaphone className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-foreground mb-2">
                 No {activeTab} advertisements
               </h3>
-              <p className="text-gray-600 mb-4">
+              <p className="text-muted-foreground mb-4">
                 {activeTab === 'active' 
                   ? "Create your first advertisement to promote your restaurant"
                   : `No ${activeTab} advertisements found`}
               </p>
               <Button 
-                className="bg-gradient-to-r from-rose-500 to-orange-500 hover:from-rose-600 hover:to-orange-600"
+                className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
                 onClick={() => setIsAddingAd(true)}
               >
                 <Plus className="w-4 h-4 mr-2" />
