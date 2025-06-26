@@ -40,8 +40,10 @@ export function ContentManagement() {
   const [isAddingAd, setIsAddingAd] = useState(false);
   const [selectedStoryType, setSelectedStoryType] = useState('image');
   const [storyDuration, setStoryDuration] = useState('24h');
-  const [adDuration, setAdDuration] = useState('süresiz');
+  const [adDuration, setAdDuration] = useState('never');
   const [showArchived, setShowArchived] = useState(false);
+  const [draggedStory, setDraggedStory] = useState(null);
+  const [draggedAd, setDraggedAd] = useState(null);
 
   // Sample menu items for featured products selection
   const menuItems = [
@@ -51,7 +53,7 @@ export function ContentManagement() {
     { id: '4', name: 'Tiramisu', image: 'https://images.pexels.com/photos/1126359/pexels-photo-1126359.jpeg?auto=compress&cs=tinysrgb&w=400', price: 45.99 },
   ];
 
-  const stories = [
+  const [stories, setStories] = useState([
     {
       id: '1',
       title: 'Taze Makarna Yapımı',
@@ -97,9 +99,9 @@ export function ContentManagement() {
       archived: true,
       priority: 3
     }
-  ];
+  ]);
 
-  const advertisements = [
+  const [advertisements, setAdvertisements] = useState([
     {
       id: '1',
       title: 'Happy Hour Özel',
@@ -115,7 +117,7 @@ export function ContentManagement() {
       impressions: 1567,
       targetAudience: 'Tüm müşteriler',
       createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
-      displayType: 'banner' // banner, popup, hero-slider
+      displayType: 'banner'
     },
     {
       id: '2',
@@ -134,9 +136,9 @@ export function ContentManagement() {
       createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
       displayType: 'popup'
     }
-  ];
+  ]);
 
-  const featuredProducts = [
+  const [featuredProducts, setFeaturedProducts] = useState([
     {
       id: '1',
       productId: 'pasta-1',
@@ -144,7 +146,6 @@ export function ContentManagement() {
       productImage: 'https://images.pexels.com/photos/4518843/pexels-photo-4518843.jpeg?auto=compress&cs=tinysrgb&w=400',
       productPrice: 89.99,
       displayOrder: 1,
-      isActive: true,
       addedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000)
     },
     {
@@ -154,10 +155,9 @@ export function ContentManagement() {
       productImage: 'https://images.pexels.com/photos/2147491/pexels-photo-2147491.jpeg?auto=compress&cs=tinysrgb&w=400',
       productPrice: 75.99,
       displayOrder: 2,
-      isActive: true,
       addedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000)
     }
-  ];
+  ]);
 
   const getTimeRemaining = (expiresAt) => {
     const now = new Date();
@@ -198,7 +198,100 @@ export function ContentManagement() {
   };
 
   const toggleArchive = (id, type) => {
-    console.log(`Toggling archive for ${type} ${id}`);
+    if (type === 'story') {
+      setStories(prev => prev.map(story => 
+        story.id === id ? { ...story, archived: !story.archived, active: story.archived } : story
+      ));
+    } else if (type === 'ad') {
+      setAdvertisements(prev => prev.map(ad => 
+        ad.id === id ? { ...ad, archived: !ad.archived, active: ad.archived } : ad
+      ));
+    }
+  };
+
+  const addProductToFeatured = (product) => {
+    const newFeaturedProduct = {
+      id: Date.now().toString(),
+      productId: product.id,
+      productName: product.name,
+      productImage: product.image,
+      productPrice: product.price,
+      displayOrder: featuredProducts.length + 1,
+      addedAt: new Date()
+    };
+    setFeaturedProducts(prev => [...prev, newFeaturedProduct]);
+  };
+
+  const removeFromFeatured = (id) => {
+    setFeaturedProducts(prev => prev.filter(product => product.id !== id));
+  };
+
+  // Drag and drop handlers for stories
+  const handleStoryDragStart = (e, storyId) => {
+    setDraggedStory(storyId);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  const handleStoryDragOver = (e) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  };
+
+  const handleStoryDrop = (e, targetStoryId) => {
+    e.preventDefault();
+    
+    if (draggedStory && draggedStory !== targetStoryId) {
+      const draggedIndex = stories.findIndex(story => story.id === draggedStory);
+      const targetIndex = stories.findIndex(story => story.id === targetStoryId);
+      
+      const newStories = [...stories];
+      const [draggedItem] = newStories.splice(draggedIndex, 1);
+      newStories.splice(targetIndex, 0, draggedItem);
+      
+      // Update priority values
+      const updatedStories = newStories.map((story, index) => ({
+        ...story,
+        priority: index + 1
+      }));
+      
+      setStories(updatedStories);
+    }
+    
+    setDraggedStory(null);
+  };
+
+  // Drag and drop handlers for ads
+  const handleAdDragStart = (e, adId) => {
+    setDraggedAd(adId);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  const handleAdDragOver = (e) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  };
+
+  const handleAdDrop = (e, targetAdId) => {
+    e.preventDefault();
+    
+    if (draggedAd && draggedAd !== targetAdId) {
+      const draggedIndex = advertisements.findIndex(ad => ad.id === draggedAd);
+      const targetIndex = advertisements.findIndex(ad => ad.id === targetAdId);
+      
+      const newAds = [...advertisements];
+      const [draggedItem] = newAds.splice(draggedIndex, 1);
+      newAds.splice(targetIndex, 0, draggedItem);
+      
+      // Update priority values
+      const updatedAds = newAds.map((ad, index) => ({
+        ...ad,
+        priority: index + 1
+      }));
+      
+      setAdvertisements(updatedAds);
+    }
+    
+    setDraggedAd(null);
   };
 
   const currentStories = showArchived ? stories.filter(s => s.archived) : stories.filter(s => !s.archived);
@@ -293,8 +386,8 @@ export function ContentManagement() {
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent className="bg-slate-700 border-slate-600">
-                          <SelectItem value="süresiz">Süresiz</SelectItem>
                           <SelectItem value="24h">24 Saat</SelectItem>
+                          <SelectItem value="never">Süresiz</SelectItem>
                           <SelectItem value="custom">Özel Gün Sayısı</SelectItem>
                         </SelectContent>
                       </Select>
@@ -353,7 +446,18 @@ export function ContentManagement() {
 
           <div className="space-y-4">
             {currentStories.sort((a, b) => a.priority - b.priority).map((story, index) => (
-              <div key={story.id} className="bg-slate-800/30 rounded-lg p-4 border border-slate-700">
+              <div 
+                key={story.id} 
+                className={cn(
+                  "bg-slate-800/30 rounded-lg p-4 border border-slate-700 transition-all duration-200",
+                  draggedStory === story.id && "opacity-50"
+                )}
+                draggable
+                onDragStart={(e) => handleStoryDragStart(e, story.id)}
+                onDragOver={handleStoryDragOver}
+                onDrop={(e) => handleStoryDrop(e, story.id)}
+                onDragEnd={() => setDraggedStory(null)}
+              >
                 <div className="flex items-start space-x-4">
                   <div className="flex items-center space-x-2">
                     <GripVertical className="w-4 h-4 text-slate-500 cursor-move" />
@@ -460,8 +564,8 @@ export function ContentManagement() {
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent className="bg-slate-700 border-slate-600">
-                          <SelectItem value="süresiz">Süresiz</SelectItem>
                           <SelectItem value="24h">24 Saat</SelectItem>
+                          <SelectItem value="never">Süresiz</SelectItem>
                           <SelectItem value="custom">Özel Gün Sayısı</SelectItem>
                         </SelectContent>
                       </Select>
@@ -520,7 +624,18 @@ export function ContentManagement() {
 
           <div className="space-y-4">
             {currentAds.sort((a, b) => a.priority - b.priority).map((ad) => (
-              <div key={ad.id} className="bg-slate-800/30 rounded-lg p-4 border border-slate-700">
+              <div 
+                key={ad.id} 
+                className={cn(
+                  "bg-slate-800/30 rounded-lg p-4 border border-slate-700 transition-all duration-200",
+                  draggedAd === ad.id && "opacity-50"
+                )}
+                draggable
+                onDragStart={(e) => handleAdDragStart(e, ad.id)}
+                onDragOver={handleAdDragOver}
+                onDrop={(e) => handleAdDrop(e, ad.id)}
+                onDragEnd={() => setDraggedAd(null)}
+              >
                 <div className="flex items-start space-x-4">
                   <div className="flex items-center space-x-2">
                     <GripVertical className="w-4 h-4 text-slate-500 cursor-move" />
@@ -608,6 +723,7 @@ export function ContentManagement() {
                     <div
                       key={item.id}
                       className="border border-slate-600 rounded-lg p-4 cursor-pointer hover:border-blue-400 transition-colors"
+                      onClick={() => addProductToFeatured(item)}
                     >
                       <div className="w-full h-32 rounded-lg overflow-hidden mb-3">
                         <img 
@@ -654,8 +770,12 @@ export function ContentManagement() {
                       </div>
                       
                       <div className="flex items-center space-x-2">
-                        <Switch checked={product.isActive} />
-                        <Button variant="outline" size="icon" className="h-8 w-8 border-red-600 hover:bg-red-600/20 text-red-400">
+                        <Button 
+                          variant="outline" 
+                          size="icon" 
+                          className="h-8 w-8 border-red-600 hover:bg-red-600/20 text-red-400"
+                          onClick={() => removeFromFeatured(product.id)}
+                        >
                           <Trash2 className="w-4 h-4" />
                         </Button>
                       </div>

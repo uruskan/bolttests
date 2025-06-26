@@ -240,15 +240,15 @@ export function DashboardOverview() {
               <ChefHat className="w-6 h-6" />
               <span className="text-sm font-medium">Menü Öğesi Ekle</span>
             </Button>
-            <Button variant="outline" className="h-20 flex flex-col items-center justify-center space-y-2 border-slate-600 hover:bg-slate-700 text-slate-300">
+            <Button className="h-20 flex flex-col items-center justify-center space-y-2 bg-gradient-to-br from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white">
               <Megaphone className="w-6 h-6" />
               <span className="text-sm font-medium">Reklam Oluştur</span>
             </Button>
-            <Button variant="outline" className="h-20 flex flex-col items-center justify-center space-y-2 border-slate-600 hover:bg-slate-700 text-slate-300">
+            <Button className="h-20 flex flex-col items-center justify-center space-y-2 bg-gradient-to-br from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white">
               <Camera className="w-6 h-6" />
               <span className="text-sm font-medium">Hikaye Ekle</span>
             </Button>
-            <Button variant="outline" className="h-20 flex flex-col items-center justify-center space-y-2 border-slate-600 hover:bg-slate-700 text-slate-300">
+            <Button className="h-20 flex flex-col items-center justify-center space-y-2 bg-gradient-to-br from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white">
               <Palette className="w-6 h-6" />
               <span className="text-sm font-medium">Tema Düzenle</span>
             </Button>

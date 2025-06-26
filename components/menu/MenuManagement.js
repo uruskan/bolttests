@@ -25,7 +25,8 @@ import {
   EyeOff,
   Camera,
   Check,
-  X
+  X,
+  GripVertical
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -37,8 +38,9 @@ export function MenuManagement() {
   const [isAddingItem, setIsAddingItem] = useState(false);
   const [editingPrice, setEditingPrice] = useState(null);
   const [tempPrice, setTempPrice] = useState('');
+  const [draggedCategory, setDraggedCategory] = useState(null);
 
-  const categories = [
+  const [categories, setCategories] = useState([
     { 
       id: 'appetizers', 
       name: 'Başlangıçlar', 
@@ -93,9 +95,9 @@ export function MenuManagement() {
       isActive: false,
       image: 'https://images.pexels.com/photos/1407846/pexels-photo-1407846.jpeg?auto=compress&cs=tinysrgb&w=400'
     },
-  ];
+  ]);
 
-  const menuItems = [
+  const [menuItems, setMenuItems] = useState([
     {
       id: '1',
       name: 'Bruschetta Classica',
@@ -145,7 +147,7 @@ export function MenuManagement() {
       isFeatured: false,
       isActive: true
     },
-  ];
+  ]);
 
   const filteredItems = menuItems
     .filter(item => item.category === selectedCategory)
@@ -170,7 +172,12 @@ export function MenuManagement() {
   };
 
   const handlePriceSave = (itemId) => {
-    console.log(`Updating price for item ${itemId} to ${tempPrice}`);
+    const newPrice = parseFloat(tempPrice);
+    if (!isNaN(newPrice) && newPrice > 0) {
+      setMenuItems(prev => prev.map(item => 
+        item.id === itemId ? { ...item, price: newPrice } : item
+      ));
+    }
     setEditingPrice(null);
     setTempPrice('');
   };
@@ -181,11 +188,53 @@ export function MenuManagement() {
   };
 
   const toggleItemStatus = (itemId) => {
-    console.log(`Toggling status for item ${itemId}`);
+    setMenuItems(prev => prev.map(item => 
+      item.id === itemId ? { ...item, isActive: !item.isActive } : item
+    ));
   };
 
   const toggleCategoryStatus = (categoryId) => {
-    console.log(`Toggling status for category ${categoryId}`);
+    setCategories(prev => prev.map(category => 
+      category.id === categoryId ? { ...category, isActive: !category.isActive } : category
+    ));
+  };
+
+  // Drag and drop handlers for categories
+  const handleCategoryDragStart = (e, categoryId) => {
+    setDraggedCategory(categoryId);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  const handleCategoryDragOver = (e) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  };
+
+  const handleCategoryDrop = (e, targetCategoryId) => {
+    e.preventDefault();
+    
+    if (draggedCategory && draggedCategory !== targetCategoryId) {
+      const draggedIndex = categories.findIndex(cat => cat.id === draggedCategory);
+      const targetIndex = categories.findIndex(cat => cat.id === targetCategoryId);
+      
+      const newCategories = [...categories];
+      const [draggedItem] = newCategories.splice(draggedIndex, 1);
+      newCategories.splice(targetIndex, 0, draggedItem);
+      
+      // Update order values
+      const updatedCategories = newCategories.map((cat, index) => ({
+        ...cat,
+        order: index + 1
+      }));
+      
+      setCategories(updatedCategories);
+    }
+    
+    setDraggedCategory(null);
+  };
+
+  const handleCategoryDragEnd = () => {
+    setDraggedCategory(null);
   };
 
   return (
@@ -311,18 +360,27 @@ export function MenuManagement() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
-              {categories.map((category) => (
+              {categories
+                .sort((a, b) => a.order - b.order)
+                .map((category) => (
                 <div
                   key={category.id}
                   className={cn(
                     "border rounded-lg p-3 cursor-pointer transition-all duration-200 relative",
                     selectedCategory === category.id
                       ? "bg-gradient-to-r from-blue-500/20 to-purple-500/20 border-blue-500/30"
-                      : "border-slate-600 hover:border-slate-500 hover:bg-slate-700/30"
+                      : "border-slate-600 hover:border-slate-500 hover:bg-slate-700/30",
+                    draggedCategory === category.id && "opacity-50"
                   )}
                   onClick={() => setSelectedCategory(category.id)}
+                  draggable
+                  onDragStart={(e) => handleCategoryDragStart(e, category.id)}
+                  onDragOver={handleCategoryDragOver}
+                  onDrop={(e) => handleCategoryDrop(e, category.id)}
+                  onDragEnd={handleCategoryDragEnd}
                 >
                   <div className="flex items-start space-x-3">
+                    <GripVertical className="w-4 h-4 text-slate-500 cursor-move mt-1 flex-shrink-0" />
                     <div className="w-12 h-12 rounded-lg overflow-hidden bg-slate-700 flex-shrink-0">
                       <img 
                         src={category.image} 
@@ -366,9 +424,6 @@ export function MenuManagement() {
                         {category.description}
                       </p>
                     </div>
-                  </div>
-                  <div className="absolute top-2 right-2">
-                    <Move className="w-3 h-3 text-slate-500 opacity-50" />
                   </div>
                 </div>
               ))}
@@ -424,11 +479,12 @@ export function MenuManagement() {
                   <div 
                     key={item.id} 
                     className={cn(
-                      "bg-slate-700/30 rounded-lg p-4 transition-all duration-200 border",
+                      "rounded-lg p-4 transition-all duration-200 border-2 cursor-pointer",
                       item.isActive 
-                        ? "border-slate-600 hover:border-blue-500/50 hover:bg-slate-700/50" 
-                        : "border-slate-700 opacity-60"
+                        ? "border-green-500 bg-slate-700/30 hover:border-green-400 hover:bg-slate-700/50" 
+                        : "border-red-500 bg-slate-700/20 opacity-60 hover:border-red-400"
                     )}
+                    onClick={() => toggleItemStatus(item.id)}
                   >
                     <div className="flex items-start space-x-4">
                       <div className="w-20 h-20 rounded-lg overflow-hidden bg-slate-700 flex-shrink-0">
@@ -512,16 +568,12 @@ export function MenuManagement() {
 
                         <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-2">
-                            <Switch
-                              checked={item.isActive}
-                              onCheckedChange={() => toggleItemStatus(item.id)}
-                            />
-                            <Label className="text-sm text-slate-300">
+                            <Badge className={item.isActive ? "bg-green-500/20 text-green-300 border-green-500/30" : "bg-red-500/20 text-red-300 border-red-500/30"}>
                               {item.isActive ? 'Aktif' : 'Pasif'}
-                            </Label>
+                            </Badge>
                           </div>
                           
-                          <div className="flex items-center space-x-2">
+                          <div className="flex items-center space-x-2" onClick={(e) => e.stopPropagation()}>
                             <Button variant="outline" size="icon" className="h-8 w-8 border-slate-600 hover:bg-slate-600 text-slate-300">
                               <Edit className="w-4 h-4" />
                             </Button>
