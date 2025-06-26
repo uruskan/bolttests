@@ -562,15 +562,15 @@ export function MenuManagement() {
             </CardHeader>
             <CardContent>
               <div className={cn(
-                "gap-6",
-                viewMode === 'grid' ? "grid grid-cols-1 xl:grid-cols-2" : "space-y-3"
+                "gap-3",
+                viewMode === 'grid' ? "grid grid-cols-1 xl:grid-cols-2" : "space-y-2"
               )}>
                 {filteredItems.map((item) => (
                   <div 
                     key={item.id} 
                     className={cn(
                       "rounded-lg transition-all duration-200 border-2 cursor-pointer",
-                      viewMode === 'list' ? "p-3" : "p-4",
+                      viewMode === 'list' ? "p-2" : "p-4",
                       item.isActive 
                         ? "border-green-500 bg-slate-700/30 hover:border-green-400 hover:bg-slate-700/50" 
                         : "border-red-500 bg-slate-700/20 opacity-60 hover:border-red-400",
@@ -583,115 +583,168 @@ export function MenuManagement() {
                     onDrop={(e) => handleItemDrop(e, item.id)}
                     onDragEnd={handleItemDragEnd}
                   >
-                    <div className={cn(
-                      "flex items-start space-x-3",
-                      viewMode === 'list' ? "items-center" : "items-start"
-                    )}>
-                      <GripVertical className="w-4 h-4 text-slate-500 cursor-move flex-shrink-0 mt-1" />
-                      <div className={cn(
-                        "rounded-lg overflow-hidden bg-slate-700 flex-shrink-0",
-                        viewMode === 'list' ? "w-16 h-16" : "w-20 h-20"
-                      )}>
-                        <img 
-                          src={item.image} 
-                          alt={item.name}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                      
-                      <div className="flex-1 min-w-0">
-                        <div className={cn(
-                          "flex items-start justify-between",
-                          viewMode === 'list' ? "items-center" : "mb-2"
-                        )}>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center space-x-2 mb-1">
-                              <h3 className="font-semibold text-white truncate">{item.name}</h3>
-                              {item.isFeatured && (
-                                <Star className="w-4 h-4 text-yellow-400 fill-current flex-shrink-0" />
-                              )}
-                            </div>
-                            {viewMode === 'grid' && (
-                              <p className="text-sm text-slate-300 mb-2 line-clamp-2">{item.description}</p>
-                            )}
-                            
-                            <div className={cn(
-                              "flex items-center text-xs text-slate-400",
-                              viewMode === 'list' ? "space-x-4" : "space-x-4 mb-2"
-                            )}>
-                              {item.prepTime && (
-                                <div className="flex items-center">
-                                  <Clock className="w-3 h-3 mr-1" />
-                                  {item.prepTime}
-                                </div>
-                              )}
-                              {item.dietary.length > 0 && viewMode === 'grid' && (
-                                <div className="flex flex-wrap gap-1">
-                                  {item.dietary.map((diet) => (
-                                    <Badge key={diet} className={cn("text-xs border", getDietaryBadgeColor(diet))}>
-                                      {diet}
-                                    </Badge>
-                                  ))}
-                                </div>
-                              )}
-                            </div>
-                          </div>
+                    {viewMode === 'list' ? (
+                      // Ultra Compact List Layout - Similar to your image
+                      <div className="flex items-center space-x-3">
+                        <GripVertical className="w-4 h-4 text-slate-500 cursor-move flex-shrink-0" />
+                        
+                        {/* Product Image */}
+                        <div className="w-12 h-12 rounded-lg overflow-hidden bg-slate-700 flex-shrink-0">
+                          <img 
+                            src={item.image} 
+                            alt={item.name}
+                            className="w-full h-full object-cover"
+                          />
                         </div>
-
-                        {/* Compact action row for list mode */}
-                        <div className={cn(
-                          "flex items-center justify-between",
-                          viewMode === 'list' ? "mt-0" : "mt-2"
-                        )} onClick={(e) => e.stopPropagation()}>
-                          <div className="flex items-center space-x-3">
-                            <Button variant="outline" size="icon" className="h-7 w-7 border-slate-600 hover:bg-slate-600 text-slate-300">
-                              <Edit className="w-3 h-3" />
-                            </Button>
-                            <Button variant="outline" size="icon" className="h-7 w-7 border-red-600 hover:bg-red-600/20 text-red-400">
-                              <Trash2 className="w-3 h-3" />
-                            </Button>
+                        
+                        {/* Product Info */}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center space-x-2">
+                            <h3 className="font-medium text-white text-sm truncate">{item.name}</h3>
+                            {item.isFeatured && (
+                              <Star className="w-3 h-3 text-yellow-400 fill-current flex-shrink-0" />
+                            )}
                           </div>
-                          
-                          {/* Price field */}
-                          <div className="flex items-center">
-                            <DollarSign className="w-3 h-3 mr-1 text-slate-400" />
-                            {editingPrice === item.id ? (
-                              <div className="flex items-center space-x-1">
-                                <Input
-                                  value={tempPrice}
-                                  onChange={(e) => setTempPrice(e.target.value)}
-                                  onKeyDown={(e) => {
-                                    if (e.key === 'Enter') handlePriceSave(item.id);
-                                    if (e.key === 'Escape') handlePriceCancel();
-                                  }}
-                                  className="w-16 h-6 text-xs bg-slate-600 border-slate-500 text-white px-1"
-                                  autoFocus
-                                />
-                                <Button size="sm" onClick={() => handlePriceSave(item.id)} className="h-6 px-1 text-xs">
-                                  <Check className="w-3 h-3" />
-                                </Button>
-                                <Button size="sm" variant="outline" onClick={handlePriceCancel} className="h-6 px-1 text-xs">
-                                  <X className="w-3 h-3" />
-                                </Button>
-                              </div>
-                            ) : (
-                              <span 
-                                className="cursor-pointer hover:text-blue-400 font-medium text-sm px-2 py-1 rounded bg-slate-600/50 hover:bg-slate-600"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handlePriceEdit(item.id, item.price);
+                          <p className="text-xs text-slate-400 truncate">{item.description}</p>
+                        </div>
+                        
+                        {/* Price */}
+                        <div className="flex items-center" onClick={(e) => e.stopPropagation()}>
+                          {editingPrice === item.id ? (
+                            <div className="flex items-center space-x-1">
+                              <Input
+                                value={tempPrice}
+                                onChange={(e) => setTempPrice(e.target.value)}
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter') handlePriceSave(item.id);
+                                  if (e.key === 'Escape') handlePriceCancel();
                                 }}
-                              >
-                                ₺{item.price}
-                                {item.originalPrice && (
-                                  <span className="line-through text-slate-500 ml-1 text-xs">₺{item.originalPrice}</span>
+                                className="w-16 h-6 text-xs bg-slate-600 border-slate-500 text-white px-1"
+                                autoFocus
+                              />
+                              <Button size="sm" onClick={() => handlePriceSave(item.id)} className="h-6 px-1 text-xs">
+                                <Check className="w-3 h-3" />
+                              </Button>
+                              <Button size="sm" variant="outline" onClick={handlePriceCancel} className="h-6 px-1 text-xs">
+                                <X className="w-3 h-3" />
+                              </Button>
+                            </div>
+                          ) : (
+                            <span 
+                              className="cursor-pointer hover:text-blue-400 font-medium text-sm px-2 py-1 rounded bg-slate-600/50 hover:bg-slate-600 min-w-[60px] text-center"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handlePriceEdit(item.id, item.price);
+                              }}
+                            >
+                              ₺{item.price}
+                            </span>
+                          )}
+                        </div>
+                        
+                        {/* Action Buttons */}
+                        <div className="flex items-center space-x-1" onClick={(e) => e.stopPropagation()}>
+                          <Button variant="outline" size="icon" className="h-6 w-6 border-slate-600 hover:bg-slate-600 text-slate-300">
+                            <Edit className="w-3 h-3" />
+                          </Button>
+                          <Button variant="outline" size="icon" className="h-6 w-6 border-red-600 hover:bg-red-600/20 text-red-400">
+                            <Trash2 className="w-3 h-3" />
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      // Grid Layout (unchanged)
+                      <div className="flex items-start space-x-3">
+                        <GripVertical className="w-4 h-4 text-slate-500 cursor-move flex-shrink-0 mt-1" />
+                        <div className="w-20 h-20 rounded-lg overflow-hidden bg-slate-700 flex-shrink-0">
+                          <img 
+                            src={item.image} 
+                            alt={item.name}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-start justify-between mb-2">
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center space-x-2 mb-1">
+                                <h3 className="font-semibold text-white truncate">{item.name}</h3>
+                                {item.isFeatured && (
+                                  <Star className="w-4 h-4 text-yellow-400 fill-current flex-shrink-0" />
                                 )}
-                              </span>
-                            )}
+                              </div>
+                              <p className="text-sm text-slate-300 mb-2 line-clamp-2">{item.description}</p>
+                              
+                              <div className="flex items-center space-x-4 text-xs text-slate-400 mb-2">
+                                {item.prepTime && (
+                                  <div className="flex items-center">
+                                    <Clock className="w-3 h-3 mr-1" />
+                                    {item.prepTime}
+                                  </div>
+                                )}
+                                {item.dietary.length > 0 && (
+                                  <div className="flex flex-wrap gap-1">
+                                    {item.dietary.map((diet) => (
+                                      <Badge key={diet} className={cn("text-xs border", getDietaryBadgeColor(diet))}>
+                                        {diet}
+                                      </Badge>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center justify-between mt-2" onClick={(e) => e.stopPropagation()}>
+                            <div className="flex items-center space-x-3">
+                              <Button variant="outline" size="icon" className="h-7 w-7 border-slate-600 hover:bg-slate-600 text-slate-300">
+                                <Edit className="w-3 h-3" />
+                              </Button>
+                              <Button variant="outline" size="icon" className="h-7 w-7 border-red-600 hover:bg-red-600/20 text-red-400">
+                                <Trash2 className="w-3 h-3" />
+                              </Button>
+                            </div>
+                            
+                            <div className="flex items-center">
+                              <DollarSign className="w-3 h-3 mr-1 text-slate-400" />
+                              {editingPrice === item.id ? (
+                                <div className="flex items-center space-x-1">
+                                  <Input
+                                    value={tempPrice}
+                                    onChange={(e) => setTempPrice(e.target.value)}
+                                    onKeyDown={(e) => {
+                                      if (e.key === 'Enter') handlePriceSave(item.id);
+                                      if (e.key === 'Escape') handlePriceCancel();
+                                    }}
+                                    className="w-16 h-6 text-xs bg-slate-600 border-slate-500 text-white px-1"
+                                    autoFocus
+                                  />
+                                  <Button size="sm" onClick={() => handlePriceSave(item.id)} className="h-6 px-1 text-xs">
+                                    <Check className="w-3 h-3" />
+                                  </Button>
+                                  <Button size="sm" variant="outline" onClick={handlePriceCancel} className="h-6 px-1 text-xs">
+                                    <X className="w-3 h-3" />
+                                  </Button>
+                                </div>
+                              ) : (
+                                <span 
+                                  className="cursor-pointer hover:text-blue-400 font-medium text-sm px-2 py-1 rounded bg-slate-600/50 hover:bg-slate-600"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handlePriceEdit(item.id, item.price);
+                                  }}
+                                >
+                                  ₺{item.price}
+                                  {item.originalPrice && (
+                                    <span className="line-through text-slate-500 ml-1 text-xs">₺{item.originalPrice}</span>
+                                  )}
+                                </span>
+                              )}
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
+                    )}
                   </div>
                 ))}
               </div>
