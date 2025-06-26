@@ -26,6 +26,7 @@ import {
   Facebook,
   Twitter
 } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 export function RestaurantSettings() {
   const [notifications, setNotifications] = useState({
@@ -61,30 +62,57 @@ export function RestaurantSettings() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-white">Restoran Ayarları</h1>
-          <p className="text-slate-400 mt-1">Restoran profilinizi ve tercihlerinizi yönetin</p>
+          <h1 className="text-3xl font-bold text-foreground">Restoran Ayarları</h1>
+          <p className="text-muted-foreground mt-1">Restoran profilinizi ve tercihlerinizi yönetin</p>
         </div>
-        <Button className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 mt-4 sm:mt-0">
+        <Button className="bg-primary hover:bg-primary/90 mt-4 sm:mt-0">
           <Save className="w-4 h-4 mr-2" />
           Tüm Değişiklikleri Kaydet
         </Button>
       </div>
 
       <Tabs defaultValue="profile" className="w-full">
-        <TabsList className="grid w-full grid-cols-4 bg-slate-800/50 border border-slate-700/50">
-          <TabsTrigger value="profile" className="flex items-center data-[state=active]:bg-blue-500/20 data-[state=active]:text-blue-300">
+        <TabsList className={cn(
+          "grid w-full grid-cols-4 transition-colors duration-200",
+          "bg-muted border border-border"
+        )}>
+          <TabsTrigger 
+            value="profile" 
+            className={cn(
+              "flex items-center transition-all duration-200",
+              "data-[state=active]:bg-background data-[state=active]:text-foreground"
+            )}
+          >
             <Store className="w-4 h-4 mr-2" />
             Profil
           </TabsTrigger>
-          <TabsTrigger value="hours" className="flex items-center data-[state=active]:bg-blue-500/20 data-[state=active]:text-blue-300">
+          <TabsTrigger 
+            value="hours" 
+            className={cn(
+              "flex items-center transition-all duration-200",
+              "data-[state=active]:bg-background data-[state=active]:text-foreground"
+            )}
+          >
             <Clock className="w-4 h-4 mr-2" />
             Çalışma Saatleri
           </TabsTrigger>
-          <TabsTrigger value="notifications" className="flex items-center data-[state=active]:bg-blue-500/20 data-[state=active]:text-blue-300">
+          <TabsTrigger 
+            value="notifications" 
+            className={cn(
+              "flex items-center transition-all duration-200",
+              "data-[state=active]:bg-background data-[state=active]:text-foreground"
+            )}
+          >
             <Bell className="w-4 h-4 mr-2" />
             Bildirimler
           </TabsTrigger>
-          <TabsTrigger value="security" className="flex items-center data-[state=active]:bg-blue-500/20 data-[state=active]:text-blue-300">
+          <TabsTrigger 
+            value="security" 
+            className={cn(
+              "flex items-center transition-all duration-200",
+              "data-[state=active]:bg-background data-[state=active]:text-foreground"
+            )}
+          >
             <Shield className="w-4 h-4 mr-2" />
             Güvenlik
           </TabsTrigger>
@@ -93,23 +121,23 @@ export function RestaurantSettings() {
         <TabsContent value="profile" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Basic Information */}
-            <Card className="bg-slate-800/50 backdrop-blur-xl border-slate-700/50">
+            <Card className="bg-card border-border">
               <CardHeader>
-                <CardTitle className="text-white">Temel Bilgiler</CardTitle>
+                <CardTitle className="text-foreground">Temel Bilgiler</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <Label htmlFor="restaurantName" className="text-slate-300">Restoran Adı</Label>
-                  <Input id="restaurantName" defaultValue="Bella Vista" className="mt-1 bg-slate-700 border-slate-600 text-white" />
+                  <Label htmlFor="restaurantName" className="text-foreground">Restoran Adı</Label>
+                  <Input id="restaurantName" defaultValue="Bella Vista" className="mt-1 bg-background border-border text-foreground" />
                 </div>
                 
                 <div>
-                  <Label htmlFor="cuisine" className="text-slate-300">Mutfak Türü</Label>
+                  <Label htmlFor="cuisine" className="text-foreground">Mutfak Türü</Label>
                   <Select defaultValue="italian">
-                    <SelectTrigger className="mt-1 bg-slate-700 border-slate-600 text-white">
+                    <SelectTrigger className="mt-1 bg-background border-border text-foreground">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="bg-slate-700 border-slate-600">
+                    <SelectContent className="bg-background border-border">
                       <SelectItem value="italian">İtalyan</SelectItem>
                       <SelectItem value="turkish">Türk</SelectItem>
                       <SelectItem value="french">Fransız</SelectItem>
@@ -122,88 +150,88 @@ export function RestaurantSettings() {
                 </div>
 
                 <div>
-                  <Label htmlFor="description" className="text-slate-300">Açıklama</Label>
+                  <Label htmlFor="description" className="text-foreground">Açıklama</Label>
                   <Textarea 
                     id="description" 
                     defaultValue="Şehrin kalbinde otantik İtalyan mutfağı. Nesiller boyu aktarılan geleneksel tarifleri sunan aile işletmesi restoran."
-                    className="mt-1 h-24 bg-slate-700 border-slate-600 text-white" 
+                    className="mt-1 h-24 bg-background border-border text-foreground" 
                   />
                 </div>
 
                 <div>
-                  <Label className="text-slate-300">Restoran Logosu</Label>
-                  <div className="mt-2 border-2 border-dashed border-slate-600 rounded-lg p-6 text-center hover:border-blue-400 transition-colors cursor-pointer">
-                    <Camera className="w-8 h-8 text-slate-400 mx-auto mb-2" />
-                    <p className="text-sm text-slate-300">Logo yüklemek için tıklayın</p>
-                    <p className="text-xs text-slate-500 mt-1">PNG, JPG 2MB'a kadar</p>
+                  <Label className="text-foreground">Restoran Logosu</Label>
+                  <div className="mt-2 border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-primary transition-colors cursor-pointer">
+                    <Camera className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
+                    <p className="text-sm text-muted-foreground">Logo yüklemek için tıklayın</p>
+                    <p className="text-xs text-muted-foreground mt-1">PNG, JPG 2MB'a kadar</p>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
             {/* Contact Information */}
-            <Card className="bg-slate-800/50 backdrop-blur-xl border-slate-700/50">
+            <Card className="bg-card border-border">
               <CardHeader>
-                <CardTitle className="text-white">İletişim Bilgileri</CardTitle>
+                <CardTitle className="text-foreground">İletişim Bilgileri</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <Label htmlFor="address" className="text-slate-300">Adres</Label>
+                  <Label htmlFor="address" className="text-foreground">Adres</Label>
                   <div className="relative mt-1">
-                    <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
+                    <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input 
                       id="address" 
                       defaultValue="Atatürk Caddesi No:123, Merkez, İstanbul"
-                      className="pl-10 bg-slate-700 border-slate-600 text-white" 
+                      className="pl-10 bg-background border-border text-foreground" 
                     />
                   </div>
                 </div>
 
                 <div>
-                  <Label htmlFor="phone" className="text-slate-300">Telefon Numarası</Label>
+                  <Label htmlFor="phone" className="text-foreground">Telefon Numarası</Label>
                   <div className="relative mt-1">
-                    <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
+                    <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input 
                       id="phone" 
                       defaultValue="+90 (212) 123-4567"
-                      className="pl-10 bg-slate-700 border-slate-600 text-white" 
+                      className="pl-10 bg-background border-border text-foreground" 
                     />
                   </div>
                 </div>
 
                 <div>
-                  <Label htmlFor="email" className="text-slate-300">E-posta</Label>
+                  <Label htmlFor="email" className="text-foreground">E-posta</Label>
                   <div className="relative mt-1">
-                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
+                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input 
                       id="email" 
                       type="email"
                       defaultValue="info@bellavista.com"
-                      className="pl-10 bg-slate-700 border-slate-600 text-white" 
+                      className="pl-10 bg-background border-border text-foreground" 
                     />
                   </div>
                 </div>
 
                 <div>
-                  <Label htmlFor="website" className="text-slate-300">Website</Label>
+                  <Label htmlFor="website" className="text-foreground">Website</Label>
                   <div className="relative mt-1">
-                    <Globe className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
+                    <Globe className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input 
                       id="website" 
                       defaultValue="https://bellavista.com"
-                      className="pl-10 bg-slate-700 border-slate-600 text-white" 
+                      className="pl-10 bg-background border-border text-foreground" 
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="capacity" className="text-slate-300">Oturma Kapasitesi</Label>
-                    <Input id="capacity" type="number" defaultValue="80" className="mt-1 bg-slate-700 border-slate-600 text-white" />
+                    <Label htmlFor="capacity" className="text-foreground">Oturma Kapasitesi</Label>
+                    <Input id="capacity" type="number" defaultValue="80" className="mt-1 bg-background border-border text-foreground" />
                   </div>
                   <div>
-                    <Label htmlFor="tables" className="text-slate-300">Masa Sayısı</Label>
-                    <Input id="tables" type="number" defaultValue="20" className="mt-1 bg-slate-700 border-slate-600 text-white" />
+                    <Label htmlFor="tables" className="text-foreground">Masa Sayısı</Label>
+                    <Input id="tables" type="number" defaultValue="20" className="mt-1 bg-background border-border text-foreground" />
                   </div>
                 </div>
               </CardContent>
@@ -211,42 +239,42 @@ export function RestaurantSettings() {
           </div>
 
           {/* Social Media */}
-          <Card className="bg-slate-800/50 backdrop-blur-xl border-slate-700/50">
+          <Card className="bg-card border-border">
             <CardHeader>
-              <CardTitle className="text-white">Sosyal Medya Hesapları</CardTitle>
+              <CardTitle className="text-foreground">Sosyal Medya Hesapları</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <Label htmlFor="instagram" className="text-slate-300">Instagram</Label>
+                  <Label htmlFor="instagram" className="text-foreground">Instagram</Label>
                   <div className="relative mt-1">
-                    <Instagram className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
+                    <Instagram className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input 
                       id="instagram" 
                       placeholder="@bellavista"
-                      className="pl-10 bg-slate-700 border-slate-600 text-white" 
+                      className="pl-10 bg-background border-border text-foreground" 
                     />
                   </div>
                 </div>
                 <div>
-                  <Label htmlFor="facebook" className="text-slate-300">Facebook</Label>
+                  <Label htmlFor="facebook" className="text-foreground">Facebook</Label>
                   <div className="relative mt-1">
-                    <Facebook className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
+                    <Facebook className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input 
                       id="facebook" 
                       placeholder="facebook.com/bellavista"
-                      className="pl-10 bg-slate-700 border-slate-600 text-white" 
+                      className="pl-10 bg-background border-border text-foreground" 
                     />
                   </div>
                 </div>
                 <div>
-                  <Label htmlFor="twitter" className="text-slate-300">Twitter</Label>
+                  <Label htmlFor="twitter" className="text-foreground">Twitter</Label>
                   <div className="relative mt-1">
-                    <Twitter className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
+                    <Twitter className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input 
                       id="twitter" 
                       placeholder="@bellavista"
-                      className="pl-10 bg-slate-700 border-slate-600 text-white" 
+                      className="pl-10 bg-background border-border text-foreground" 
                     />
                   </div>
                 </div>
@@ -256,16 +284,16 @@ export function RestaurantSettings() {
         </TabsContent>
 
         <TabsContent value="hours" className="space-y-6">
-          <Card className="bg-slate-800/50 backdrop-blur-xl border-slate-700/50">
+          <Card className="bg-card border-border">
             <CardHeader>
-              <CardTitle className="text-white">Çalışma Saatleri</CardTitle>
+              <CardTitle className="text-foreground">Çalışma Saatleri</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 {days.map((day) => (
-                  <div key={day.key} className="flex items-center space-x-4 p-4 bg-slate-700/30 rounded-lg">
+                  <div key={day.key} className="flex items-center space-x-4 p-4 bg-accent/30 rounded-lg">
                     <div className="w-24">
-                      <Label className="font-medium text-white">{day.label}</Label>
+                      <Label className="font-medium text-foreground">{day.label}</Label>
                     </div>
                     
                     <div className="flex items-center space-x-2">
@@ -278,13 +306,13 @@ export function RestaurantSettings() {
                           }))
                         }
                       />
-                      <Label className="text-sm text-slate-300">Açık</Label>
+                      <Label className="text-sm text-muted-foreground">Açık</Label>
                     </div>
 
                     {!businessHours[day.key].closed && (
                       <>
                         <div className="flex items-center space-x-2">
-                          <Label className="text-sm text-slate-300">Açılış:</Label>
+                          <Label className="text-sm text-foreground">Açılış:</Label>
                           <Input
                             type="time"
                             value={businessHours[day.key].open}
@@ -294,12 +322,12 @@ export function RestaurantSettings() {
                                 [day.key]: { ...prev[day.key], open: e.target.value }
                               }))
                             }
-                            className="w-24 bg-slate-700 border-slate-600 text-white"
+                            className="w-24 bg-background border-border text-foreground"
                           />
                         </div>
                         
                         <div className="flex items-center space-x-2">
-                          <Label className="text-sm text-slate-300">Kapanış:</Label>
+                          <Label className="text-sm text-foreground">Kapanış:</Label>
                           <Input
                             type="time"
                             value={businessHours[day.key].close}
@@ -309,14 +337,14 @@ export function RestaurantSettings() {
                                 [day.key]: { ...prev[day.key], close: e.target.value }
                               }))
                             }
-                            className="w-24 bg-slate-700 border-slate-600 text-white"
+                            className="w-24 bg-background border-border text-foreground"
                           />
                         </div>
                       </>
                     )}
 
                     {businessHours[day.key].closed && (
-                      <div className="text-sm text-slate-500 italic">Kapalı</div>
+                      <div className="text-sm text-muted-foreground italic">Kapalı</div>
                     )}
                   </div>
                 ))}
@@ -326,9 +354,9 @@ export function RestaurantSettings() {
         </TabsContent>
 
         <TabsContent value="notifications" className="space-y-6">
-          <Card className="bg-slate-800/50 backdrop-blur-xl border-slate-700/50">
+          <Card className="bg-card border-border">
             <CardHeader>
-              <CardTitle className="text-white">Bildirim Tercihleri</CardTitle>
+              <CardTitle className="text-foreground">Bildirim Tercihleri</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-6">
@@ -339,10 +367,10 @@ export function RestaurantSettings() {
                   { key: 'customerReviews', label: 'Müşteri Yorumları', description: 'Yeni müşteri yorumları hakkında bildirim al' },
                   { key: 'promotions', label: 'Promosyon Hatırlatıcıları', description: 'Aktif promosyonlar ve kampanyalar hakkında hatırlatıcı' }
                 ].map((item) => (
-                  <div key={item.key} className="flex items-center justify-between p-4 bg-slate-700/30 rounded-lg">
+                  <div key={item.key} className="flex items-center justify-between p-4 bg-accent/30 rounded-lg">
                     <div className="flex-1">
-                      <div className="font-medium text-white">{item.label}</div>
-                      <div className="text-sm text-slate-400 mt-1">{item.description}</div>
+                      <div className="font-medium text-foreground">{item.label}</div>
+                      <div className="text-sm text-muted-foreground mt-1">{item.description}</div>
                     </div>
                     <Switch
                       checked={notifications[item.key]}
@@ -359,63 +387,63 @@ export function RestaurantSettings() {
 
         <TabsContent value="security" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card className="bg-slate-800/50 backdrop-blur-xl border-slate-700/50">
+            <Card className="bg-card border-border">
               <CardHeader>
-                <CardTitle className="text-white">Hesap Güvenliği</CardTitle>
+                <CardTitle className="text-foreground">Hesap Güvenliği</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <Label htmlFor="currentPassword" className="text-slate-300">Mevcut Şifre</Label>
-                  <Input id="currentPassword" type="password" className="mt-1 bg-slate-700 border-slate-600 text-white" />
+                  <Label htmlFor="currentPassword" className="text-foreground">Mevcut Şifre</Label>
+                  <Input id="currentPassword" type="password" className="mt-1 bg-background border-border text-foreground" />
                 </div>
                 
                 <div>
-                  <Label htmlFor="newPassword" className="text-slate-300">Yeni Şifre</Label>
-                  <Input id="newPassword" type="password" className="mt-1 bg-slate-700 border-slate-600 text-white" />
+                  <Label htmlFor="newPassword" className="text-foreground">Yeni Şifre</Label>
+                  <Input id="newPassword" type="password" className="mt-1 bg-background border-border text-foreground" />
                 </div>
 
                 <div>
-                  <Label htmlFor="confirmPassword" className="text-slate-300">Yeni Şifre Tekrar</Label>
-                  <Input id="confirmPassword" type="password" className="mt-1 bg-slate-700 border-slate-600 text-white" />
+                  <Label htmlFor="confirmPassword" className="text-foreground">Yeni Şifre Tekrar</Label>
+                  <Input id="confirmPassword" type="password" className="mt-1 bg-background border-border text-foreground" />
                 </div>
 
-                <Button className="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600">
+                <Button className="w-full bg-primary hover:bg-primary/90">
                   Şifreyi Güncelle
                 </Button>
               </CardContent>
             </Card>
 
-            <Card className="bg-slate-800/50 backdrop-blur-xl border-slate-700/50">
+            <Card className="bg-card border-border">
               <CardHeader>
-                <CardTitle className="text-white">Güvenlik Ayarları</CardTitle>
+                <CardTitle className="text-foreground">Güvenlik Ayarları</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <div className="font-medium text-white">İki Faktörlü Kimlik Doğrulama</div>
-                    <div className="text-sm text-slate-400">Ekstra güvenlik katmanı ekle</div>
+                    <div className="font-medium text-foreground">İki Faktörlü Kimlik Doğrulama</div>
+                    <div className="text-sm text-muted-foreground">Ekstra güvenlik katmanı ekle</div>
                   </div>
                   <Switch />
                 </div>
 
                 <div className="flex items-center justify-between">
                   <div>
-                    <div className="font-medium text-white">Giriş Bildirimleri</div>
-                    <div className="text-sm text-slate-400">Yeni girişler hakkında bildirim al</div>
+                    <div className="font-medium text-foreground">Giriş Bildirimleri</div>
+                    <div className="text-sm text-muted-foreground">Yeni girişler hakkında bildirim al</div>
                   </div>
                   <Switch defaultChecked />
                 </div>
 
                 <div className="flex items-center justify-between">
                   <div>
-                    <div className="font-medium text-white">Oturum Zaman Aşımı</div>
-                    <div className="text-sm text-slate-400">Hareketsizlik sonrası otomatik çıkış</div>
+                    <div className="font-medium text-foreground">Oturum Zaman Aşımı</div>
+                    <div className="text-sm text-muted-foreground">Hareketsizlik sonrası otomatik çıkış</div>
                   </div>
                   <Select defaultValue="30">
-                    <SelectTrigger className="w-24 bg-slate-700 border-slate-600 text-white">
+                    <SelectTrigger className="w-24 bg-background border-border text-foreground">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="bg-slate-700 border-slate-600">
+                    <SelectContent className="bg-background border-border">
                       <SelectItem value="15">15 dk</SelectItem>
                       <SelectItem value="30">30 dk</SelectItem>
                       <SelectItem value="60">1 saat</SelectItem>
@@ -424,9 +452,9 @@ export function RestaurantSettings() {
                   </Select>
                 </div>
 
-                <div className="border-t border-slate-600 pt-4">
-                  <h4 className="font-medium text-white mb-2">Son Aktiviteler</h4>
-                  <div className="space-y-2 text-sm text-slate-400">
+                <div className="border-t border-border pt-4">
+                  <h4 className="font-medium text-foreground mb-2">Son Aktiviteler</h4>
+                  <div className="space-y-2 text-sm text-muted-foreground">
                     <div>Son giriş: Bugün 09:30</div>
                     <div>Şifre değiştirildi: 2 hafta önce</div>
                     <div>Hesap oluşturuldu: 15 Mart 2020</div>
