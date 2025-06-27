@@ -37,9 +37,41 @@ import {
   Trash2,
   AlertTriangle,
   ToggleLeft,
-  ToggleRight
+  ToggleRight,
+  Info
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+
+// Status Legend Component
+function StatusLegend() {
+  return (
+    <Card className="bg-card/50 backdrop-blur-sm border-border/50">
+      <CardHeader className="pb-3">
+        <CardTitle className="text-foreground flex items-center text-sm">
+          <Info className="w-4 h-4 mr-2" />
+          Durum Açıklaması
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-2">
+        <div className="flex items-center space-x-2 text-sm">
+          <div className="w-3 h-3 rounded-full bg-green-500" />
+          <span className="text-green-700 dark:text-green-300 font-medium">Yeşil:</span>
+          <span className="text-muted-foreground">Aktif</span>
+        </div>
+        <div className="flex items-center space-x-2 text-sm">
+          <div className="w-3 h-3 rounded-full bg-red-500" />
+          <span className="text-red-700 dark:text-red-300 font-medium">Kırmızı:</span>
+          <span className="text-muted-foreground">Pasif</span>
+        </div>
+        <div className="flex items-center space-x-2 text-sm">
+          <div className="w-3 h-3 rounded-full bg-yellow-500" />
+          <span className="text-yellow-700 dark:text-yellow-300 font-medium">Sarı:</span>
+          <span className="text-muted-foreground">Öne Çıkan</span>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
 
 // Sortable Category Component
 function SortableCategory({ category, onToggleActive, onEdit, onDelete }) {
@@ -204,20 +236,20 @@ function SortableProduct({ product, onToggleActive, onPriceChange, onEdit, onDel
   };
 
   const [isEditingPrice, setIsEditingPrice] = useState(false);
-  const [tempPrice, setTempPrice] = useState(product.price.toString());
+  const [tempPrice, setTempPrice] = useState(Math.round(product.price).toString());
 
   const handlePriceClick = () => {
     setIsEditingPrice(true);
-    setTempPrice(product.price.toString());
+    setTempPrice(Math.round(product.price).toString());
   };
 
   const handlePriceBlur = () => {
     setIsEditingPrice(false);
-    const newPrice = parseFloat(tempPrice);
+    const newPrice = parseInt(tempPrice);
     if (!isNaN(newPrice) && newPrice > 0) {
       onPriceChange(product.id, newPrice);
     } else {
-      setTempPrice(product.price.toString());
+      setTempPrice(Math.round(product.price).toString());
     }
   };
 
@@ -226,7 +258,7 @@ function SortableProduct({ product, onToggleActive, onPriceChange, onEdit, onDel
       handlePriceBlur();
     } else if (e.key === 'Escape') {
       setIsEditingPrice(false);
-      setTempPrice(product.price.toString());
+      setTempPrice(Math.round(product.price).toString());
     }
   };
 
@@ -312,6 +344,9 @@ function SortableProduct({ product, onToggleActive, onPriceChange, onEdit, onDel
                 className="w-24 text-right text-xl font-bold bg-white dark:bg-slate-800 border-2 border-blue-500 text-blue-600 dark:text-blue-400"
                 autoFocus
                 onClick={(e) => e.stopPropagation()}
+                type="number"
+                min="0"
+                step="1"
               />
             ) : (
               <div 
@@ -327,7 +362,7 @@ function SortableProduct({ product, onToggleActive, onPriceChange, onEdit, onDel
                 }}
                 title="Fiyatı düzenlemek için tıklayın"
               >
-                ₺{product.price.toFixed(2)}
+                ₺{Math.round(product.price)}
               </div>
             )}
           </div>
@@ -456,7 +491,7 @@ export function MenuManagement() {
       id: '1',
       name: 'Bruschetta Classica',
       description: 'Taze domates, fesleğen ve sarımsakla kızarmış ekmek',
-      price: 45.99,
+      price: 46,
       category: 'Başlangıçlar',
       categoryId: '1',
       image: 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=400',
@@ -467,7 +502,7 @@ export function MenuManagement() {
       id: '2',
       name: 'Antipasto Misto',
       description: 'Karışık peynir ve marine sebze seçkisi',
-      price: 68.99,
+      price: 69,
       category: 'Başlangıçlar',
       categoryId: '1',
       image: 'https://images.pexels.com/photos/4518843/pexels-photo-4518843.jpeg?auto=compress&cs=tinysrgb&w=400',
@@ -478,7 +513,7 @@ export function MenuManagement() {
       id: '3',
       name: 'Arancini',
       description: 'Mozzarella ve bezelyeli çıtır risotto topları',
-      price: 52.99,
+      price: 53,
       category: 'Başlangıçlar',
       categoryId: '1',
       image: 'https://images.pexels.com/photos/8753999/pexels-photo-8753999.jpeg?auto=compress&cs=tinysrgb&w=400',
@@ -489,7 +524,7 @@ export function MenuManagement() {
       id: '4',
       name: 'Calamari Fritti',
       description: 'Limonla servis edilen kızarmış kalamar halkaları',
-      price: 61.99,
+      price: 62,
       category: 'Başlangıçlar',
       categoryId: '1',
       image: 'https://images.pexels.com/photos/1099680/pexels-photo-1099680.jpeg?auto=compress&cs=tinysrgb&w=400',
@@ -639,7 +674,11 @@ export function MenuManagement() {
 
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
         {/* Categories Sidebar */}
-        <div className="lg:col-span-2">
+        <div className="lg:col-span-2 space-y-4">
+          {/* Status Legend */}
+          <StatusLegend />
+          
+          {/* Categories */}
           <Card className="bg-card/50 backdrop-blur-sm border-border/50">
             <CardHeader>
               <CardTitle className="text-foreground flex items-center">
