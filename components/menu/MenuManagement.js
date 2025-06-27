@@ -317,7 +317,7 @@ function SortableProduct({ product, onToggleActive, onPriceChange, onEdit, onDel
             {product.featured && (
               <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-300 dark:border-yellow-700 flex-shrink-0">
                 <Star className="w-3 h-3 mr-1" />
-                ⭐
+                Öne Çıkan
               </Badge>
             )}
           </div>
