@@ -5,7 +5,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ConfirmationDialog } from '@/components/ui/confirmation-dialog';
 import { 
   Plus, 
   Camera, 
@@ -16,12 +20,37 @@ import {
   Edit,
   Trash2,
   Play,
-  Clock
+  Clock,
+  Star,
+  Settings,
+  Monitor,
+  Smartphone,
+  Layout,
+  AlertTriangle,
+  ToggleLeft,
+  ToggleRight
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export function ContentManagement() {
   const [activeTab, setActiveTab] = useState('stories');
+  
+  // Display options state
+  const [displayOptions, setDisplayOptions] = useState({
+    advertisementType: 'popup', // 'popup' or 'hero'
+    showKampanyalarButton: true,
+    featuredProductLayout: 'grid' // 'grid', 'carousel', 'list'
+  });
+
+  // Confirmation dialog state
+  const [confirmDialog, setConfirmDialog] = useState({
+    open: false,
+    title: '',
+    description: '',
+    onConfirm: null,
+    variant: 'default',
+    icon: null
+  });
 
   const stories = [
     {
@@ -77,6 +106,122 @@ export function ContentManagement() {
     }
   ];
 
+  const featuredProducts = [
+    {
+      id: '1',
+      name: 'Bruschetta Classica',
+      description: 'Taze domates, fesleğen ve sarımsakla kızarmış ekmek',
+      price: 46,
+      image: 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=400',
+      category: 'Başlangıçlar',
+      active: true,
+      featured: true,
+      views: 342,
+      orders: 28
+    },
+    {
+      id: '2',
+      name: 'Pasta Carbonara',
+      description: 'Geleneksel İtalyan usulü kremalı makarna',
+      price: 78,
+      image: 'https://images.pexels.com/photos/4518843/pexels-photo-4518843.jpeg?auto=compress&cs=tinysrgb&w=400',
+      category: 'Makarnalar',
+      active: true,
+      featured: true,
+      views: 289,
+      orders: 35
+    },
+    {
+      id: '3',
+      name: 'Margherita Pizza',
+      description: 'Klasik domates, mozzarella ve fesleğen',
+      price: 65,
+      image: 'https://images.pexels.com/photos/2147491/pexels-photo-2147491.jpeg?auto=compress&cs=tinysrgb&w=400',
+      category: 'Pizzalar',
+      active: true,
+      featured: true,
+      views: 456,
+      orders: 42
+    },
+    {
+      id: '4',
+      name: 'Tiramisu',
+      description: 'Ev yapımı geleneksel İtalyan tatlısı',
+      price: 35,
+      image: 'https://images.pexels.com/photos/1126359/pexels-photo-1126359.jpeg?auto=compress&cs=tinysrgb&w=400',
+      category: 'Tatlılar',
+      active: false,
+      featured: true,
+      views: 198,
+      orders: 15
+    }
+  ];
+
+  const handleToggleFeaturedProduct = (productId) => {
+    const product = featuredProducts.find(p => p.id === productId);
+    const action = product.active ? 'pasif' : 'aktif';
+    
+    setConfirmDialog({
+      open: true,
+      title: `Öne çıkan ürünü ${action} yap`,
+      description: `"${product.name}" ürününü öne çıkanlar listesinde ${action} yapmak istediğinizden emin misiniz?`,
+      onConfirm: () => {
+        // Update product active status
+        console.log(`Toggle featured product ${productId} to ${!product.active}`);
+      },
+      variant: 'default',
+      icon: product.active ? <ToggleLeft className="w-5 h-5" /> : <ToggleRight className="w-5 h-5" />
+    });
+  };
+
+  const handleRemoveFeaturedProduct = (productId) => {
+    const product = featuredProducts.find(p => p.id === productId);
+    
+    setConfirmDialog({
+      open: true,
+      title: 'Öne çıkanlardan kaldır',
+      description: `"${product.name}" ürününü öne çıkanlar listesinden kaldırmak istediğinizden emin misiniz?`,
+      onConfirm: () => {
+        // Remove from featured products
+        console.log(`Remove featured product ${productId}`);
+      },
+      variant: 'destructive',
+      icon: <AlertTriangle className="w-5 h-5" />
+    });
+  };
+
+  const handleToggleStory = (storyId) => {
+    const story = stories.find(s => s.id === storyId);
+    const action = story.active ? 'pasif' : 'aktif';
+    
+    setConfirmDialog({
+      open: true,
+      title: `Hikayeyi ${action} yap`,
+      description: `"${story.title}" hikayesini ${action} yapmak istediğinizden emin misiniz?`,
+      onConfirm: () => {
+        console.log(`Toggle story ${storyId} to ${!story.active}`);
+      },
+      variant: 'default',
+      icon: story.active ? <ToggleLeft className="w-5 h-5" /> : <ToggleRight className="w-5 h-5" />
+    });
+  };
+
+  const handleToggleAd = (adId) => {
+    const ad = advertisements.find(a => a.id === adId);
+    const action = ad.active ? 'pasif' : 'aktif';
+    
+    setConfirmDialog({
+      open: true,
+      title: `Reklamı ${action} yap`,
+      description: `"${ad.title}" reklamını ${action} yapmak istediğinizden emin misiniz?`,
+      onConfirm: () => {
+        console.log(`Toggle ad ${adId} to ${!ad.active}`);
+      },
+      variant: 'default',
+      icon: ad.active ? <ToggleLeft className="w-5 h-5" /> : <ToggleRight className="w-5 h-5" />
+    });
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -93,7 +238,7 @@ export function ContentManagement() {
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className={cn(
-          "grid w-full grid-cols-2 transition-colors duration-200",
+          "grid w-full grid-cols-4 transition-colors duration-200",
           "bg-muted border border-border"
         )}>
           <TabsTrigger 
@@ -116,15 +261,35 @@ export function ContentManagement() {
             <Megaphone className="w-4 h-4 mr-2" />
             Reklamlar
           </TabsTrigger>
+          <TabsTrigger 
+            value="featured" 
+            className={cn(
+              "flex items-center transition-all duration-200",
+              "data-[state=active]:bg-background data-[state=active]:text-foreground"
+            )}
+          >
+            <Star className="w-4 h-4 mr-2" />
+            Öne Çıkanlar
+          </TabsTrigger>
+          <TabsTrigger 
+            value="display" 
+            className={cn(
+              "flex items-center transition-all duration-200",
+              "data-[state=active]:bg-background data-[state=active]:text-foreground"
+            )}
+          >
+            <Settings className="w-4 h-4 mr-2" />
+            Görünüm
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="stories" className="space-y-6">
-          <Card className="bg-card border-border">
+          <Card className="bg-card/50 backdrop-blur-sm border-border/50">
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
                 <span className="flex items-center">
                   <Camera className="w-5 h-5 mr-2 text-primary" />
-                  Aktif Hikayeler ({stories.length})
+                  Aktif Hikayeler ({stories.filter(s => s.active).length})
                 </span>
                 <Badge className="bg-green-100 text-green-800 border-green-200 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800">
                   24 saat canlı
@@ -170,6 +335,14 @@ export function ContentManagement() {
                             </span>
                           </div>
                           <div className="flex items-center space-x-2">
+                            <Button 
+                              variant="outline" 
+                              size="icon" 
+                              className="h-6 w-6 bg-white/20 border-white/30 hover:bg-white/30"
+                              onClick={() => handleToggleStory(story.id)}
+                            >
+                              {story.active ? <Eye className="w-3 h-3 text-white" /> : <EyeOff className="w-3 h-3 text-white" />}
+                            </Button>
                             <Button variant="outline" size="icon" className="h-6 w-6 bg-white/20 border-white/30 hover:bg-white/30">
                               <Edit className="w-3 h-3 text-white" />
                             </Button>
@@ -188,11 +361,11 @@ export function ContentManagement() {
         </TabsContent>
 
         <TabsContent value="ads" className="space-y-6">
-          <Card className="bg-card border-border">
+          <Card className="bg-card/50 backdrop-blur-sm border-border/50">
             <CardHeader>
               <CardTitle className="flex items-center">
                 <Megaphone className="w-5 h-5 mr-2 text-primary" />
-                Aktif Reklamlar ({advertisements.length})
+                Aktif Reklamlar ({advertisements.filter(a => a.active).length})
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -223,9 +396,21 @@ export function ContentManagement() {
                     </div>
                     
                     <div className="flex items-center space-x-2">
-                      <Badge className="bg-green-100 text-green-800 border-green-200 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800">
-                        Aktif
+                      <Badge className={cn(
+                        ad.active 
+                          ? "bg-green-100 text-green-800 border-green-200 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800"
+                          : "bg-red-100 text-red-800 border-red-200 dark:bg-red-900/20 dark:text-red-300 dark:border-red-800"
+                      )}>
+                        {ad.active ? 'Aktif' : 'Pasif'}
                       </Badge>
+                      <Button 
+                        variant="outline" 
+                        size="icon" 
+                        className="h-8 w-8"
+                        onClick={() => handleToggleAd(ad.id)}
+                      >
+                        {ad.active ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+                      </Button>
                       <Button variant="outline" size="icon" className="h-8 w-8">
                         <Edit className="w-4 h-4" />
                       </Button>
@@ -239,7 +424,290 @@ export function ContentManagement() {
             </CardContent>
           </Card>
         </TabsContent>
+
+        <TabsContent value="featured" className="space-y-6">
+          <Card className="bg-card/50 backdrop-blur-sm border-border/50">
+            <CardHeader>
+              <CardTitle className="flex items-center justify-between">
+                <span className="flex items-center">
+                  <Star className="w-5 h-5 mr-2 text-primary" />
+                  Öne Çıkan Ürünler ({featuredProducts.filter(p => p.active).length})
+                </span>
+                <Button variant="outline">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Ürün Ekle
+                </Button>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {featuredProducts.map((product) => (
+                  <div 
+                    key={product.id} 
+                    className={cn(
+                      "flex items-center space-x-4 p-4 rounded-lg border-2 transition-all duration-200",
+                      product.active 
+                        ? "bg-green-50/80 border-green-200/80 hover:bg-green-100/80 dark:bg-green-950/30 dark:border-green-800/50 dark:hover:bg-green-900/40"
+                        : "bg-red-50/80 border-red-200/80 hover:bg-red-100/80 dark:bg-red-950/30 dark:border-red-800/50 dark:hover:bg-red-900/40"
+                    )}
+                  >
+                    <div className="w-16 h-16 rounded-lg overflow-hidden bg-muted flex-shrink-0">
+                      <img 
+                        src={product.image} 
+                        alt={product.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center space-x-2 mb-1">
+                        <h3 className={cn(
+                          "font-semibold truncate",
+                          product.active 
+                            ? "text-green-800 dark:text-green-200" 
+                            : "text-red-800 dark:text-red-200"
+                        )}>
+                          {product.name}
+                        </h3>
+                        <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-300 dark:border-yellow-700 flex-shrink-0">
+                          <Star className="w-3 h-3 mr-1" />
+                          Öne Çıkan
+                        </Badge>
+                      </div>
+                      <p className={cn(
+                        "text-sm line-clamp-1 mb-2",
+                        product.active 
+                          ? "text-green-600 dark:text-green-300" 
+                          : "text-red-600 dark:text-red-300"
+                      )}>
+                        {product.description}
+                      </p>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-4 text-xs text-muted-foreground">
+                          <span className="flex items-center">
+                            <Eye className="w-3 h-3 mr-1" />
+                            {product.views}
+                          </span>
+                          <span className="flex items-center">
+                            <Share className="w-3 h-3 mr-1" />
+                            {product.orders} sipariş
+                          </span>
+                        </div>
+                        <div className={cn(
+                          "font-bold",
+                          product.active 
+                            ? "text-green-700 dark:text-green-300" 
+                            : "text-red-700 dark:text-red-300"
+                        )}>
+                          ₺{product.price}
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="flex flex-col space-y-1">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className={cn(
+                          "h-8 w-8",
+                          product.active 
+                            ? "text-green-700 hover:text-green-800 hover:bg-green-100/50 dark:text-green-300 dark:hover:text-green-200 dark:hover:bg-green-900/40" 
+                            : "text-red-700 hover:text-red-800 hover:bg-red-100/50 dark:text-red-300 dark:hover:text-red-200 dark:hover:bg-red-900/40"
+                        )}
+                        onClick={() => handleToggleFeaturedProduct(product.id)}
+                        title={product.active ? "Pasif yap" : "Aktif yap"}
+                      >
+                        {product.active ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-accent"
+                        title="Düzenle"
+                      >
+                        <Edit className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-accent"
+                        onClick={() => handleRemoveFeaturedProduct(product.id)}
+                        title="Öne çıkanlardan kaldır"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="display" className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Advertisement Display Options */}
+            <Card className="bg-card/50 backdrop-blur-sm border-border/50">
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Megaphone className="w-5 h-5 mr-2 text-primary" />
+                  Reklam Görüntüleme Seçenekleri
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div>
+                  <Label className="text-foreground font-medium">Reklam Türü</Label>
+                  <Select 
+                    value={displayOptions.advertisementType} 
+                    onValueChange={(value) => setDisplayOptions(prev => ({ ...prev, advertisementType: value }))}
+                  >
+                    <SelectTrigger className="mt-2 bg-background border-border text-foreground">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="bg-background border-border">
+                      <SelectItem value="popup">
+                        <div className="flex items-center">
+                          <Monitor className="w-4 h-4 mr-2" />
+                          Pop-up Reklam
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="hero">
+                        <div className="flex items-center">
+                          <Layout className="w-4 h-4 mr-2" />
+                          Hero Slider
+                        </div>
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    {displayOptions.advertisementType === 'popup' 
+                      ? 'Reklamlar açılır pencere olarak gösterilir'
+                      : 'Reklamlar sayfa üstünde slider olarak gösterilir'
+                    }
+                  </p>
+                </div>
+
+                {displayOptions.advertisementType === 'popup' && (
+                  <div className="flex items-center justify-between p-4 bg-accent/30 rounded-lg">
+                    <div>
+                      <div className="font-medium text-foreground">Kampanyalar Butonu</div>
+                      <div className="text-sm text-muted-foreground">Ana sayfada kampanyalar butonunu göster</div>
+                    </div>
+                    <Switch
+                      checked={displayOptions.showKampanyalarButton}
+                      onCheckedChange={(checked) => setDisplayOptions(prev => ({ ...prev, showKampanyalarButton: checked }))}
+                    />
+                  </div>
+                )}
+
+                {displayOptions.advertisementType === 'hero' && (
+                  <div>
+                    <Label className="text-foreground font-medium">Öne Çıkan Ürün Düzeni</Label>
+                    <Select 
+                      value={displayOptions.featuredProductLayout} 
+                      onValueChange={(value) => setDisplayOptions(prev => ({ ...prev, featuredProductLayout: value }))}
+                    >
+                      <SelectTrigger className="mt-2 bg-background border-border text-foreground">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="bg-background border-border">
+                        <SelectItem value="grid">
+                          <div className="flex items-center">
+                            <Layout className="w-4 h-4 mr-2" />
+                            Grid Düzeni
+                          </div>
+                        </SelectItem>
+                        <SelectItem value="carousel">
+                          <div className="flex items-center">
+                            <Smartphone className="w-4 h-4 mr-2" />
+                            Carousel Düzeni
+                          </div>
+                        </SelectItem>
+                        <SelectItem value="list">
+                          <div className="flex items-center">
+                            <Monitor className="w-4 h-4 mr-2" />
+                            Liste Düzeni
+                          </div>
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Hero slider kullanıldığında öne çıkan ürünlerin nasıl gösterileceğini belirler
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Preview */}
+            <Card className="bg-card/50 backdrop-blur-sm border-border/50">
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Eye className="w-5 h-5 mr-2 text-primary" />
+                  Önizleme
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="p-4 bg-accent/20 rounded-lg border border-border">
+                    <h4 className="font-medium text-foreground mb-2">Seçili Ayarlar:</h4>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex items-center justify-between">
+                        <span className="text-muted-foreground">Reklam Türü:</span>
+                        <Badge variant="outline" className="border-border text-foreground">
+                          {displayOptions.advertisementType === 'popup' ? 'Pop-up' : 'Hero Slider'}
+                        </Badge>
+                      </div>
+                      
+                      {displayOptions.advertisementType === 'popup' && (
+                        <div className="flex items-center justify-between">
+                          <span className="text-muted-foreground">Kampanyalar Butonu:</span>
+                          <Badge variant="outline" className={cn(
+                            "border-border",
+                            displayOptions.showKampanyalarButton 
+                              ? "text-green-700 border-green-200 bg-green-50 dark:text-green-300 dark:border-green-800 dark:bg-green-950/30"
+                              : "text-red-700 border-red-200 bg-red-50 dark:text-red-300 dark:border-red-800 dark:bg-red-950/30"
+                          )}>
+                            {displayOptions.showKampanyalarButton ? 'Göster' : 'Gizle'}
+                          </Badge>
+                        </div>
+                      )}
+                      
+                      {displayOptions.advertisementType === 'hero' && (
+                        <div className="flex items-center justify-between">
+                          <span className="text-muted-foreground">Öne Çıkan Düzen:</span>
+                          <Badge variant="outline" className="border-border text-foreground">
+                            {displayOptions.featuredProductLayout === 'grid' ? 'Grid' : 
+                             displayOptions.featuredProductLayout === 'carousel' ? 'Carousel' : 'Liste'}
+                          </Badge>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="text-center">
+                    <Button className="bg-primary hover:bg-primary/90">
+                      <Settings className="w-4 h-4 mr-2" />
+                      Ayarları Kaydet
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
       </Tabs>
+
+      {/* Confirmation Dialog */}
+      <ConfirmationDialog
+        open={confirmDialog.open}
+        onOpenChange={(open) => setConfirmDialog(prev => ({ ...prev, open }))}
+        title={confirmDialog.title}
+        description={confirmDialog.description}
+        onConfirm={confirmDialog.onConfirm}
+        variant={confirmDialog.variant}
+        icon={confirmDialog.icon}
+      />
     </div>
   );
 }
