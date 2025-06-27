@@ -15,6 +15,7 @@ import {
   Camera, 
   Megaphone, 
   Eye, 
+  EyeOff,
   Heart,
   Share,
   Edit,
