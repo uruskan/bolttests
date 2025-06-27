@@ -12,7 +12,7 @@ export function DashboardLayout({ children, activeView, onViewChange }) {
     <div className={cn(
       "min-h-screen transition-all duration-300",
       "bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50",
-      "dark:bg-gradient-to-br dark:from-slate-900 dark:via-slate-800 dark:to-slate-900"
+      "dark:bg-gradient-to-br dark:from-slate-900 dark:via-slate-800 dark:to-slate-700"
     )}>
       <Header 
         sidebarOpen={sidebarOpen} 

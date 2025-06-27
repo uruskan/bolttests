@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
+import { ConfirmationDialog } from '@/components/ui/confirmation-dialog';
 import { 
   DndContext, 
   closestCenter,
@@ -33,12 +34,15 @@ import {
   Eye,
   EyeOff,
   Edit,
-  Trash2
+  Trash2,
+  AlertTriangle,
+  ToggleLeft,
+  ToggleRight
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 // Sortable Category Component
-function SortableCategory({ category, onToggleActive }) {
+function SortableCategory({ category, onToggleActive, onEdit, onDelete }) {
   const {
     attributes,
     listeners,
@@ -66,8 +70,8 @@ function SortableCategory({ category, onToggleActive }) {
         className={cn(
           "flex items-center justify-between p-4 rounded-xl border-2 transition-all duration-200 cursor-pointer shadow-sm hover:shadow-md",
           category.active 
-            ? "bg-green-50 border-green-200 hover:bg-green-100 dark:bg-green-900/20 dark:border-green-700 dark:hover:bg-green-900/30"
-            : "bg-red-50 border-red-200 hover:bg-red-100 dark:bg-red-900/20 dark:border-red-700 dark:hover:bg-red-900/30"
+            ? "bg-green-50/80 border-green-200/80 hover:bg-green-100/80 dark:bg-green-950/30 dark:border-green-800/50 dark:hover:bg-green-900/40"
+            : "bg-red-50/80 border-red-200/80 hover:bg-red-100/80 dark:bg-red-950/30 dark:border-red-800/50 dark:hover:bg-red-900/40"
         )}
         onClick={() => onToggleActive(category.id)}
       >
@@ -77,8 +81,8 @@ function SortableCategory({ category, onToggleActive }) {
             {...attributes}
             {...listeners}
             className={cn(
-              "cursor-grab active:cursor-grabbing p-1 rounded hover:bg-accent transition-colors",
-              "text-muted-foreground hover:text-foreground"
+              "cursor-grab active:cursor-grabbing p-1 rounded hover:bg-white/50 dark:hover:bg-slate-800/50 transition-colors",
+              "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
             )}
             onClick={(e) => e.stopPropagation()}
           >
@@ -86,7 +90,7 @@ function SortableCategory({ category, onToggleActive }) {
           </div>
           
           {/* Category Image */}
-          <div className="w-12 h-12 rounded-xl overflow-hidden bg-muted">
+          <div className="w-12 h-12 rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800">
             <img 
               src={category.image} 
               alt={category.name}
@@ -138,7 +142,7 @@ function SortableCategory({ category, onToggleActive }) {
               variant="ghost"
               size="icon"
               className={cn(
-                "h-8 w-8 hover:bg-accent",
+                "h-8 w-8 hover:bg-white/50 dark:hover:bg-slate-800/50",
                 category.active 
                   ? "text-green-700 hover:text-green-800 dark:text-green-300 dark:hover:text-green-200" 
                   : "text-red-700 hover:text-red-800 dark:text-red-300 dark:hover:text-red-200"
@@ -154,9 +158,12 @@ function SortableCategory({ category, onToggleActive }) {
               variant="ghost"
               size="icon"
               className={cn(
-                "h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-accent"
+                "h-8 w-8 text-slate-600 hover:text-slate-800 hover:bg-white/50 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800/50"
               )}
-              onClick={(e) => e.stopPropagation()}
+              onClick={(e) => {
+                e.stopPropagation();
+                onEdit(category);
+              }}
             >
               <Edit className="w-4 h-4" />
             </Button>
@@ -164,9 +171,12 @@ function SortableCategory({ category, onToggleActive }) {
               variant="ghost"
               size="icon"
               className={cn(
-                "h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-accent"
+                "h-8 w-8 text-slate-600 hover:text-red-600 hover:bg-white/50 dark:text-slate-400 dark:hover:text-red-400 dark:hover:bg-slate-800/50"
               )}
-              onClick={(e) => e.stopPropagation()}
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete(category);
+              }}
             >
               <Trash2 className="w-4 h-4" />
             </Button>
@@ -178,7 +188,7 @@ function SortableCategory({ category, onToggleActive }) {
 }
 
 // Sortable Product Component
-function SortableProduct({ product, onToggleActive, onPriceChange }) {
+function SortableProduct({ product, onToggleActive, onPriceChange, onEdit, onDelete }) {
   const {
     attributes,
     listeners,
@@ -233,8 +243,8 @@ function SortableProduct({ product, onToggleActive, onPriceChange }) {
         className={cn(
           "flex items-center space-x-4 p-4 rounded-xl border-2 transition-all duration-200 shadow-sm hover:shadow-md",
           product.active 
-            ? "bg-green-50 border-green-200 hover:bg-green-100 dark:bg-green-900/20 dark:border-green-700 dark:hover:bg-green-900/30"
-            : "bg-red-50 border-red-200 hover:bg-red-100 dark:bg-red-900/20 dark:border-red-700 dark:hover:bg-red-900/30",
+            ? "bg-green-50/80 border-green-200/80 hover:bg-green-100/80 dark:bg-green-950/30 dark:border-green-800/50 dark:hover:bg-green-900/40"
+            : "bg-red-50/80 border-red-200/80 hover:bg-red-100/80 dark:bg-red-950/30 dark:border-red-800/50 dark:hover:bg-red-900/40",
           product.featured && "ring-2 ring-yellow-400/50"
         )}
         onClick={() => onToggleActive(product.id)}
@@ -244,8 +254,8 @@ function SortableProduct({ product, onToggleActive, onPriceChange }) {
           {...attributes}
           {...listeners}
           className={cn(
-            "cursor-grab active:cursor-grabbing p-1 rounded hover:bg-accent transition-colors",
-            "text-muted-foreground hover:text-foreground"
+            "cursor-grab active:cursor-grabbing p-1 rounded hover:bg-white/50 dark:hover:bg-slate-800/50 transition-colors",
+            "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
           )}
           onClick={(e) => e.stopPropagation()}
         >
@@ -253,7 +263,7 @@ function SortableProduct({ product, onToggleActive, onPriceChange }) {
         </div>
         
         {/* Product Image */}
-        <div className="w-16 h-16 rounded-xl overflow-hidden bg-muted flex-shrink-0">
+        <div className="w-16 h-16 rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800 flex-shrink-0">
           <img 
             src={product.image} 
             alt={product.name}
@@ -299,7 +309,7 @@ function SortableProduct({ product, onToggleActive, onPriceChange }) {
                 onChange={(e) => setTempPrice(e.target.value)}
                 onBlur={handlePriceBlur}
                 onKeyDown={handlePriceKeyDown}
-                className="w-24 text-right text-xl font-bold bg-background border-2 border-primary text-primary"
+                className="w-24 text-right text-xl font-bold bg-white dark:bg-slate-800 border-2 border-blue-500 text-blue-600 dark:text-blue-400"
                 autoFocus
                 onClick={(e) => e.stopPropagation()}
               />
@@ -308,8 +318,8 @@ function SortableProduct({ product, onToggleActive, onPriceChange }) {
                 className={cn(
                   "text-xl font-bold cursor-pointer transition-all duration-200 px-3 py-1 rounded-lg border-2 border-dashed hover:border-solid",
                   product.active 
-                    ? "text-green-700 border-green-300 hover:border-green-500 hover:bg-green-100 dark:text-green-300 dark:border-green-600 dark:hover:border-green-400 dark:hover:bg-green-900/40"
-                    : "text-red-700 border-red-300 hover:border-red-500 hover:bg-red-100 dark:text-red-300 dark:border-red-600 dark:hover:border-red-400 dark:hover:bg-red-900/40"
+                    ? "text-green-700 border-green-300 hover:border-green-500 hover:bg-green-100/50 dark:text-green-300 dark:border-green-600 dark:hover:border-green-400 dark:hover:bg-green-900/40"
+                    : "text-red-700 border-red-300 hover:border-red-500 hover:bg-red-100/50 dark:text-red-300 dark:border-red-600 dark:hover:border-red-400 dark:hover:bg-red-900/40"
                 )}
                 onClick={(e) => {
                   e.stopPropagation();
@@ -328,7 +338,7 @@ function SortableProduct({ product, onToggleActive, onPriceChange }) {
               variant="ghost"
               size="icon"
               className={cn(
-                "h-8 w-8 hover:bg-accent",
+                "h-8 w-8 hover:bg-white/50 dark:hover:bg-slate-800/50",
                 product.active 
                   ? "text-green-700 hover:text-green-800 dark:text-green-300 dark:hover:text-green-200" 
                   : "text-red-700 hover:text-red-800 dark:text-red-300 dark:hover:text-red-200"
@@ -345,9 +355,12 @@ function SortableProduct({ product, onToggleActive, onPriceChange }) {
               variant="ghost"
               size="icon"
               className={cn(
-                "h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-accent"
+                "h-8 w-8 text-slate-600 hover:text-slate-800 hover:bg-white/50 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800/50"
               )}
-              onClick={(e) => e.stopPropagation()}
+              onClick={(e) => {
+                e.stopPropagation();
+                onEdit(product);
+              }}
               title="Ürünü düzenle"
             >
               <Edit className="w-4 h-4" />
@@ -356,9 +369,12 @@ function SortableProduct({ product, onToggleActive, onPriceChange }) {
               variant="ghost"
               size="icon"
               className={cn(
-                "h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-accent"
+                "h-8 w-8 text-slate-600 hover:text-red-600 hover:bg-white/50 dark:text-slate-400 dark:hover:text-red-400 dark:hover:bg-slate-800/50"
               )}
-              onClick={(e) => e.stopPropagation()}
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete(product);
+              }}
               title="Ürünü sil"
             >
               <Trash2 className="w-4 h-4" />
@@ -373,6 +389,16 @@ function SortableProduct({ product, onToggleActive, onPriceChange }) {
 export function MenuManagement() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('1');
+  
+  // Dialog states
+  const [confirmDialog, setConfirmDialog] = useState({
+    open: false,
+    title: '',
+    description: '',
+    onConfirm: null,
+    variant: 'default',
+    icon: null
+  });
   
   const [categories, setCategories] = useState([
     {
@@ -506,21 +532,82 @@ export function MenuManagement() {
   };
 
   const toggleCategoryActive = (categoryId) => {
-    setCategories(prev => prev.map(cat => 
-      cat.id === categoryId ? { ...cat, active: !cat.active } : cat
-    ));
+    const category = categories.find(cat => cat.id === categoryId);
+    const action = category.active ? 'pasif' : 'aktif';
+    
+    setConfirmDialog({
+      open: true,
+      title: `Kategoriyi ${action} yap`,
+      description: `"${category.name}" kategorisini ${action} yapmak istediğinizden emin misiniz?`,
+      onConfirm: () => {
+        setCategories(prev => prev.map(cat => 
+          cat.id === categoryId ? { ...cat, active: !cat.active } : cat
+        ));
+      },
+      variant: 'default',
+      icon: category.active ? <ToggleLeft className="w-5 h-5" /> : <ToggleRight className="w-5 h-5" />
+    });
   };
 
   const toggleProductActive = (productId) => {
-    setMenuItems(prev => prev.map(item => 
-      item.id === productId ? { ...item, active: !item.active } : item
-    ));
+    const product = menuItems.find(item => item.id === productId);
+    const action = product.active ? 'pasif' : 'aktif';
+    
+    setConfirmDialog({
+      open: true,
+      title: `Ürünü ${action} yap`,
+      description: `"${product.name}" ürününü ${action} yapmak istediğinizden emin misiniz?`,
+      onConfirm: () => {
+        setMenuItems(prev => prev.map(item => 
+          item.id === productId ? { ...item, active: !item.active } : item
+        ));
+      },
+      variant: 'default',
+      icon: product.active ? <ToggleLeft className="w-5 h-5" /> : <ToggleRight className="w-5 h-5" />
+    });
   };
 
   const updateProductPrice = (productId, newPrice) => {
     setMenuItems(prev => prev.map(item => 
       item.id === productId ? { ...item, price: newPrice } : item
     ));
+  };
+
+  const handleCategoryEdit = (category) => {
+    // TODO: Open category edit modal
+    console.log('Edit category:', category);
+  };
+
+  const handleCategoryDelete = (category) => {
+    setConfirmDialog({
+      open: true,
+      title: 'Kategoriyi sil',
+      description: `"${category.name}" kategorisini silmek istediğinizden emin misiniz? Bu işlem geri alınamaz ve kategorideki tüm ürünler de silinecektir.`,
+      onConfirm: () => {
+        setCategories(prev => prev.filter(cat => cat.id !== category.id));
+        setMenuItems(prev => prev.filter(item => item.categoryId !== category.id));
+      },
+      variant: 'destructive',
+      icon: <AlertTriangle className="w-5 h-5" />
+    });
+  };
+
+  const handleProductEdit = (product) => {
+    // TODO: Open product edit modal
+    console.log('Edit product:', product);
+  };
+
+  const handleProductDelete = (product) => {
+    setConfirmDialog({
+      open: true,
+      title: 'Ürünü sil',
+      description: `"${product.name}" ürününü silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.`,
+      onConfirm: () => {
+        setMenuItems(prev => prev.filter(item => item.id !== product.id));
+      },
+      variant: 'destructive',
+      icon: <AlertTriangle className="w-5 h-5" />
+    });
   };
 
   const selectedCategoryData = categories.find(cat => cat.id === selectedCategory);
@@ -553,7 +640,7 @@ export function MenuManagement() {
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
         {/* Categories Sidebar */}
         <div className="lg:col-span-2">
-          <Card className="bg-card border-border">
+          <Card className="bg-card/50 backdrop-blur-sm border-border/50">
             <CardHeader>
               <CardTitle className="text-foreground flex items-center">
                 📂 Kategoriler
@@ -575,12 +662,14 @@ export function MenuManagement() {
                       onClick={() => setSelectedCategory(category.id)}
                       className={cn(
                         "cursor-pointer transition-all duration-200",
-                        selectedCategory === category.id && "ring-2 ring-primary ring-offset-2 ring-offset-background"
+                        selectedCategory === category.id && "ring-2 ring-blue-500 ring-offset-2 ring-offset-background"
                       )}
                     >
                       <SortableCategory 
                         category={category} 
                         onToggleActive={toggleCategoryActive}
+                        onEdit={handleCategoryEdit}
+                        onDelete={handleCategoryDelete}
                       />
                     </div>
                   ))}
@@ -592,7 +681,7 @@ export function MenuManagement() {
 
         {/* Menu Items */}
         <div className="lg:col-span-3">
-          <Card className="bg-card border-border">
+          <Card className="bg-card/50 backdrop-blur-sm border-border/50">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle className="text-foreground">
@@ -605,7 +694,7 @@ export function MenuManagement() {
                       placeholder="🔍 Öğe ara..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      className="w-48 pl-10 bg-background border-border text-foreground placeholder:text-muted-foreground"
+                      className="w-48 pl-10 bg-background/50 border-border text-foreground placeholder:text-muted-foreground"
                     />
                   </div>
                   <Button 
@@ -641,6 +730,8 @@ export function MenuManagement() {
                       product={item} 
                       onToggleActive={toggleProductActive}
                       onPriceChange={updateProductPrice}
+                      onEdit={handleProductEdit}
+                      onDelete={handleProductDelete}
                     />
                   ))}
                 </SortableContext>
@@ -649,6 +740,17 @@ export function MenuManagement() {
           </Card>
         </div>
       </div>
+
+      {/* Confirmation Dialog */}
+      <ConfirmationDialog
+        open={confirmDialog.open}
+        onOpenChange={(open) => setConfirmDialog(prev => ({ ...prev, open }))}
+        title={confirmDialog.title}
+        description={confirmDialog.description}
+        onConfirm={confirmDialog.onConfirm}
+        variant={confirmDialog.variant}
+        icon={confirmDialog.icon}
+      />
     </div>
   );
 }
