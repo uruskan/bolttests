@@ -31,7 +31,9 @@ import {
   Grid3X3,
   Star,
   Eye,
-  EyeOff
+  EyeOff,
+  Edit,
+  Trash2
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -60,11 +62,15 @@ function SortableCategory({ category, onToggleActive }) {
         isDragging && "opacity-50"
       )}
     >
-      <div className={cn(
-        "flex items-center justify-between p-4 rounded-xl border-2 transition-all duration-200 cursor-pointer",
-        "bg-card hover:bg-accent/50 border-border hover:border-primary/30",
-        "shadow-sm hover:shadow-md"
-      )}>
+      <div 
+        className={cn(
+          "flex items-center justify-between p-4 rounded-xl border-2 transition-all duration-200 cursor-pointer shadow-sm hover:shadow-md",
+          category.active 
+            ? "bg-green-50 border-green-200 hover:bg-green-100 dark:bg-green-900/20 dark:border-green-700 dark:hover:bg-green-900/30"
+            : "bg-red-50 border-red-200 hover:bg-red-100 dark:bg-red-900/20 dark:border-red-700 dark:hover:bg-red-900/30"
+        )}
+        onClick={() => onToggleActive(category.id)}
+      >
         <div className="flex items-center space-x-4">
           {/* Drag Handle */}
           <div
@@ -74,6 +80,7 @@ function SortableCategory({ category, onToggleActive }) {
               "cursor-grab active:cursor-grabbing p-1 rounded hover:bg-accent transition-colors",
               "text-muted-foreground hover:text-foreground"
             )}
+            onClick={(e) => e.stopPropagation()}
           >
             <GripVertical className="w-4 h-4" />
           </div>
@@ -89,18 +96,39 @@ function SortableCategory({ category, onToggleActive }) {
           
           {/* Category Info */}
           <div>
-            <div className="font-semibold text-foreground text-lg">{category.name}</div>
-            <div className="text-muted-foreground text-sm">{category.description}</div>
+            <div className={cn(
+              "font-semibold text-lg",
+              category.active 
+                ? "text-green-800 dark:text-green-200" 
+                : "text-red-800 dark:text-red-200"
+            )}>
+              {category.name}
+            </div>
+            <div className={cn(
+              "text-sm",
+              category.active 
+                ? "text-green-600 dark:text-green-300" 
+                : "text-red-600 dark:text-red-300"
+            )}>
+              {category.description}
+            </div>
           </div>
         </div>
         
         {/* Right Side */}
         <div className="flex items-center space-x-4">
           <div className="text-right">
-            <div className="text-2xl font-bold text-foreground">{category.itemCount}</div>
+            <div className={cn(
+              "text-2xl font-bold",
+              category.active 
+                ? "text-green-800 dark:text-green-200" 
+                : "text-red-800 dark:text-red-200"
+            )}>
+              {category.itemCount}
+            </div>
           </div>
           
-          {/* Active/Inactive Toggle */}
+          {/* Status Indicator and Actions */}
           <div className="flex items-center space-x-2">
             <div className={cn(
               "w-3 h-3 rounded-full",
@@ -110,9 +138,15 @@ function SortableCategory({ category, onToggleActive }) {
               variant="ghost"
               size="icon"
               className={cn(
-                "h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-accent"
+                "h-8 w-8 hover:bg-accent",
+                category.active 
+                  ? "text-green-700 hover:text-green-800 dark:text-green-300 dark:hover:text-green-200" 
+                  : "text-red-700 hover:text-red-800 dark:text-red-300 dark:hover:text-red-200"
               )}
-              onClick={() => onToggleActive(category.id)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleActive(category.id);
+              }}
             >
               {category.active ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
             </Button>
@@ -122,8 +156,9 @@ function SortableCategory({ category, onToggleActive }) {
               className={cn(
                 "h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-accent"
               )}
+              onClick={(e) => e.stopPropagation()}
             >
-              ✏️
+              <Edit className="w-4 h-4" />
             </Button>
             <Button
               variant="ghost"
@@ -131,8 +166,9 @@ function SortableCategory({ category, onToggleActive }) {
               className={cn(
                 "h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-accent"
               )}
+              onClick={(e) => e.stopPropagation()}
             >
-              🗑️
+              <Trash2 className="w-4 h-4" />
             </Button>
           </div>
         </div>
@@ -193,12 +229,16 @@ function SortableProduct({ product, onToggleActive, onPriceChange }) {
         isDragging && "opacity-50"
       )}
     >
-      <div className={cn(
-        "flex items-center space-x-4 p-4 rounded-xl border-2 transition-all duration-200",
-        "bg-card hover:bg-accent/50 border-border hover:border-primary/30",
-        "shadow-sm hover:shadow-md",
-        product.featured && "ring-2 ring-yellow-400/50 bg-yellow-50/50 dark:bg-yellow-900/20"
-      )}>
+      <div 
+        className={cn(
+          "flex items-center space-x-4 p-4 rounded-xl border-2 transition-all duration-200 shadow-sm hover:shadow-md",
+          product.active 
+            ? "bg-green-50 border-green-200 hover:bg-green-100 dark:bg-green-900/20 dark:border-green-700 dark:hover:bg-green-900/30"
+            : "bg-red-50 border-red-200 hover:bg-red-100 dark:bg-red-900/20 dark:border-red-700 dark:hover:bg-red-900/30",
+          product.featured && "ring-2 ring-yellow-400/50"
+        )}
+        onClick={() => onToggleActive(product.id)}
+      >
         {/* Drag Handle */}
         <div
           {...attributes}
@@ -207,6 +247,7 @@ function SortableProduct({ product, onToggleActive, onPriceChange }) {
             "cursor-grab active:cursor-grabbing p-1 rounded hover:bg-accent transition-colors",
             "text-muted-foreground hover:text-foreground"
           )}
+          onClick={(e) => e.stopPropagation()}
         >
           <GripVertical className="w-4 h-4" />
         </div>
@@ -221,55 +262,82 @@ function SortableProduct({ product, onToggleActive, onPriceChange }) {
         </div>
         
         {/* Product Info */}
-        <div className="flex-1">
+        <div className="flex-1 min-w-0">
           <div className="flex items-center space-x-2 mb-1">
-            <h3 className="font-semibold text-foreground text-lg">{product.name}</h3>
+            <h3 className={cn(
+              "font-semibold text-lg truncate",
+              product.active 
+                ? "text-green-800 dark:text-green-200" 
+                : "text-red-800 dark:text-red-200"
+            )}>
+              {product.name}
+            </h3>
             {product.featured && (
-              <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-300 dark:border-yellow-700">
+              <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-300 dark:border-yellow-700 flex-shrink-0">
                 <Star className="w-3 h-3 mr-1" />
                 ⭐
               </Badge>
             )}
-            <Badge className={cn(
-              product.active 
-                ? "bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-700"
-                : "bg-red-100 text-red-800 border-red-200 dark:bg-red-900/30 dark:text-red-300 dark:border-red-700"
-            )}>
-              {product.active ? 'Aktif' : 'Pasif'}
-            </Badge>
           </div>
-          <p className="text-muted-foreground text-sm">{product.description}</p>
+          <p className={cn(
+            "text-sm line-clamp-2",
+            product.active 
+              ? "text-green-600 dark:text-green-300" 
+              : "text-red-600 dark:text-red-300"
+          )}>
+            {product.description}
+          </p>
         </div>
         
-        {/* Price and Actions */}
-        <div className="text-right">
-          <div className="mb-3">
+        {/* Price and Actions - Single Line */}
+        <div className="flex items-center space-x-3 flex-shrink-0">
+          {/* Price */}
+          <div className="text-right">
             {isEditingPrice ? (
               <Input
                 value={tempPrice}
                 onChange={(e) => setTempPrice(e.target.value)}
                 onBlur={handlePriceBlur}
                 onKeyDown={handlePriceKeyDown}
-                className="w-24 text-right text-xl font-bold bg-background border-border text-primary"
+                className="w-24 text-right text-xl font-bold bg-background border-2 border-primary text-primary"
                 autoFocus
+                onClick={(e) => e.stopPropagation()}
               />
             ) : (
               <div 
-                className="text-2xl font-bold text-primary cursor-pointer hover:text-primary/80 transition-colors"
-                onClick={handlePriceClick}
+                className={cn(
+                  "text-xl font-bold cursor-pointer transition-all duration-200 px-3 py-1 rounded-lg border-2 border-dashed hover:border-solid",
+                  product.active 
+                    ? "text-green-700 border-green-300 hover:border-green-500 hover:bg-green-100 dark:text-green-300 dark:border-green-600 dark:hover:border-green-400 dark:hover:bg-green-900/40"
+                    : "text-red-700 border-red-300 hover:border-red-500 hover:bg-red-100 dark:text-red-300 dark:border-red-600 dark:hover:border-red-400 dark:hover:bg-red-900/40"
+                )}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handlePriceClick();
+                }}
+                title="Fiyatı düzenlemek için tıklayın"
               >
                 ₺{product.price.toFixed(2)}
               </div>
             )}
           </div>
-          <div className="flex items-center space-x-2">
+          
+          {/* Action Buttons */}
+          <div className="flex items-center space-x-1">
             <Button
               variant="ghost"
               size="icon"
               className={cn(
-                "h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-accent"
+                "h-8 w-8 hover:bg-accent",
+                product.active 
+                  ? "text-green-700 hover:text-green-800 dark:text-green-300 dark:hover:text-green-200" 
+                  : "text-red-700 hover:text-red-800 dark:text-red-300 dark:hover:text-red-200"
               )}
-              onClick={() => onToggleActive(product.id)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleActive(product.id);
+              }}
+              title={product.active ? "Ürünü pasif yap" : "Ürünü aktif yap"}
             >
               {product.active ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
             </Button>
@@ -279,17 +347,10 @@ function SortableProduct({ product, onToggleActive, onPriceChange }) {
               className={cn(
                 "h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-accent"
               )}
+              onClick={(e) => e.stopPropagation()}
+              title="Ürünü düzenle"
             >
-              📋
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              className={cn(
-                "h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-accent"
-              )}
-            >
-              ✏️
+              <Edit className="w-4 h-4" />
             </Button>
             <Button
               variant="ghost"
@@ -297,8 +358,10 @@ function SortableProduct({ product, onToggleActive, onPriceChange }) {
               className={cn(
                 "h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-accent"
               )}
+              onClick={(e) => e.stopPropagation()}
+              title="Ürünü sil"
             >
-              🗑️
+              <Trash2 className="w-4 h-4" />
             </Button>
           </div>
         </div>
@@ -393,7 +456,7 @@ export function MenuManagement() {
       category: 'Başlangıçlar',
       categoryId: '1',
       image: 'https://images.pexels.com/photos/8753999/pexels-photo-8753999.jpeg?auto=compress&cs=tinysrgb&w=400',
-      active: true,
+      active: false,
       featured: false
     },
     {
