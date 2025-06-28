@@ -23,8 +23,6 @@ import {
   Wand2,
   Smartphone,
   Monitor,
-  Sun,
-  Moon,
   AlignLeft,
   AlignCenter,
   AlignRight,
@@ -43,7 +41,6 @@ import {
 } from '@/lib/theme/themeBlueprint';
 
 export function ThemeCustomization() {
-  const [isDarkMode, setIsDarkMode] = useState(false);
   const [themeMode, setThemeMode] = useState('simple');
   const [currentTheme, setCurrentTheme] = useState(getDefaultThemeBlueprint());
   const [selectedPreset, setSelectedPreset] = useState('elegant-classic');
@@ -101,15 +98,6 @@ export function ThemeCustomization() {
     setBorderRadius([8]);
   };
 
-  const getAlignmentIcon = (alignment) => {
-    switch (alignment) {
-      case 'left': return AlignLeft;
-      case 'center': return AlignCenter;
-      case 'right': return AlignRight;
-      default: return AlignLeft;
-    }
-  };
-
   const getFontPreviewText = (key) => {
     const previewTexts = {
       restaurantName: "Bella Vista Restaurant",
@@ -123,7 +111,7 @@ export function ThemeCustomization() {
   };
 
   return (
-    <div className={cn("space-y-6", isDarkMode && "dark")}>
+    <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
         <div>
@@ -131,13 +119,6 @@ export function ThemeCustomization() {
           <p className="text-muted-foreground mt-1">QR menünüzün görünümünü özelleştirin</p>
         </div>
         <div className="flex items-center space-x-3 mt-4 sm:mt-0">
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => setIsDarkMode(!isDarkMode)}
-          >
-            {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-          </Button>
           <Button variant="outline">
             <Upload className="w-4 h-4 mr-2" />
             İçe Aktar
@@ -767,7 +748,7 @@ export function ThemeCustomization() {
           )}
         </div>
 
-        {/* Live Preview - Unchanged */}
+        {/* Live Preview */}
         <div className="lg:col-span-1">
           <Card className="backdrop-blur-xl border sticky top-6 bg-card">
             <CardHeader>
