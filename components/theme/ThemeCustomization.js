@@ -104,6 +104,24 @@ function SortableBlock({ block, blockLabels }) {
   );
 }
 
+// Helper function to determine if a color is light or dark
+function isLightColor(color) {
+  // Convert hex to RGB
+  const hex = color.replace('#', '');
+  const r = parseInt(hex.substr(0, 2), 16);
+  const g = parseInt(hex.substr(2, 2), 16);
+  const b = parseInt(hex.substr(4, 2), 16);
+  
+  // Calculate luminance
+  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+  return luminance > 0.5;
+}
+
+// Helper function to get contrasting text color
+function getContrastingTextColor(backgroundColor) {
+  return isLightColor(backgroundColor) ? '#1f2937' : '#f9fafb';
+}
+
 export function ThemeCustomization() {
   const [themeMode, setThemeMode] = useState('simple');
   const [currentTheme, setCurrentTheme] = useState(getDefaultThemeBlueprint());
@@ -594,20 +612,26 @@ export function ThemeCustomization() {
                     </CardContent>
                   </Card>
 
-                  {/* Font Preview - Fixed Height */}
+                  {/* Font Preview - Fixed Height with Better Contrast */}
                   <Card className="bg-card border-border h-[700px]">
                     <CardHeader>
                       <CardTitle className="text-foreground flex items-center">
                         <Eye className="w-5 h-5 mr-2" />
                         Font Önizlemesi
                       </CardTitle>
+                      <p className="text-muted-foreground text-sm">
+                        Fontların nasıl görüneceğini kontrol edin. Önizleme her zaman okunabilir renklerde gösterilir.
+                      </p>
                     </CardHeader>
-                    <CardContent className="h-[calc(100%-80px)] overflow-y-auto">
+                    <CardContent className="h-[calc(100%-120px)] overflow-y-auto">
                       <div className="space-y-6">
                         {Object.entries(currentTheme.advancedSettings.typography).map(([key, settings]) => (
-                          <div key={key} className="p-4 bg-accent/20 rounded-lg border border-border">
-                            <div className="text-xs text-muted-foreground mb-3 uppercase tracking-wide font-medium">
-                              {getTypographyLabel(key)}
+                          <div key={key} className="p-6 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900 rounded-lg border border-border shadow-sm">
+                            <div className="text-xs text-muted-foreground mb-4 uppercase tracking-wide font-medium flex items-center justify-between">
+                              <span>{getTypographyLabel(key)}</span>
+                              <Badge variant="outline" className="text-xs">
+                                {settings.fontFamily}
+                              </Badge>
                             </div>
                             <div
                               style={{
@@ -615,15 +639,28 @@ export function ThemeCustomization() {
                                 fontSize: settings.fontSize,
                                 fontWeight: settings.fontWeight,
                                 textAlign: settings.alignment,
-                                color: currentTheme.advancedSettings.colors[key] || currentTheme.advancedSettings.colors.productName,
-                                lineHeight: '1.4'
+                                // Always use contrasting colors for readability in preview
+                                color: 'hsl(var(--foreground))',
+                                lineHeight: '1.5'
                               }}
-                              className="transition-all duration-200 mb-3"
+                              className="transition-all duration-200 mb-4 min-h-[3rem] flex items-center"
                             >
                               {getFontPreviewText(key)}
                             </div>
-                            <div className="text-xs text-muted-foreground">
-                              {settings.fontFamily} • {settings.fontSize} • {settings.fontWeight} • {settings.alignment}
+                            <div className="text-xs text-muted-foreground bg-background/50 rounded px-3 py-2 border">
+                              <div className="grid grid-cols-2 gap-2">
+                                <span><strong>Boyut:</strong> {settings.fontSize}</span>
+                                <span><strong>Ağırlık:</strong> {settings.fontWeight}</span>
+                                <span><strong>Hizalama:</strong> {settings.alignment}</span>
+                                <span><strong>Tema Rengi:</strong> 
+                                  <span 
+                                    className="inline-block w-3 h-3 rounded-full ml-2 border border-border"
+                                    style={{ 
+                                      backgroundColor: currentTheme.advancedSettings.colors[key] || currentTheme.advancedSettings.colors.productName 
+                                    }}
+                                  />
+                                </span>
+                              </div>
                             </div>
                           </div>
                         ))}
@@ -881,7 +918,7 @@ export function ThemeCustomization() {
               <div className="space-y-4">
                 {/* Preview Header */}
                 <div 
-                  className="p-4 text-white rounded-lg"
+                  className="p-4 rounded-lg"
                   style={{ 
                     backgroundColor: currentTheme.advancedSettings.colors.header,
                     borderRadius: `${borderRadius[0]}px`
@@ -892,7 +929,7 @@ export function ThemeCustomization() {
                     style={{ 
                       fontSize: `${fontSize[0] + 4}px`,
                       fontFamily: currentTheme.advancedSettings.typography.restaurantName.fontFamily,
-                      color: currentTheme.advancedSettings.colors.restaurantName
+                      color: getContrastingTextColor(currentTheme.advancedSettings.colors.header)
                     }}
                   >
                     Bella Vista
@@ -901,7 +938,7 @@ export function ThemeCustomization() {
                     className="text-sm opacity-90"
                     style={{ 
                       fontFamily: currentTheme.advancedSettings.typography.restaurantSlogan.fontFamily,
-                      color: currentTheme.advancedSettings.colors.restaurantName
+                      color: getContrastingTextColor(currentTheme.advancedSettings.colors.header)
                     }}
                   >
                     İtalyan Mutfağı
@@ -952,7 +989,8 @@ export function ThemeCustomization() {
                       style={{ 
                         backgroundColor: currentTheme.advancedSettings.colors.buttons,
                         borderRadius: `${borderRadius[0] / 2}px`,
-                        fontSize: `${fontSize[0] - 2}px`
+                        fontSize: `${fontSize[0] - 2}px`,
+                        color: getContrastingTextColor(currentTheme.advancedSettings.colors.buttons)
                       }}
                     >
                       Detay
