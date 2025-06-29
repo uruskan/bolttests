@@ -124,11 +124,17 @@ function SortableCategory({ category, onToggleActive, onEdit, onDelete }) {
           
           {/* Category Image */}
           <div className="w-12 h-12 rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800">
-            <img 
-              src={category.image} 
-              alt={category.name}
-              className="w-full h-full object-cover"
-            />
+            {category.image ? (
+              <img 
+                src={category.image} 
+                alt={category.name}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-slate-400">
+                <div className="w-6 h-6 bg-slate-300 dark:bg-slate-600 rounded" />
+              </div>
+            )}
           </div>
           
           {/* Category Info */}
@@ -161,7 +167,7 @@ function SortableCategory({ category, onToggleActive, onEdit, onDelete }) {
                 ? "text-green-800 dark:text-green-200" 
                 : "text-red-800 dark:text-red-200"
             )}>
-              {category.itemCount}
+              {category.itemCount || 0}
             </div>
           </div>
           
@@ -237,11 +243,11 @@ function SortableProduct({ product, onToggleActive, onPriceChange, onEdit, onDel
   };
 
   const [isEditingPrice, setIsEditingPrice] = useState(false);
-  const [tempPrice, setTempPrice] = useState(Math.round(product.price).toString());
+  const [tempPrice, setTempPrice] = useState(Math.round(product.price || 0).toString());
 
   const handlePriceClick = () => {
     setIsEditingPrice(true);
-    setTempPrice(Math.round(product.price).toString());
+    setTempPrice(Math.round(product.price || 0).toString());
   };
 
   const handlePriceBlur = () => {
@@ -250,7 +256,7 @@ function SortableProduct({ product, onToggleActive, onPriceChange, onEdit, onDel
     if (!isNaN(newPrice) && newPrice > 0) {
       onPriceChange(product.id, newPrice);
     } else {
-      setTempPrice(Math.round(product.price).toString());
+      setTempPrice(Math.round(product.price || 0).toString());
     }
   };
 
@@ -259,7 +265,7 @@ function SortableProduct({ product, onToggleActive, onPriceChange, onEdit, onDel
       handlePriceBlur();
     } else if (e.key === 'Escape') {
       setIsEditingPrice(false);
-      setTempPrice(Math.round(product.price).toString());
+      setTempPrice(Math.round(product.price || 0).toString());
     }
   };
 
@@ -297,11 +303,17 @@ function SortableProduct({ product, onToggleActive, onPriceChange, onEdit, onDel
         
         {/* Product Image */}
         <div className="w-16 h-16 rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800 flex-shrink-0">
-          <img 
-            src={product.image} 
-            alt={product.name}
-            className="w-full h-full object-cover"
-          />
+          {product.image ? (
+            <img 
+              src={product.image} 
+              alt={product.name}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-slate-400">
+              <div className="w-8 h-8 bg-slate-300 dark:bg-slate-600 rounded" />
+            </div>
+          )}
         </div>
         
         {/* Product Info */}
@@ -363,7 +375,7 @@ function SortableProduct({ product, onToggleActive, onPriceChange, onEdit, onDel
                 }}
                 title="Fiyatı düzenlemek için tıklayın"
               >
-                ₺{Math.round(product.price)}
+                ₺{Math.round(product.price || 0)}
               </div>
             )}
           </div>
@@ -424,7 +436,7 @@ function SortableProduct({ product, onToggleActive, onPriceChange, onEdit, onDel
 
 export function MenuManagement() {
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('1');
+  const [selectedCategory, setSelectedCategory] = useState(null);
   
   // Dialog states
   const [categoryDialog, setCategoryDialog] = useState({ open: false, category: null });
@@ -438,103 +450,9 @@ export function MenuManagement() {
     icon: null
   });
   
-  const [categories, setCategories] = useState([
-    {
-      id: '1',
-      name: 'Başlangıçlar',
-      description: 'Lezzetli başlangıç tarifleri',
-      itemCount: 8,
-      active: true,
-      image: 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=400'
-    },
-    {
-      id: '2',
-      name: 'Makarnalar',
-      description: 'Ev yapımı taze makarnalar',
-      itemCount: 12,
-      active: true,
-      image: 'https://images.pexels.com/photos/4518843/pexels-photo-4518843.jpeg?auto=compress&cs=tinysrgb&w=400'
-    },
-    {
-      id: '3',
-      name: 'Pizzalar',
-      description: 'Odun ateşinde İnce hamur',
-      itemCount: 10,
-      active: true,
-      image: 'https://images.pexels.com/photos/2147491/pexels-photo-2147491.jpeg?auto=compress&cs=tinysrgb&w=400'
-    },
-    {
-      id: '4',
-      name: 'Ana Yemekler',
-      description: 'Doyurucu İtalyan yemekleri',
-      itemCount: 15,
-      active: true,
-      image: 'https://images.pexels.com/photos/8753999/pexels-photo-8753999.jpeg?auto=compress&cs=tinysrgb&w=400'
-    },
-    {
-      id: '5',
-      name: 'Tatlılar',
-      description: 'Tatlı son',
-      itemCount: 6,
-      active: true,
-      image: 'https://images.pexels.com/photos/1126359/pexels-photo-1126359.jpeg?auto=compress&cs=tinysrgb&w=400'
-    },
-    {
-      id: '6',
-      name: 'İçecekler',
-      description: 'İçecekler ve şaraplar',
-      itemCount: 20,
-      active: false,
-      image: 'https://images.pexels.com/photos/1407846/pexels-photo-1407846.jpeg?auto=compress&cs=tinysrgb&w=400'
-    }
-  ]);
-
-  const [menuItems, setMenuItems] = useState([
-    {
-      id: '1',
-      name: 'Bruschetta Classica',
-      description: 'Taze domates, fesleğen ve sarımsakla kızarmış ekmek',
-      price: 46,
-      category: 'Başlangıçlar',
-      categoryId: '1',
-      image: 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=400',
-      active: true,
-      featured: true
-    },
-    {
-      id: '2',
-      name: 'Antipasto Misto',
-      description: 'Karışık peynir ve marine sebze seçkisi',
-      price: 69,
-      category: 'Başlangıçlar',
-      categoryId: '1',
-      image: 'https://images.pexels.com/photos/4518843/pexels-photo-4518843.jpeg?auto=compress&cs=tinysrgb&w=400',
-      active: true,
-      featured: false
-    },
-    {
-      id: '3',
-      name: 'Arancini',
-      description: 'Mozzarella ve bezelyeli çıtır risotto topları',
-      price: 53,
-      category: 'Başlangıçlar',
-      categoryId: '1',
-      image: 'https://images.pexels.com/photos/8753999/pexels-photo-8753999.jpeg?auto=compress&cs=tinysrgb&w=400',
-      active: false,
-      featured: false
-    },
-    {
-      id: '4',
-      name: 'Calamari Fritti',
-      description: 'Limonla servis edilen kızarmış kalamar halkaları',
-      price: 62,
-      category: 'Başlangıçlar',
-      categoryId: '1',
-      image: 'https://images.pexels.com/photos/1099680/pexels-photo-1099680.jpeg?auto=compress&cs=tinysrgb&w=400',
-      active: true,
-      featured: false
-    }
-  ]);
+  // Empty state - no mock data
+  const [categories, setCategories] = useState([]);
+  const [menuItems, setMenuItems] = useState([]);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -571,6 +489,8 @@ export function MenuManagement() {
 
   const toggleCategoryActive = (categoryId) => {
     const category = categories.find(cat => cat.id === categoryId);
+    if (!category) return;
+    
     const action = category.active ? 'pasif' : 'aktif';
     
     setConfirmDialog({
@@ -589,6 +509,8 @@ export function MenuManagement() {
 
   const toggleProductActive = (productId) => {
     const product = menuItems.find(item => item.id === productId);
+    if (!product) return;
+    
     const action = product.active ? 'pasif' : 'aktif';
     
     setConfirmDialog({
@@ -640,6 +562,10 @@ export function MenuManagement() {
       description: `"${product.name}" ürününü silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.`,
       onConfirm: () => {
         setMenuItems(prev => prev.filter(item => item.id !== product.id));
+        // Update category item count
+        setCategories(prev => prev.map(cat => 
+          cat.id === product.categoryId ? { ...cat, itemCount: Math.max(0, (cat.itemCount || 0) - 1) } : cat
+        ));
       },
       variant: 'destructive',
       icon: <AlertTriangle className="w-5 h-5" />
@@ -657,9 +583,15 @@ export function MenuManagement() {
       const newCategory = {
         ...categoryData,
         id: Date.now().toString(),
-        itemCount: 0
+        itemCount: 0,
+        active: true
       };
       setCategories(prev => [...prev, newCategory]);
+      
+      // Auto-select the new category
+      if (!selectedCategory) {
+        setSelectedCategory(newCategory.id);
+      }
     }
   };
 
@@ -671,16 +603,21 @@ export function MenuManagement() {
       ));
     } else {
       // Add new product
+      const targetCategoryId = selectedCategory || categories[0]?.id;
+      if (!targetCategoryId) return;
+      
       const newProduct = {
         ...productData,
         id: Date.now().toString(),
-        categoryId: selectedCategory
+        categoryId: targetCategoryId,
+        active: true,
+        featured: false
       };
       setMenuItems(prev => [...prev, newProduct]);
       
       // Update category item count
       setCategories(prev => prev.map(cat => 
-        cat.id === selectedCategory ? { ...cat, itemCount: cat.itemCount + 1 } : cat
+        cat.id === targetCategoryId ? { ...cat, itemCount: (cat.itemCount || 0) + 1 } : cat
       ));
     }
   };
@@ -690,6 +627,10 @@ export function MenuManagement() {
     item.categoryId === selectedCategory &&
     item.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  // Empty state messages
+  const hasCategories = categories.length > 0;
+  const hasProducts = filteredProducts.length > 0;
 
   return (
     <div className="space-y-6">
@@ -711,6 +652,7 @@ export function MenuManagement() {
           <Button 
             className="bg-primary hover:bg-primary/90 text-primary-foreground"
             onClick={() => setProductDialog({ open: true, product: null })}
+            disabled={!hasCategories}
           >
             <Plus className="w-4 h-4 mr-2" />
             Öğe Ekle
@@ -732,34 +674,51 @@ export function MenuManagement() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              <DndContext 
-                sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragEnd={handleCategoryDragEnd}
-              >
-                <SortableContext 
-                  items={categories.map(cat => cat.id)}
-                  strategy={verticalListSortingStrategy}
+              {!hasCategories ? (
+                <div className="text-center py-8">
+                  <div className="text-muted-foreground mb-4">
+                    <ChefHat className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                    <p>Henüz kategori eklenmemiş</p>
+                    <p className="text-sm">İlk kategorinizi ekleyerek başlayın</p>
+                  </div>
+                  <Button 
+                    variant="outline"
+                    onClick={() => setCategoryDialog({ open: true, category: null })}
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    İlk Kategoriyi Ekle
+                  </Button>
+                </div>
+              ) : (
+                <DndContext 
+                  sensors={sensors}
+                  collisionDetection={closestCenter}
+                  onDragEnd={handleCategoryDragEnd}
                 >
-                  {categories.map((category) => (
-                    <div
-                      key={category.id}
-                      onClick={() => setSelectedCategory(category.id)}
-                      className={cn(
-                        "cursor-pointer transition-all duration-200",
-                        selectedCategory === category.id && "ring-2 ring-blue-500 ring-offset-2 ring-offset-background"
-                      )}
-                    >
-                      <SortableCategory 
-                        category={category} 
-                        onToggleActive={toggleCategoryActive}
-                        onEdit={handleCategoryEdit}
-                        onDelete={handleCategoryDelete}
-                      />
-                    </div>
-                  ))}
-                </SortableContext>
-              </DndContext>
+                  <SortableContext 
+                    items={categories.map(cat => cat.id)}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    {categories.map((category) => (
+                      <div
+                        key={category.id}
+                        onClick={() => setSelectedCategory(category.id)}
+                        className={cn(
+                          "cursor-pointer transition-all duration-200",
+                          selectedCategory === category.id && "ring-2 ring-blue-500 ring-offset-2 ring-offset-background"
+                        )}
+                      >
+                        <SortableCategory 
+                          category={category} 
+                          onToggleActive={toggleCategoryActive}
+                          onEdit={handleCategoryEdit}
+                          onDelete={handleCategoryDelete}
+                        />
+                      </div>
+                    ))}
+                  </SortableContext>
+                </DndContext>
+              )}
             </CardContent>
           </Card>
         </div>
@@ -770,57 +729,82 @@ export function MenuManagement() {
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle className="text-foreground">
-                  {selectedCategoryData?.name} ({filteredProducts.length} Öğe)
+                  {selectedCategoryData ? `${selectedCategoryData.name} (${filteredProducts.length} Öğe)` : 'Kategori Seçin'}
                 </CardTitle>
-                <div className="flex items-center space-x-2">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                    <Input
-                      placeholder="🔍 Öğe ara..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="w-48 pl-10 bg-background/50 border-border text-foreground placeholder:text-muted-foreground"
-                    />
+                {selectedCategoryData && (
+                  <div className="flex items-center space-x-2">
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                      <Input
+                        placeholder="🔍 Öğe ara..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-48 pl-10 bg-background/50 border-border text-foreground placeholder:text-muted-foreground"
+                      />
+                    </div>
+                    <Button 
+                      variant="outline" 
+                      size="icon"
+                      className="border-border text-muted-foreground hover:bg-accent hover:text-foreground"
+                    >
+                      <List className="w-4 h-4" />
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="icon"
+                      className="border-border text-muted-foreground hover:bg-accent hover:text-foreground"
+                    >
+                      <Grid3X3 className="w-4 h-4" />
+                    </Button>
                   </div>
-                  <Button 
-                    variant="outline" 
-                    size="icon"
-                    className="border-border text-muted-foreground hover:bg-accent hover:text-foreground"
-                  >
-                    <List className="w-4 h-4" />
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    size="icon"
-                    className="border-border text-muted-foreground hover:bg-accent hover:text-foreground"
-                  >
-                    <Grid3X3 className="w-4 h-4" />
-                  </Button>
-                </div>
+                )}
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
-              <DndContext 
-                sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragEnd={handleProductDragEnd}
-              >
-                <SortableContext 
-                  items={filteredProducts.map(item => item.id)}
-                  strategy={verticalListSortingStrategy}
+              {!selectedCategoryData ? (
+                <div className="text-center py-12">
+                  <div className="text-muted-foreground">
+                    <List className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                    <p>Ürünleri görüntülemek için bir kategori seçin</p>
+                  </div>
+                </div>
+              ) : !hasProducts ? (
+                <div className="text-center py-12">
+                  <div className="text-muted-foreground mb-4">
+                    <ChefHat className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                    <p>Bu kategoride henüz ürün yok</p>
+                    <p className="text-sm">İlk ürününüzü ekleyerek başlayın</p>
+                  </div>
+                  <Button 
+                    onClick={() => setProductDialog({ open: true, product: null })}
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    İlk Ürünü Ekle
+                  </Button>
+                </div>
+              ) : (
+                <DndContext 
+                  sensors={sensors}
+                  collisionDetection={closestCenter}
+                  onDragEnd={handleProductDragEnd}
                 >
-                  {filteredProducts.map((item) => (
-                    <SortableProduct 
-                      key={item.id}
-                      product={item} 
-                      onToggleActive={toggleProductActive}
-                      onPriceChange={updateProductPrice}
-                      onEdit={handleProductEdit}
-                      onDelete={handleProductDelete}
-                    />
-                  ))}
-                </SortableContext>
-              </DndContext>
+                  <SortableContext 
+                    items={filteredProducts.map(item => item.id)}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    {filteredProducts.map((item) => (
+                      <SortableProduct 
+                        key={item.id}
+                        product={item} 
+                        onToggleActive={toggleProductActive}
+                        onPriceChange={updateProductPrice}
+                        onEdit={handleProductEdit}
+                        onDelete={handleProductDelete}
+                      />
+                    ))}
+                  </SortableContext>
+                </DndContext>
+              )}
             </CardContent>
           </Card>
         </div>

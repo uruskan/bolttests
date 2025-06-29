@@ -27,51 +27,54 @@ export function DashboardPage() {
     return () => clearInterval(timer);
   }, []);
 
+  // Empty state metrics - all zeros
   const metrics = [
     {
       title: "Toplam Menü Öğesi",
-      value: "127",
-      change: "+5 bu hafta",
-      trend: "up",
+      value: "0",
+      change: "Henüz ürün eklenmemiş",
+      trend: "neutral",
       icon: ChefHat,
       colorClass: "from-green-400 to-emerald-500"
     },
     {
       title: "Aktif Kategoriler",
-      value: "8",
-      change: "Tümü aktif",
+      value: "0",
+      change: "Henüz kategori eklenmemiş",
       trend: "neutral",
       icon: Users,
       colorClass: "from-blue-400 to-blue-500"
     },
     {
       title: "QR Kod Taramaları",
-      value: "2,847",
-      change: "+12.5% bu ay",
-      trend: "up",
+      value: "0",
+      change: "Henüz tarama yok",
+      trend: "neutral",
       icon: Eye,
       colorClass: "from-orange-400 to-orange-500"
     },
     {
       title: "Müşteri Puanı",
-      value: "4.8",
-      change: "+0.2 bu hafta",
-      trend: "up",
+      value: "-",
+      change: "Henüz değerlendirme yok",
+      trend: "neutral",
       icon: Star,
       colorClass: "from-yellow-400 to-yellow-500"
     }
   ];
 
+  // Empty state content stats
   const contentStats = [
-    { name: "Aktif Hikayeler", count: 3, value: 234, icon: Eye, valueLabel: 'görüntülenme' },
-    { name: "Aktif Reklamlar", count: 2, value: 156, icon: Megaphone, valueLabel: 'tıklama' },
-    { name: "Öne Çıkan Ürünler", count: 5, value: 89, icon: Heart, valueLabel: 'beğeni' },
+    { name: "Aktif Hikayeler", count: 0, value: 0, icon: Eye, valueLabel: 'görüntülenme' },
+    { name: "Aktif Reklamlar", count: 0, value: 0, icon: Megaphone, valueLabel: 'tıklama' },
+    { name: "Öne Çıkan Ürünler", count: 0, value: 0, icon: Heart, valueLabel: 'beğeni' },
   ];
 
+  // Empty state menu stats
   const menuStats = [
-    { name: "Başlangıçlar", count: 8, value: 0, icon: ChefHat, valueLabel: 'aktif' },
-    { name: "Ana Yemekler", count: 15, value: 0, icon: ChefHat, valueLabel: 'aktif' },
-    { name: "Tatlılar", count: 6, value: 2, icon: ChefHat, valueLabel: 'pasif' },
+    { name: "Kategoriler", count: 0, value: 0, icon: ChefHat, valueLabel: 'toplam' },
+    { name: "Ürünler", count: 0, value: 0, icon: ChefHat, valueLabel: 'toplam' },
+    { name: "Pasif Ürünler", count: 0, value: 0, icon: ChefHat, valueLabel: 'toplam' },
   ];
 
   const quickActions = [
@@ -83,7 +86,7 @@ export function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      <WelcomeHeader userName="Ahmet Bey" currentTime={currentTime} />
+      <WelcomeHeader userName="Kullanıcı" currentTime={currentTime} />
 
       {/* Metrics Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

@@ -3,7 +3,14 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
-export function WelcomeHeader({ userName, currentTime }) {
+export function WelcomeHeader({ userName = "Kullanıcı", currentTime }) {
+  const getGreeting = () => {
+    const hour = currentTime.getHours();
+    if (hour < 12) return "Günaydın";
+    if (hour < 18) return "İyi günler";
+    return "İyi akşamlar";
+  };
+
   return (
     <Card className={cn(
       "backdrop-blur-xl border shadow-lg transition-all duration-200",
@@ -16,13 +23,13 @@ export function WelcomeHeader({ userName, currentTime }) {
               "text-2xl font-bold mb-2 transition-colors duration-200",
               "text-foreground"
             )}>
-              Günaydın, {userName}!
+              {getGreeting()}, {userName}!
             </h1>
             <p className={cn(
               "transition-colors duration-200",
               "text-muted-foreground"
             )}>
-              Restoranınızda bugün neler oluyor
+              Restoranınızı yönetmeye başlayın
             </p>
           </div>
           <div className="mt-4 sm:mt-0 text-right">

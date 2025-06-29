@@ -128,14 +128,18 @@ export function RestaurantSettings() {
               <CardContent className="space-y-4">
                 <div>
                   <Label htmlFor="restaurantName" className="text-foreground">Restoran Adı</Label>
-                  <Input id="restaurantName" defaultValue="Bella Vista" className="mt-1 bg-background border-border text-foreground" />
+                  <Input 
+                    id="restaurantName" 
+                    placeholder="Restoran adınızı girin"
+                    className="mt-1 bg-background border-border text-foreground" 
+                  />
                 </div>
                 
                 <div>
                   <Label htmlFor="cuisine" className="text-foreground">Mutfak Türü</Label>
-                  <Select defaultValue="italian">
+                  <Select>
                     <SelectTrigger className="mt-1 bg-background border-border text-foreground">
-                      <SelectValue />
+                      <SelectValue placeholder="Mutfak türünü seçin" />
                     </SelectTrigger>
                     <SelectContent className="bg-background border-border">
                       <SelectItem value="italian">İtalyan</SelectItem>
@@ -153,7 +157,7 @@ export function RestaurantSettings() {
                   <Label htmlFor="description" className="text-foreground">Açıklama</Label>
                   <Textarea 
                     id="description" 
-                    defaultValue="Şehrin kalbinde otantik İtalyan mutfağı. Nesiller boyu aktarılan geleneksel tarifleri sunan aile işletmesi restoran."
+                    placeholder="Restoranınız hakkında kısa bir açıklama yazın"
                     className="mt-1 h-24 bg-background border-border text-foreground" 
                   />
                 </div>
@@ -181,7 +185,7 @@ export function RestaurantSettings() {
                     <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input 
                       id="address" 
-                      defaultValue="Atatürk Caddesi No:123, Merkez, İstanbul"
+                      placeholder="Restoran adresinizi girin"
                       className="pl-10 bg-background border-border text-foreground" 
                     />
                   </div>
@@ -193,7 +197,7 @@ export function RestaurantSettings() {
                     <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input 
                       id="phone" 
-                      defaultValue="+90 (212) 123-4567"
+                      placeholder="+90 (5XX) XXX-XXXX"
                       className="pl-10 bg-background border-border text-foreground" 
                     />
                   </div>
@@ -206,7 +210,7 @@ export function RestaurantSettings() {
                     <Input 
                       id="email" 
                       type="email"
-                      defaultValue="info@bellavista.com"
+                      placeholder="info@restoraniniz.com"
                       className="pl-10 bg-background border-border text-foreground" 
                     />
                   </div>
@@ -218,7 +222,7 @@ export function RestaurantSettings() {
                     <Globe className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input 
                       id="website" 
-                      defaultValue="https://bellavista.com"
+                      placeholder="https://restoraniniz.com"
                       className="pl-10 bg-background border-border text-foreground" 
                     />
                   </div>
@@ -227,11 +231,21 @@ export function RestaurantSettings() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="capacity" className="text-foreground">Oturma Kapasitesi</Label>
-                    <Input id="capacity" type="number" defaultValue="80" className="mt-1 bg-background border-border text-foreground" />
+                    <Input 
+                      id="capacity" 
+                      type="number" 
+                      placeholder="80"
+                      className="mt-1 bg-background border-border text-foreground" 
+                    />
                   </div>
                   <div>
                     <Label htmlFor="tables" className="text-foreground">Masa Sayısı</Label>
-                    <Input id="tables" type="number" defaultValue="20" className="mt-1 bg-background border-border text-foreground" />
+                    <Input 
+                      id="tables" 
+                      type="number" 
+                      placeholder="20"
+                      className="mt-1 bg-background border-border text-foreground" 
+                    />
                   </div>
                 </div>
               </CardContent>
@@ -251,7 +265,7 @@ export function RestaurantSettings() {
                     <Instagram className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input 
                       id="instagram" 
-                      placeholder="@bellavista"
+                      placeholder="@restoraniniz"
                       className="pl-10 bg-background border-border text-foreground" 
                     />
                   </div>
@@ -262,7 +276,7 @@ export function RestaurantSettings() {
                     <Facebook className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input 
                       id="facebook" 
-                      placeholder="facebook.com/bellavista"
+                      placeholder="facebook.com/restoraniniz"
                       className="pl-10 bg-background border-border text-foreground" 
                     />
                   </div>
@@ -273,7 +287,7 @@ export function RestaurantSettings() {
                     <Twitter className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input 
                       id="twitter" 
-                      placeholder="@bellavista"
+                      placeholder="@restoraniniz"
                       className="pl-10 bg-background border-border text-foreground" 
                     />
                   </div>
@@ -455,9 +469,7 @@ export function RestaurantSettings() {
                 <div className="border-t border-border pt-4">
                   <h4 className="font-medium text-foreground mb-2">Son Aktiviteler</h4>
                   <div className="space-y-2 text-sm text-muted-foreground">
-                    <div>Son giriş: Bugün 09:30</div>
-                    <div>Şifre değiştirildi: 2 hafta önce</div>
-                    <div>Hesap oluşturuldu: 15 Mart 2020</div>
+                    <div>Henüz aktivite kaydı yok</div>
                   </div>
                 </div>
               </CardContent>
