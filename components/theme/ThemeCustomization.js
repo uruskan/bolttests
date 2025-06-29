@@ -101,13 +101,25 @@ export function ThemeCustomization() {
   const getFontPreviewText = (key) => {
     const previewTexts = {
       restaurantName: "Bella Vista Restaurant",
-      restaurantSlogan: "Authentic Italian Cuisine Since 1985",
+      restaurantSlogan: "Otantik İtalyan Mutfağı 1985'ten Beri",
       categoryName: "Ana Yemekler",
       productName: "Pasta Carbonara",
       productPrice: "₺89.99",
       productDescription: "Taze malzemelerle hazırlanan geleneksel İtalyan makarnası, krema sosu ve parmesan peyniri ile servis edilir."
     };
-    return previewTexts[key] || "Sample Text";
+    return previewTexts[key] || "Örnek Metin";
+  };
+
+  const getTypographyLabel = (key) => {
+    const labels = {
+      restaurantName: "Restoran Adı",
+      restaurantSlogan: "Restoran Sloganı",
+      categoryName: "Kategori Adları",
+      productName: "Ürün Adları",
+      productPrice: "Fiyatlar",
+      productDescription: "Açıklamalar"
+    };
+    return labels[key] || key;
   };
 
   return (
@@ -299,28 +311,28 @@ export function ThemeCustomization() {
                   className="flex items-center data-[state=active]:bg-background data-[state=active]:text-foreground"
                 >
                   <Palette className="w-4 h-4 mr-2" />
-                  Colors
+                  Renkler
                 </TabsTrigger>
                 <TabsTrigger 
                   value="typography" 
                   className="flex items-center data-[state=active]:bg-background data-[state=active]:text-foreground"
                 >
                   <Type className="w-4 h-4 mr-2" />
-                  Typography
+                  Tipografi
                 </TabsTrigger>
                 <TabsTrigger 
                   value="layout" 
                   className="flex items-center data-[state=active]:bg-background data-[state=active]:text-foreground"
                 >
                   <Layout className="w-4 h-4 mr-2" />
-                  Layout
+                  Düzen
                 </TabsTrigger>
                 <TabsTrigger 
                   value="advanced" 
                   className="flex items-center data-[state=active]:bg-background data-[state=active]:text-foreground"
                 >
                   <Settings className="w-4 h-4 mr-2" />
-                  Advanced
+                  Gelişmiş
                 </TabsTrigger>
               </TabsList>
 
@@ -359,6 +371,9 @@ export function ThemeCustomization() {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   {/* Typography Settings */}
                   <Card className="bg-card border-border">
+                    <CardHeader>
+                      <CardTitle className="text-foreground">Tipografi Ayarları</CardTitle>
+                    </CardHeader>
                     <CardContent className="p-0">
                       <Tabs defaultValue="restaurantName" orientation="vertical" className="flex">
                         <TabsList className="flex flex-col h-auto w-48 bg-muted/30 rounded-none border-r border-border">
@@ -366,37 +381,37 @@ export function ThemeCustomization() {
                             value="restaurantName" 
                             className="w-full justify-start data-[state=active]:bg-background"
                           >
-                            Restaurant Name
+                            Restoran Adı
                           </TabsTrigger>
                           <TabsTrigger 
                             value="restaurantSlogan" 
                             className="w-full justify-start data-[state=active]:bg-background"
                           >
-                            Restaurant Slogan
+                            Restoran Sloganı
                           </TabsTrigger>
                           <TabsTrigger 
                             value="categoryName" 
                             className="w-full justify-start data-[state=active]:bg-background"
                           >
-                            Categories
+                            Kategoriler
                           </TabsTrigger>
                           <TabsTrigger 
                             value="productName" 
                             className="w-full justify-start data-[state=active]:bg-background"
                           >
-                            Product Names
+                            Ürün Adları
                           </TabsTrigger>
                           <TabsTrigger 
                             value="productPrice" 
                             className="w-full justify-start data-[state=active]:bg-background"
                           >
-                            Prices
+                            Fiyatlar
                           </TabsTrigger>
                           <TabsTrigger 
                             value="productDescription" 
                             className="w-full justify-start data-[state=active]:bg-background"
                           >
-                            Descriptions
+                            Açıklamalar
                           </TabsTrigger>
                         </TabsList>
 
@@ -405,14 +420,14 @@ export function ThemeCustomization() {
                             <TabsContent key={key} value={key} className="mt-0">
                               <div className="space-y-6">
                                 <div>
-                                  <h3 className="text-lg font-semibold mb-4 capitalize text-foreground">
-                                    {key.replace(/([A-Z])/g, ' $1')}
+                                  <h3 className="text-lg font-semibold mb-4 text-foreground">
+                                    {getTypographyLabel(key)}
                                   </h3>
                                 </div>
 
                                 <div className="grid grid-cols-1 gap-6">
                                   <div>
-                                    <Label className="text-foreground">Font Family</Label>
+                                    <Label className="text-foreground">Font Ailesi</Label>
                                     <Select 
                                       value={settings.fontFamily}
                                       onValueChange={(value) => updateAdvancedSetting(`typography.${key}.fontFamily`, value)}
@@ -430,7 +445,7 @@ export function ThemeCustomization() {
 
                                   <div>
                                     <Label className="text-foreground">
-                                      Size: {settings.fontSize}
+                                      Boyut: {settings.fontSize}
                                     </Label>
                                     <div className="mt-2 flex items-center space-x-4">
                                       <Slider
@@ -510,7 +525,7 @@ export function ThemeCustomization() {
                         {Object.entries(currentTheme.advancedSettings.typography).map(([key, settings]) => (
                           <div key={key} className="p-4 bg-accent/20 rounded-lg border border-border">
                             <div className="text-xs text-muted-foreground mb-2 uppercase tracking-wide">
-                              {key.replace(/([A-Z])/g, ' $1')}
+                              {getTypographyLabel(key)}
                             </div>
                             <div
                               style={{
