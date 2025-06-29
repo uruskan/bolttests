@@ -263,10 +263,18 @@ export function ContentManagement() {
   };
 
   const filterContent = (items) => {
-    return items.filter(item => 
-      item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (item.description && item.description.toLowerCase().includes(searchTerm.toLowerCase()))
-    );
+    return items.filter(item => {
+      if (!item) return false;
+      
+      // Handle different item types with different property names
+      const title = item.title || item.name || '';
+      const description = item.description || '';
+      
+      const searchLower = searchTerm.toLowerCase();
+      
+      return title.toLowerCase().includes(searchLower) ||
+             description.toLowerCase().includes(searchLower);
+    });
   };
 
   // Story handlers
