@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { DashboardLayout } from '@/components/templates/DashboardLayout';
-import { DashboardPage } from '@/components/pages/DashboardPage';
 import { MenuManagement } from '@/components/menu/MenuManagement';
 import { ContentManagement } from '@/components/content/ContentManagement';
 import { RestaurantSettings } from '@/components/settings/RestaurantSettings';
@@ -13,7 +12,6 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate initial data loading
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 1000);
@@ -23,8 +21,6 @@ export default function Home() {
 
   const renderActiveView = () => {
     switch (activeView) {
-      case 'dashboard':
-        return <DashboardPage />;
       case 'menu':
         return <MenuManagement />;
       case 'content':
@@ -34,7 +30,7 @@ export default function Home() {
       case 'settings':
         return <RestaurantSettings />;
       default:
-        return <DashboardPage />;
+        return null;
     }
   };
 
