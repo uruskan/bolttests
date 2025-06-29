@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { ConfirmationDialog } from '@/components/ui/confirmation-dialog';
-import { CategoryFormDialog, ProductFormDialog } from '@/components/ui/form-dialog';
+import { SimpleCategoryFormDialog, SimpleProductFormDialog } from '@/components/ui/simple-form-dialog';
 import { 
   DndContext, 
   closestCenter,
@@ -827,14 +827,14 @@ export function MenuManagement() {
       </div>
 
       {/* Form Dialogs */}
-      <CategoryFormDialog
+      <SimpleCategoryFormDialog
         category={categoryDialog.category}
         open={categoryDialog.open}
         onOpenChange={(open) => setCategoryDialog({ open, category: null })}
         onSave={handleSaveCategory}
       />
 
-      <ProductFormDialog
+      <SimpleProductFormDialog
         product={productDialog.product}
         open={productDialog.open}
         onOpenChange={(open) => setProductDialog({ open, product: null })}

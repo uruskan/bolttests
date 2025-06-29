@@ -11,10 +11,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ConfirmationDialog } from '@/components/ui/confirmation-dialog';
 import { 
-  StoryFormDialog, 
-  AdvertisementFormDialog, 
-  ProductFormDialog 
-} from '@/components/ui/form-dialog';
+  SimpleStoryFormDialog, 
+  SimpleAdvertisementFormDialog, 
+  FeaturedProductSelectionDialog 
+} from '@/components/ui/simple-form-dialog';
 import { 
   Plus, 
   Camera, 
@@ -44,7 +44,7 @@ export function ContentManagement() {
   // Dialog states
   const [storyDialog, setStoryDialog] = useState({ open: false, story: null });
   const [adDialog, setAdDialog] = useState({ open: false, advertisement: null });
-  const [productDialog, setProductDialog] = useState({ open: false, product: null });
+  const [productSelectionDialog, setProductSelectionDialog] = useState({ open: false });
   
   // Display options state
   const [displayOptions, setDisplayOptions] = useState({
@@ -339,10 +339,6 @@ export function ContentManagement() {
     });
   };
 
-  const handleEditFeaturedProduct = (product) => {
-    setProductDialog({ open: true, product });
-  };
-
   const handleRemoveFeaturedProduct = (productId) => {
     const product = featuredProducts.find(p => p.id === productId);
     
@@ -358,23 +354,16 @@ export function ContentManagement() {
     });
   };
 
-  const handleSaveFeaturedProduct = (productData) => {
-    if (productDialog.product) {
-      // Edit existing product
-      setFeaturedProducts(prev => prev.map(p => 
-        p.id === productDialog.product.id ? { ...p, ...productData } : p
-      ));
-    } else {
-      // Add new product
-      const newProduct = {
-        ...productData,
-        id: Date.now().toString(),
-        views: 0,
-        orders: 0,
-        featured: true
-      };
-      setFeaturedProducts(prev => [...prev, newProduct]);
-    }
+  const handleAddFeaturedProduct = (productData) => {
+    const newProduct = {
+      ...productData,
+      id: Date.now().toString(),
+      views: 0,
+      orders: 0,
+      featured: true,
+      active: true
+    };
+    setFeaturedProducts(prev => [...prev, newProduct]);
   };
 
   return (
@@ -393,7 +382,7 @@ export function ContentManagement() {
             } else if (activeTab === 'ads') {
               setAdDialog({ open: true, advertisement: null });
             } else if (activeTab === 'featured') {
-              setProductDialog({ open: true, product: null });
+              setProductSelectionDialog({ open: true });
             }
           }}
         >
@@ -665,7 +654,7 @@ export function ContentManagement() {
                 </span>
                 <Button 
                   variant="outline"
-                  onClick={() => setProductDialog({ open: true, product: null })}
+                  onClick={() => setProductSelectionDialog({ open: true })}
                 >
                   <Plus className="w-4 h-4 mr-2" />
                   Ürün Ekle
@@ -745,18 +734,6 @@ export function ContentManagement() {
                     </div>
                     
                     <div className="flex flex-col space-y-1">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-accent"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleEditFeaturedProduct(product);
-                        }}
-                        title="Düzenle"
-                      >
-                        <Edit className="w-4 h-4" />
-                      </Button>
                       <Button
                         variant="ghost"
                         size="icon"
@@ -932,25 +909,25 @@ export function ContentManagement() {
       </Tabs>
 
       {/* Form Dialogs */}
-      <StoryFormDialog
+      <SimpleStoryFormDialog
         story={storyDialog.story}
         open={storyDialog.open}
         onOpenChange={(open) => setStoryDialog({ open, story: null })}
         onSave={handleSaveStory}
       />
 
-      <AdvertisementFormDialog
+      <SimpleAdvertisementFormDialog
         advertisement={adDialog.advertisement}
         open={adDialog.open}
         onOpenChange={(open) => setAdDialog({ open, advertisement: null })}
         onSave={handleSaveAd}
       />
 
-      <ProductFormDialog
-        product={productDialog.product}
-        open={productDialog.open}
-        onOpenChange={(open) => setProductDialog({ open, product: null })}
-        onSave={handleSaveFeaturedProduct}
+      <FeaturedProductSelectionDialog
+        open={productSelectionDialog.open}
+        onOpenChange={(open) => setProductSelectionDialog({ open })}
+        onSave={handleAddFeaturedProduct}
+        existingProducts={featuredProducts}
       />
 
       {/* Confirmation Dialog */}
