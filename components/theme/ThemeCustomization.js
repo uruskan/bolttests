@@ -10,6 +10,7 @@ import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
+import { EnhancedColorSection } from '@/components/ui/color-picker';
 import { 
   DndContext, 
   closestCenter,
@@ -451,29 +452,15 @@ export function ThemeCustomization() {
                 <Card className="bg-card border-border">
                   <CardHeader>
                     <CardTitle className="text-foreground">Renk Ayarları</CardTitle>
+                    <p className="text-muted-foreground text-sm">
+                      Menünüzün renklerini kolayca özelleştirin. Hazır renk paletlerinden seçim yapabilir veya kendi renklerinizi belirleyebilirsiniz.
+                    </p>
                   </CardHeader>
                   <CardContent>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                      {Object.entries(currentTheme.advancedSettings.colors).map(([key, value]) => (
-                        <div key={key}>
-                          <Label className="capitalize text-foreground">
-                            {key.replace(/([A-Z])/g, ' $1')}
-                          </Label>
-                          <div className="flex items-center space-x-3 mt-2">
-                            <input
-                              type="color"
-                              value={value}
-                              onChange={(e) => updateAdvancedSetting(`colors.${key}`, e.target.value)}
-                              className="w-12 h-12 rounded-lg border border-border cursor-pointer"
-                            />
-                            <div>
-                              <div className="font-medium text-foreground">{key}</div>
-                              <div className="text-sm text-muted-foreground">{value}</div>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
+                    <EnhancedColorSection 
+                      currentTheme={currentTheme}
+                      updateAdvancedSetting={updateAdvancedSetting}
+                    />
                   </CardContent>
                 </Card>
               </TabsContent>
