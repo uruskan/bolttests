@@ -1,17 +1,15 @@
-'use client';
+import * as React from "react"
+import * as DialogPrimitive from "@radix-ui/react-dialog"
+import { X } from "lucide-react"
+import { cn } from "@/lib/utils"
 
-import * as React from 'react';
-import * as DialogPrimitive from '@radix-ui/react-dialog';
-import { X } from 'lucide-react';
-import { cn } from '@/lib/utils';
+const Dialog = DialogPrimitive.Root
 
-const Dialog = DialogPrimitive.Root;
+const DialogTrigger = DialogPrimitive.Trigger
 
-const DialogTrigger = DialogPrimitive.Trigger;
+const DialogPortal = DialogPrimitive.Portal
 
-const DialogPortal = DialogPrimitive.Portal;
-
-const DialogClose = DialogPrimitive.Close;
+const DialogClose = DialogPrimitive.Close
 
 const DialogOverlay = React.forwardRef(({ className, ...props }, ref) => (
   <DialogPrimitive.Overlay
@@ -22,8 +20,8 @@ const DialogOverlay = React.forwardRef(({ className, ...props }, ref) => (
     )}
     {...props}
   />
-));
-DialogOverlay.displayName = DialogPrimitive.Overlay.displayName;
+))
+DialogOverlay.displayName = DialogPrimitive.Overlay.displayName
 
 const DialogContent = React.forwardRef(({ className, children, ...props }, ref) => (
   <DialogPortal>
@@ -43,8 +41,8 @@ const DialogContent = React.forwardRef(({ className, children, ...props }, ref) 
       </DialogPrimitive.Close>
     </DialogPrimitive.Content>
   </DialogPortal>
-));
-DialogContent.displayName = DialogPrimitive.Content.displayName;
+))
+DialogContent.displayName = DialogPrimitive.Content.displayName
 
 const DialogHeader = ({ className, ...props }) => (
   <div
@@ -54,8 +52,8 @@ const DialogHeader = ({ className, ...props }) => (
     )}
     {...props}
   />
-);
-DialogHeader.displayName = "DialogHeader";
+)
+DialogHeader.displayName = "DialogHeader"
 
 const DialogFooter = ({ className, ...props }) => (
   <div
@@ -65,8 +63,8 @@ const DialogFooter = ({ className, ...props }) => (
     )}
     {...props}
   />
-);
-DialogFooter.displayName = "DialogFooter";
+)
+DialogFooter.displayName = "DialogFooter"
 
 const DialogTitle = React.forwardRef(({ className, ...props }, ref) => (
   <DialogPrimitive.Title
@@ -77,8 +75,8 @@ const DialogTitle = React.forwardRef(({ className, ...props }, ref) => (
     )}
     {...props}
   />
-));
-DialogTitle.displayName = DialogPrimitive.Title.displayName;
+))
+DialogTitle.displayName = DialogPrimitive.Title.displayName
 
 const DialogDescription = React.forwardRef(({ className, ...props }, ref) => (
   <DialogPrimitive.Description
@@ -86,8 +84,8 @@ const DialogDescription = React.forwardRef(({ className, ...props }, ref) => (
     className={cn("text-sm text-muted-foreground", className)}
     {...props}
   />
-));
-DialogDescription.displayName = DialogPrimitive.Description.displayName;
+))
+DialogDescription.displayName = DialogPrimitive.Description.displayName
 
 export {
   Dialog,
@@ -100,4 +98,4 @@ export {
   DialogFooter,
   DialogTitle,
   DialogDescription,
-};
+}
