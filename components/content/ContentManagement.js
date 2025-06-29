@@ -11,6 +11,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ConfirmationDialog } from '@/components/ui/confirmation-dialog';
 import { 
+  StoryFormDialog, 
+  AdvertisementFormDialog, 
+  ProductFormDialog 
+} from '@/components/ui/form-dialog';
+import { 
   Plus, 
   Camera, 
   Megaphone, 
@@ -36,6 +41,11 @@ import { cn } from '@/lib/utils';
 export function ContentManagement() {
   const [activeTab, setActiveTab] = useState('stories');
   
+  // Dialog states
+  const [storyDialog, setStoryDialog] = useState({ open: false, story: null });
+  const [adDialog, setAdDialog] = useState({ open: false, advertisement: null });
+  const [productDialog, setProductDialog] = useState({ open: false, product: null });
+  
   // Display options state
   const [displayOptions, setDisplayOptions] = useState({
     advertisementType: 'popup', // 'popup' or 'hero'
@@ -53,7 +63,7 @@ export function ContentManagement() {
     icon: null
   });
 
-  const stories = [
+  const [stories, setStories] = useState([
     {
       id: '1',
       title: 'Fresh Pasta Making',
@@ -114,9 +124,9 @@ export function ContentManagement() {
       active: true,
       timeLeft: '8h'
     }
-  ];
+  ]);
 
-  const advertisements = [
+  const [advertisements, setAdvertisements] = useState([
     {
       id: '1',
       title: 'Happy Hour Special',
@@ -144,9 +154,9 @@ export function ContentManagement() {
       impressions: 567,
       active: true
     }
-  ];
+  ]);
 
-  const featuredProducts = [
+  const [featuredProducts, setFeaturedProducts] = useState([
     {
       id: '1',
       name: 'Bruschetta Classica',
@@ -195,8 +205,122 @@ export function ContentManagement() {
       views: 198,
       orders: 15
     }
-  ];
+  ]);
 
+  // Story handlers
+  const handleToggleStory = (storyId) => {
+    const story = stories.find(s => s.id === storyId);
+    const action = story.active ? 'pasif' : 'aktif';
+    
+    setConfirmDialog({
+      open: true,
+      title: `Hikayeyi ${action} yap`,
+      description: `"${story.title}" hikayesini ${action} yapmak istediğinizden emin misiniz?`,
+      onConfirm: () => {
+        setStories(prev => prev.map(s => 
+          s.id === storyId ? { ...s, active: !s.active } : s
+        ));
+      },
+      variant: 'default',
+      icon: story.active ? <ToggleLeft className="w-5 h-5" /> : <ToggleRight className="w-5 h-5" />
+    });
+  };
+
+  const handleEditStory = (story) => {
+    setStoryDialog({ open: true, story });
+  };
+
+  const handleDeleteStory = (storyId) => {
+    const story = stories.find(s => s.id === storyId);
+    
+    setConfirmDialog({
+      open: true,
+      title: 'Hikayeyi sil',
+      description: `"${story.title}" hikayesini silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.`,
+      onConfirm: () => {
+        setStories(prev => prev.filter(s => s.id !== storyId));
+      },
+      variant: 'destructive',
+      icon: <AlertTriangle className="w-5 h-5" />
+    });
+  };
+
+  const handleSaveStory = (storyData) => {
+    if (storyDialog.story) {
+      // Edit existing story
+      setStories(prev => prev.map(s => 
+        s.id === storyDialog.story.id ? { ...s, ...storyData } : s
+      ));
+    } else {
+      // Add new story
+      const newStory = {
+        ...storyData,
+        id: Date.now().toString(),
+        views: 0,
+        likes: 0,
+        timeLeft: `${storyData.duration}h`
+      };
+      setStories(prev => [...prev, newStory]);
+    }
+  };
+
+  // Advertisement handlers
+  const handleToggleAd = (adId) => {
+    const ad = advertisements.find(a => a.id === adId);
+    const action = ad.active ? 'pasif' : 'aktif';
+    
+    setConfirmDialog({
+      open: true,
+      title: `Reklamı ${action} yap`,
+      description: `"${ad.title}" reklamını ${action} yapmak istediğinizden emin misiniz?`,
+      onConfirm: () => {
+        setAdvertisements(prev => prev.map(a => 
+          a.id === adId ? { ...a, active: !a.active } : a
+        ));
+      },
+      variant: 'default',
+      icon: ad.active ? <ToggleLeft className="w-5 h-5" /> : <ToggleRight className="w-5 h-5" />
+    });
+  };
+
+  const handleEditAd = (advertisement) => {
+    setAdDialog({ open: true, advertisement });
+  };
+
+  const handleDeleteAd = (adId) => {
+    const ad = advertisements.find(a => a.id === adId);
+    
+    setConfirmDialog({
+      open: true,
+      title: 'Reklamı sil',
+      description: `"${ad.title}" reklamını silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.`,
+      onConfirm: () => {
+        setAdvertisements(prev => prev.filter(a => a.id !== adId));
+      },
+      variant: 'destructive',
+      icon: <AlertTriangle className="w-5 h-5" />
+    });
+  };
+
+  const handleSaveAd = (adData) => {
+    if (adDialog.advertisement) {
+      // Edit existing ad
+      setAdvertisements(prev => prev.map(a => 
+        a.id === adDialog.advertisement.id ? { ...a, ...adData } : a
+      ));
+    } else {
+      // Add new ad
+      const newAd = {
+        ...adData,
+        id: Date.now().toString(),
+        clicks: 0,
+        impressions: 0
+      };
+      setAdvertisements(prev => [...prev, newAd]);
+    }
+  };
+
+  // Featured product handlers
   const handleToggleFeaturedProduct = (productId) => {
     const product = featuredProducts.find(p => p.id === productId);
     const action = product.active ? 'pasif' : 'aktif';
@@ -206,12 +330,17 @@ export function ContentManagement() {
       title: `Öne çıkan ürünü ${action} yap`,
       description: `"${product.name}" ürününü öne çıkanlar listesinde ${action} yapmak istediğinizden emin misiniz?`,
       onConfirm: () => {
-        // Update product active status
-        console.log(`Toggle featured product ${productId} to ${!product.active}`);
+        setFeaturedProducts(prev => prev.map(p => 
+          p.id === productId ? { ...p, active: !p.active } : p
+        ));
       },
       variant: 'default',
       icon: product.active ? <ToggleLeft className="w-5 h-5" /> : <ToggleRight className="w-5 h-5" />
     });
+  };
+
+  const handleEditFeaturedProduct = (product) => {
+    setProductDialog({ open: true, product });
   };
 
   const handleRemoveFeaturedProduct = (productId) => {
@@ -222,44 +351,30 @@ export function ContentManagement() {
       title: 'Öne çıkanlardan kaldır',
       description: `"${product.name}" ürününü öne çıkanlar listesinden kaldırmak istediğinizden emin misiniz?`,
       onConfirm: () => {
-        // Remove from featured products
-        console.log(`Remove featured product ${productId}`);
+        setFeaturedProducts(prev => prev.filter(p => p.id !== productId));
       },
       variant: 'destructive',
       icon: <AlertTriangle className="w-5 h-5" />
     });
   };
 
-  const handleToggleStory = (storyId) => {
-    const story = stories.find(s => s.id === storyId);
-    const action = story.active ? 'pasif' : 'aktif';
-    
-    setConfirmDialog({
-      open: true,
-      title: `Hikayeyi ${action} yap`,
-      description: `"${story.title}" hikayesini ${action} yapmak istediğinizden emin misiniz?`,
-      onConfirm: () => {
-        console.log(`Toggle story ${storyId} to ${!story.active}`);
-      },
-      variant: 'default',
-      icon: story.active ? <ToggleLeft className="w-5 h-5" /> : <ToggleRight className="w-5 h-5" />
-    });
-  };
-
-  const handleToggleAd = (adId) => {
-    const ad = advertisements.find(a => a.id === adId);
-    const action = ad.active ? 'pasif' : 'aktif';
-    
-    setConfirmDialog({
-      open: true,
-      title: `Reklamı ${action} yap`,
-      description: `"${ad.title}" reklamını ${action} yapmak istediğinizden emin misiniz?`,
-      onConfirm: () => {
-        console.log(`Toggle ad ${adId} to ${!ad.active}`);
-      },
-      variant: 'default',
-      icon: ad.active ? <ToggleLeft className="w-5 h-5" /> : <ToggleRight className="w-5 h-5" />
-    });
+  const handleSaveFeaturedProduct = (productData) => {
+    if (productDialog.product) {
+      // Edit existing product
+      setFeaturedProducts(prev => prev.map(p => 
+        p.id === productDialog.product.id ? { ...p, ...productData } : p
+      ));
+    } else {
+      // Add new product
+      const newProduct = {
+        ...productData,
+        id: Date.now().toString(),
+        views: 0,
+        orders: 0,
+        featured: true
+      };
+      setFeaturedProducts(prev => [...prev, newProduct]);
+    }
   };
 
   return (
@@ -270,9 +385,22 @@ export function ContentManagement() {
           <h1 className="text-3xl font-bold text-foreground">İçerik Yönetimi</h1>
           <p className="text-muted-foreground mt-1">Hikayeler, reklamlar ve içeriklerinizi yönetin</p>
         </div>
-        <Button className="bg-primary hover:bg-primary/90 mt-4 sm:mt-0">
+        <Button 
+          className="bg-primary hover:bg-primary/90 mt-4 sm:mt-0"
+          onClick={() => {
+            if (activeTab === 'stories') {
+              setStoryDialog({ open: true, story: null });
+            } else if (activeTab === 'ads') {
+              setAdDialog({ open: true, advertisement: null });
+            } else if (activeTab === 'featured') {
+              setProductDialog({ open: true, product: null });
+            }
+          }}
+        >
           <Plus className="w-4 h-4 mr-2" />
-          İçerik Oluştur
+          {activeTab === 'stories' ? 'Hikaye Oluştur' : 
+           activeTab === 'ads' ? 'Reklam Oluştur' : 
+           activeTab === 'featured' ? 'Ürün Ekle' : 'İçerik Oluştur'}
         </Button>
       </div>
 
@@ -378,6 +506,32 @@ export function ContentManagement() {
                         story.active ? "bg-green-500" : "bg-red-500"
                       )} />
 
+                      {/* Action buttons - visible on hover */}
+                      <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex space-x-1">
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="h-6 w-6 bg-white/20 border-white/30 hover:bg-white/30"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleEditStory(story);
+                          }}
+                        >
+                          <Edit className="w-3 h-3 text-white" />
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="h-6 w-6 bg-white/20 border-white/30 hover:bg-white/30"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteStory(story.id);
+                          }}
+                        >
+                          <Trash2 className="w-3 h-3 text-white" />
+                        </Button>
+                      </div>
+
                       <div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/80 to-transparent">
                         <h3 className="font-medium text-white text-xs mb-1 line-clamp-2">{story.title}</h3>
                         <div className="flex items-center justify-between text-xs text-white/80">
@@ -477,7 +631,7 @@ export function ContentManagement() {
                         className="h-8 w-8"
                         onClick={(e) => {
                           e.stopPropagation();
-                          // Edit functionality
+                          handleEditAd(ad);
                         }}
                       >
                         <Edit className="w-4 h-4" />
@@ -488,7 +642,7 @@ export function ContentManagement() {
                         className="h-8 w-8 text-destructive hover:bg-destructive/10"
                         onClick={(e) => {
                           e.stopPropagation();
-                          // Delete functionality
+                          handleDeleteAd(ad.id);
                         }}
                       >
                         <Trash2 className="w-4 h-4" />
@@ -509,7 +663,10 @@ export function ContentManagement() {
                   <Star className="w-5 h-5 mr-2 text-primary" />
                   Öne Çıkan Ürünler ({featuredProducts.filter(p => p.active).length})
                 </span>
-                <Button variant="outline">
+                <Button 
+                  variant="outline"
+                  onClick={() => setProductDialog({ open: true, product: null })}
+                >
                   <Plus className="w-4 h-4 mr-2" />
                   Ürün Ekle
                 </Button>
@@ -594,7 +751,7 @@ export function ContentManagement() {
                         className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-accent"
                         onClick={(e) => {
                           e.stopPropagation();
-                          // Edit functionality
+                          handleEditFeaturedProduct(product);
                         }}
                         title="Düzenle"
                       >
@@ -773,6 +930,28 @@ export function ContentManagement() {
           </div>
         </TabsContent>
       </Tabs>
+
+      {/* Form Dialogs */}
+      <StoryFormDialog
+        story={storyDialog.story}
+        open={storyDialog.open}
+        onOpenChange={(open) => setStoryDialog({ open, story: null })}
+        onSave={handleSaveStory}
+      />
+
+      <AdvertisementFormDialog
+        advertisement={adDialog.advertisement}
+        open={adDialog.open}
+        onOpenChange={(open) => setAdDialog({ open, advertisement: null })}
+        onSave={handleSaveAd}
+      />
+
+      <ProductFormDialog
+        product={productDialog.product}
+        open={productDialog.open}
+        onOpenChange={(open) => setProductDialog({ open, product: null })}
+        onSave={handleSaveFeaturedProduct}
+      />
 
       {/* Confirmation Dialog */}
       <ConfirmationDialog

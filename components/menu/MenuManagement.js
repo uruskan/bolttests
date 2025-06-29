@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { ConfirmationDialog } from '@/components/ui/confirmation-dialog';
+import { CategoryFormDialog, ProductFormDialog } from '@/components/ui/form-dialog';
 import { 
   DndContext, 
   closestCenter,
@@ -19,7 +20,6 @@ import {
   SortableContext,
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
-  horizontalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import {
   useSortable,
@@ -38,7 +38,8 @@ import {
   AlertTriangle,
   ToggleLeft,
   ToggleRight,
-  Info
+  Info,
+  Plus
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -426,6 +427,8 @@ export function MenuManagement() {
   const [selectedCategory, setSelectedCategory] = useState('1');
   
   // Dialog states
+  const [categoryDialog, setCategoryDialog] = useState({ open: false, category: null });
+  const [productDialog, setProductDialog] = useState({ open: false, product: null });
   const [confirmDialog, setConfirmDialog] = useState({
     open: false,
     title: '',
@@ -609,8 +612,7 @@ export function MenuManagement() {
   };
 
   const handleCategoryEdit = (category) => {
-    // TODO: Open category edit modal
-    console.log('Edit category:', category);
+    setCategoryDialog({ open: true, category });
   };
 
   const handleCategoryDelete = (category) => {
@@ -628,8 +630,7 @@ export function MenuManagement() {
   };
 
   const handleProductEdit = (product) => {
-    // TODO: Open product edit modal
-    console.log('Edit product:', product);
+    setProductDialog({ open: true, product });
   };
 
   const handleProductDelete = (product) => {
@@ -643,6 +644,45 @@ export function MenuManagement() {
       variant: 'destructive',
       icon: <AlertTriangle className="w-5 h-5" />
     });
+  };
+
+  const handleSaveCategory = (categoryData) => {
+    if (categoryDialog.category) {
+      // Edit existing category
+      setCategories(prev => prev.map(cat => 
+        cat.id === categoryDialog.category.id ? { ...cat, ...categoryData } : cat
+      ));
+    } else {
+      // Add new category
+      const newCategory = {
+        ...categoryData,
+        id: Date.now().toString(),
+        itemCount: 0
+      };
+      setCategories(prev => [...prev, newCategory]);
+    }
+  };
+
+  const handleSaveProduct = (productData) => {
+    if (productDialog.product) {
+      // Edit existing product
+      setMenuItems(prev => prev.map(item => 
+        item.id === productDialog.product.id ? { ...item, ...productData } : item
+      ));
+    } else {
+      // Add new product
+      const newProduct = {
+        ...productData,
+        id: Date.now().toString(),
+        categoryId: selectedCategory
+      };
+      setMenuItems(prev => [...prev, newProduct]);
+      
+      // Update category item count
+      setCategories(prev => prev.map(cat => 
+        cat.id === selectedCategory ? { ...cat, itemCount: cat.itemCount + 1 } : cat
+      ));
+    }
   };
 
   const selectedCategoryData = categories.find(cat => cat.id === selectedCategory);
@@ -663,11 +703,17 @@ export function MenuManagement() {
           <Button 
             variant="outline" 
             className="border-border text-muted-foreground hover:bg-accent hover:text-foreground"
+            onClick={() => setCategoryDialog({ open: true, category: null })}
           >
-            + Kategori Ekle
+            <Plus className="w-4 h-4 mr-2" />
+            Kategori Ekle
           </Button>
-          <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
-            + Öğe Ekle
+          <Button 
+            className="bg-primary hover:bg-primary/90 text-primary-foreground"
+            onClick={() => setProductDialog({ open: true, product: null })}
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            Öğe Ekle
           </Button>
         </div>
       </div>
@@ -779,6 +825,21 @@ export function MenuManagement() {
           </Card>
         </div>
       </div>
+
+      {/* Form Dialogs */}
+      <CategoryFormDialog
+        category={categoryDialog.category}
+        open={categoryDialog.open}
+        onOpenChange={(open) => setCategoryDialog({ open, category: null })}
+        onSave={handleSaveCategory}
+      />
+
+      <ProductFormDialog
+        product={productDialog.product}
+        open={productDialog.open}
+        onOpenChange={(open) => setProductDialog({ open, product: null })}
+        onSave={handleSaveProduct}
+      />
 
       {/* Confirmation Dialog */}
       <ConfirmationDialog
