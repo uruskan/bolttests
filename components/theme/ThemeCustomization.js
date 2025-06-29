@@ -11,6 +11,24 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { 
+  DndContext, 
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import {
+  useSortable,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import { 
   Palette, 
   Type, 
   Layout, 
@@ -28,7 +46,8 @@ import {
   AlignRight,
   Bold,
   Italic,
-  ImageIcon
+  ImageIcon,
+  GripVertical
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { 
@@ -40,6 +59,50 @@ import {
   getDefaultThemeBlueprint 
 } from '@/lib/theme/themeBlueprint';
 
+// Sortable Block Component
+function SortableBlock({ block, blockLabels }) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: block });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={cn(
+        "flex items-center justify-between p-4 rounded-lg bg-accent/30 border border-border transition-all duration-200",
+        isDragging && "opacity-50 shadow-lg"
+      )}
+    >
+      <div className="flex items-center space-x-3">
+        <div
+          {...attributes}
+          {...listeners}
+          className="cursor-grab active:cursor-grabbing p-1 rounded hover:bg-accent transition-colors"
+        >
+          <GripVertical className="w-4 h-4 text-muted-foreground" />
+        </div>
+        <span className="font-medium text-foreground">
+          {blockLabels[block] || block}
+        </span>
+      </div>
+      <Badge variant="outline" className="text-xs border-border text-muted-foreground">
+        Sıra: {block}
+      </Badge>
+    </div>
+  );
+}
+
 export function ThemeCustomization() {
   const [themeMode, setThemeMode] = useState('simple');
   const [currentTheme, setCurrentTheme] = useState(getDefaultThemeBlueprint());
@@ -48,6 +111,54 @@ export function ThemeCustomization() {
   const [fontSize, setFontSize] = useState([16]);
   const [density, setDensity] = useState([16]);
   const [borderRadius, setBorderRadius] = useState([8]);
+
+  // Drag and drop sensors
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  // Block labels for layout section
+  const blockLabels = {
+    header: "Header",
+    advertisementHero: "Reklam Hero Slider",
+    featuredItems: "Öne Çıkan Ürünler",
+    advertisementButton: "Kampanyalar Butonu",
+    categories: "Kategoriler",
+    footer: "Footer"
+  };
+
+  const handleDragEnd = (event) => {
+    const { active, over } = event;
+
+    if (active.id !== over.id) {
+      const oldIndex = currentTheme.advancedSettings.layout.blocks.findIndex(
+        (block) => block === active.id
+      );
+      const newIndex = currentTheme.advancedSettings.layout.blocks.findIndex(
+        (block) => block === over.id
+      );
+
+      const newBlocks = arrayMove(
+        currentTheme.advancedSettings.layout.blocks,
+        oldIndex,
+        newIndex
+      );
+
+      setCurrentTheme(prev => ({
+        ...prev,
+        advancedSettings: {
+          ...prev.advancedSettings,
+          layout: {
+            ...prev.advancedSettings.layout,
+            blocks: newBlocks
+          }
+        }
+      }));
+    }
+  };
 
   const applyThemePreset = (presetKey) => {
     const preset = themePresets[presetKey];
@@ -538,7 +649,38 @@ export function ThemeCustomization() {
               <TabsContent value="layout" className="space-y-6">
                 <Card className="bg-card border-border">
                   <CardHeader>
-                    <CardTitle className="text-foreground">Düzen Ayarları</CardTitle>
+                    <CardTitle className="text-foreground">Sayfa Blokları Sırası</CardTitle>
+                    <p className="text-muted-foreground text-sm">
+                      Blokları sürükleyerek menü sayfasındaki sıralamayı değiştirin
+                    </p>
+                  </CardHeader>
+                  <CardContent>
+                    <DndContext 
+                      sensors={sensors}
+                      collisionDetection={closestCenter}
+                      onDragEnd={handleDragEnd}
+                    >
+                      <SortableContext 
+                        items={currentTheme.advancedSettings.layout.blocks}
+                        strategy={verticalListSortingStrategy}
+                      >
+                        <div className="space-y-3">
+                          {currentTheme.advancedSettings.layout.blocks.map((block) => (
+                            <SortableBlock 
+                              key={block} 
+                              block={block} 
+                              blockLabels={blockLabels}
+                            />
+                          ))}
+                        </div>
+                      </SortableContext>
+                    </DndContext>
+                  </CardContent>
+                </Card>
+
+                <Card className="bg-card border-border">
+                  <CardHeader>
+                    <CardTitle className="text-foreground">Diğer Düzen Ayarları</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-6">
                     <div>
@@ -551,24 +693,6 @@ export function ThemeCustomization() {
                         step={2}
                         className="mt-2"
                       />
-                    </div>
-                    
-                    <div>
-                      <Label className="text-foreground">Sayfa Blokları Sırası</Label>
-                      <div className="mt-2 space-y-2">
-                        {currentTheme.advancedSettings.layout.blocks.map((block, index) => (
-                          <div key={block} className="flex items-center justify-between p-3 rounded-lg bg-accent/30">
-                            <span className="capitalize text-foreground">
-                              {block.replace(/([A-Z])/g, ' $1')}
-                            </span>
-                            <div className="flex items-center space-x-2">
-                              <Badge variant="outline" className="text-xs border-border text-muted-foreground">
-                                {index + 1}
-                              </Badge>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
                     </div>
                   </CardContent>
                 </Card>

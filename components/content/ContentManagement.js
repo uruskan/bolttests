@@ -81,8 +81,38 @@ export function ContentManagement() {
       thumbnail: 'https://images.pexels.com/photos/1407846/pexels-photo-1407846.jpeg?auto=compress&cs=tinysrgb&w=400',
       views: 89,
       likes: 12,
-      active: true,
+      active: false,
       timeLeft: '18h'
+    },
+    {
+      id: '4',
+      title: 'Chef Special',
+      type: 'video',
+      thumbnail: 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=400',
+      views: 67,
+      likes: 8,
+      active: true,
+      timeLeft: '15h'
+    },
+    {
+      id: '5',
+      title: 'Dessert Time',
+      type: 'image',
+      thumbnail: 'https://images.pexels.com/photos/1126359/pexels-photo-1126359.jpeg?auto=compress&cs=tinysrgb&w=400',
+      views: 123,
+      likes: 19,
+      active: false,
+      timeLeft: '12h'
+    },
+    {
+      id: '6',
+      title: 'Morning Coffee',
+      type: 'image',
+      thumbnail: 'https://images.pexels.com/photos/1099680/pexels-photo-1099680.jpeg?auto=compress&cs=tinysrgb&w=400',
+      views: 98,
+      likes: 14,
+      active: true,
+      timeLeft: '8h'
     }
   ];
 
@@ -103,6 +133,15 @@ export function ContentManagement() {
       image: 'https://images.pexels.com/photos/1099680/pexels-photo-1099680.jpeg?auto=compress&cs=tinysrgb&w=400',
       clicks: 156,
       impressions: 934,
+      active: false
+    },
+    {
+      id: '3',
+      title: 'Pizza Night',
+      description: '50% off all pizzas every Tuesday night',
+      image: 'https://images.pexels.com/photos/2147491/pexels-photo-2147491.jpeg?auto=compress&cs=tinysrgb&w=400',
+      clicks: 89,
+      impressions: 567,
       active: true
     }
   ];
@@ -139,7 +178,7 @@ export function ContentManagement() {
       price: 65,
       image: 'https://images.pexels.com/photos/2147491/pexels-photo-2147491.jpeg?auto=compress&cs=tinysrgb&w=400',
       category: 'Pizzalar',
-      active: true,
+      active: false,
       featured: true,
       views: 456,
       orders: 42
@@ -151,7 +190,7 @@ export function ContentManagement() {
       price: 35,
       image: 'https://images.pexels.com/photos/1126359/pexels-photo-1126359.jpeg?auto=compress&cs=tinysrgb&w=400',
       category: 'Tatlılar',
-      active: false,
+      active: true,
       featured: true,
       views: 198,
       orders: 15
@@ -298,10 +337,21 @@ export function ContentManagement() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
                 {stories.map((story) => (
-                  <div key={story.id} className="relative group">
-                    <div className="aspect-[9/16] rounded-lg overflow-hidden bg-muted relative">
+                  <div 
+                    key={story.id} 
+                    className={cn(
+                      "relative group cursor-pointer transition-all duration-200 hover:scale-105",
+                      "border-2 rounded-lg overflow-hidden",
+                      story.active 
+                        ? "border-green-500 shadow-green-200 dark:shadow-green-900/50" 
+                        : "border-red-500 shadow-red-200 dark:shadow-red-900/50",
+                      "shadow-lg hover:shadow-xl"
+                    )}
+                    onClick={() => handleToggleStory(story.id)}
+                  >
+                    <div className="aspect-[9/16] bg-muted relative">
                       <img 
                         src={story.thumbnail} 
                         alt={story.title}
@@ -309,48 +359,36 @@ export function ContentManagement() {
                       />
                       {story.type === 'video' && (
                         <div className="absolute inset-0 flex items-center justify-center">
-                          <div className="w-12 h-12 bg-white/90 rounded-full flex items-center justify-center">
-                            <Play className="w-6 h-6 text-primary ml-1" />
+                          <div className="w-8 h-8 bg-white/90 rounded-full flex items-center justify-center">
+                            <Play className="w-4 h-4 text-primary ml-0.5" />
                           </div>
                         </div>
                       )}
                       
                       <div className="absolute top-2 right-2">
-                        <Badge className="bg-black/60 text-white border-none">
-                          <Clock className="w-3 h-3 mr-1" />
+                        <Badge className="bg-black/60 text-white border-none text-xs">
+                          <Clock className="w-2 h-2 mr-1" />
                           {story.timeLeft}
                         </Badge>
                       </div>
 
-                      <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/60 to-transparent">
-                        <h3 className="font-semibold text-white mb-1">{story.title}</h3>
-                        <div className="flex items-center justify-between text-xs text-white">
-                          <div className="flex items-center space-x-3">
-                            <span className="flex items-center">
-                              <Eye className="w-3 h-3 mr-1" />
-                              {story.views}
-                            </span>
-                            <span className="flex items-center">
-                              <Heart className="w-3 h-3 mr-1" />
-                              {story.likes}
-                            </span>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <Button 
-                              variant="outline" 
-                              size="icon" 
-                              className="h-6 w-6 bg-white/20 border-white/30 hover:bg-white/30"
-                              onClick={() => handleToggleStory(story.id)}
-                            >
-                              {story.active ? <Eye className="w-3 h-3 text-white" /> : <EyeOff className="w-3 h-3 text-white" />}
-                            </Button>
-                            <Button variant="outline" size="icon" className="h-6 w-6 bg-white/20 border-white/30 hover:bg-white/30">
-                              <Edit className="w-3 h-3 text-white" />
-                            </Button>
-                            <Button variant="outline" size="icon" className="h-6 w-6 bg-white/20 border-white/30 hover:bg-white/30">
-                              <Share className="w-3 h-3 text-white" />
-                            </Button>
-                          </div>
+                      {/* Status indicator */}
+                      <div className={cn(
+                        "absolute top-2 left-2 w-3 h-3 rounded-full border-2 border-white",
+                        story.active ? "bg-green-500" : "bg-red-500"
+                      )} />
+
+                      <div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/80 to-transparent">
+                        <h3 className="font-medium text-white text-xs mb-1 line-clamp-2">{story.title}</h3>
+                        <div className="flex items-center justify-between text-xs text-white/80">
+                          <span className="flex items-center">
+                            <Eye className="w-2 h-2 mr-1" />
+                            {story.views}
+                          </span>
+                          <span className="flex items-center">
+                            <Heart className="w-2 h-2 mr-1" />
+                            {story.likes}
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -372,8 +410,17 @@ export function ContentManagement() {
             <CardContent>
               <div className="space-y-4">
                 {advertisements.map((ad) => (
-                  <div key={ad.id} className="flex items-center space-x-4 p-4 bg-accent/30 rounded-lg border border-border">
-                    <div className="w-20 h-20 rounded-lg overflow-hidden bg-muted flex-shrink-0">
+                  <div 
+                    key={ad.id} 
+                    className={cn(
+                      "flex items-center space-x-4 p-4 rounded-lg border-2 cursor-pointer transition-all duration-200 hover:scale-[1.02]",
+                      ad.active 
+                        ? "bg-green-50/80 border-green-500 hover:bg-green-100/80 dark:bg-green-950/30 dark:border-green-500 dark:hover:bg-green-900/40"
+                        : "bg-red-50/80 border-red-500 hover:bg-red-100/80 dark:bg-red-950/30 dark:border-red-500 dark:hover:bg-red-900/40"
+                    )}
+                    onClick={() => handleToggleAd(ad.id)}
+                  >
+                    <div className="w-16 h-16 rounded-lg overflow-hidden bg-muted flex-shrink-0">
                       <img 
                         src={ad.image} 
                         alt={ad.title}
@@ -381,9 +428,29 @@ export function ContentManagement() {
                       />
                     </div>
                     
+                    {/* Status indicator */}
+                    <div className={cn(
+                      "w-3 h-3 rounded-full flex-shrink-0",
+                      ad.active ? "bg-green-500" : "bg-red-500"
+                    )} />
+                    
                     <div className="flex-1">
-                      <h3 className="font-semibold text-foreground mb-1">{ad.title}</h3>
-                      <p className="text-sm text-muted-foreground mb-2">{ad.description}</p>
+                      <h3 className={cn(
+                        "font-semibold mb-1",
+                        ad.active 
+                          ? "text-green-800 dark:text-green-200" 
+                          : "text-red-800 dark:text-red-200"
+                      )}>
+                        {ad.title}
+                      </h3>
+                      <p className={cn(
+                        "text-sm mb-2",
+                        ad.active 
+                          ? "text-green-600 dark:text-green-300" 
+                          : "text-red-600 dark:text-red-300"
+                      )}>
+                        {ad.description}
+                      </p>
                       <div className="flex items-center space-x-4 text-xs text-muted-foreground">
                         <span className="flex items-center">
                           <Eye className="w-3 h-3 mr-1" />
@@ -408,14 +475,22 @@ export function ContentManagement() {
                         variant="outline" 
                         size="icon" 
                         className="h-8 w-8"
-                        onClick={() => handleToggleAd(ad.id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          // Edit functionality
+                        }}
                       >
-                        {ad.active ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
-                      </Button>
-                      <Button variant="outline" size="icon" className="h-8 w-8">
                         <Edit className="w-4 h-4" />
                       </Button>
-                      <Button variant="outline" size="icon" className="h-8 w-8 text-destructive hover:bg-destructive/10">
+                      <Button 
+                        variant="outline" 
+                        size="icon" 
+                        className="h-8 w-8 text-destructive hover:bg-destructive/10"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          // Delete functionality
+                        }}
+                      >
                         <Trash2 className="w-4 h-4" />
                       </Button>
                     </div>
@@ -446,11 +521,12 @@ export function ContentManagement() {
                   <div 
                     key={product.id} 
                     className={cn(
-                      "flex items-center space-x-4 p-4 rounded-lg border-2 transition-all duration-200",
+                      "flex items-center space-x-4 p-4 rounded-lg border-2 transition-all duration-200 cursor-pointer hover:scale-[1.02]",
                       product.active 
-                        ? "bg-green-50/80 border-green-200/80 hover:bg-green-100/80 dark:bg-green-950/30 dark:border-green-800/50 dark:hover:bg-green-900/40"
-                        : "bg-red-50/80 border-red-200/80 hover:bg-red-100/80 dark:bg-red-950/30 dark:border-red-800/50 dark:hover:bg-red-900/40"
+                        ? "bg-green-50/80 border-green-500 hover:bg-green-100/80 dark:bg-green-950/30 dark:border-green-500 dark:hover:bg-green-900/40"
+                        : "bg-red-50/80 border-red-500 hover:bg-red-100/80 dark:bg-red-950/30 dark:border-red-500 dark:hover:bg-red-900/40"
                     )}
+                    onClick={() => handleToggleFeaturedProduct(product.id)}
                   >
                     <div className="w-16 h-16 rounded-lg overflow-hidden bg-muted flex-shrink-0">
                       <img 
@@ -459,6 +535,12 @@ export function ContentManagement() {
                         className="w-full h-full object-cover"
                       />
                     </div>
+                    
+                    {/* Status indicator */}
+                    <div className={cn(
+                      "w-3 h-3 rounded-full flex-shrink-0",
+                      product.active ? "bg-green-500" : "bg-red-500"
+                    )} />
                     
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center space-x-2 mb-1">
@@ -509,21 +591,11 @@ export function ContentManagement() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        className={cn(
-                          "h-8 w-8",
-                          product.active 
-                            ? "text-green-700 hover:text-green-800 hover:bg-green-100/50 dark:text-green-300 dark:hover:text-green-200 dark:hover:bg-green-900/40" 
-                            : "text-red-700 hover:text-red-800 hover:bg-red-100/50 dark:text-red-300 dark:hover:text-red-200 dark:hover:bg-red-900/40"
-                        )}
-                        onClick={() => handleToggleFeaturedProduct(product.id)}
-                        title={product.active ? "Pasif yap" : "Aktif yap"}
-                      >
-                        {product.active ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
                         className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-accent"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          // Edit functionality
+                        }}
                         title="Düzenle"
                       >
                         <Edit className="w-4 h-4" />
@@ -532,7 +604,10 @@ export function ContentManagement() {
                         variant="ghost"
                         size="icon"
                         className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-accent"
-                        onClick={() => handleRemoveFeaturedProduct(product.id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleRemoveFeaturedProduct(product.id);
+                        }}
                         title="Öne çıkanlardan kaldır"
                       >
                         <Trash2 className="w-4 h-4" />
