@@ -369,144 +369,125 @@ export function ThemeCustomization() {
 
               <TabsContent value="typography" className="space-y-6">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  {/* Typography Settings - Fixed Height */}
+                  {/* Typography Settings - Fixed Height with Full Content Distribution */}
                   <Card className="bg-card border-border h-[700px]">
                     <CardHeader>
                       <CardTitle className="text-foreground">Tipografi Ayarları</CardTitle>
                     </CardHeader>
                     <CardContent className="p-0 h-[calc(100%-80px)]">
                       <Tabs defaultValue="restaurantName" orientation="vertical" className="flex h-full">
-                        <TabsList className="flex flex-col h-full w-48 bg-muted/30 rounded-none border-r border-border">
-                          <TabsTrigger 
-                            value="restaurantName" 
-                            className="w-full justify-start data-[state=active]:bg-background"
-                          >
-                            Restoran Adı
-                          </TabsTrigger>
-                          <TabsTrigger 
-                            value="restaurantSlogan" 
-                            className="w-full justify-start data-[state=active]:bg-background"
-                          >
-                            Restoran Sloganı
-                          </TabsTrigger>
-                          <TabsTrigger 
-                            value="categoryName" 
-                            className="w-full justify-start data-[state=active]:bg-background"
-                          >
-                            Kategoriler
-                          </TabsTrigger>
-                          <TabsTrigger 
-                            value="productName" 
-                            className="w-full justify-start data-[state=active]:bg-background"
-                          >
-                            Ürün Adları
-                          </TabsTrigger>
-                          <TabsTrigger 
-                            value="productPrice" 
-                            className="w-full justify-start data-[state=active]:bg-background"
-                          >
-                            Fiyatlar
-                          </TabsTrigger>
-                          <TabsTrigger 
-                            value="productDescription" 
-                            className="w-full justify-start data-[state=active]:bg-background"
-                          >
-                            Açıklamalar
-                          </TabsTrigger>
+                        <TabsList className="flex flex-col h-full w-48 bg-muted/30 rounded-none border-r border-border py-4">
+                          {Object.keys(currentTheme.advancedSettings.typography).map((key) => (
+                            <TabsTrigger 
+                              key={key}
+                              value={key} 
+                              className="w-full justify-start data-[state=active]:bg-background mb-2 py-3"
+                            >
+                              {getTypographyLabel(key)}
+                            </TabsTrigger>
+                          ))}
                         </TabsList>
 
-                        <div className="flex-1 p-6 overflow-y-auto">
+                        <div className="flex-1 h-full">
                           {Object.entries(currentTheme.advancedSettings.typography).map(([key, settings]) => (
-                            <TabsContent key={key} value={key} className="mt-0 h-full">
-                              <div className="space-y-8 h-full flex flex-col justify-center">
-                                <div>
-                                  <h3 className="text-lg font-semibold mb-6 text-foreground">
+                            <TabsContent key={key} value={key} className="mt-0 h-full p-8">
+                              <div className="h-full flex flex-col justify-between space-y-12">
+                                {/* Header */}
+                                <div className="text-center">
+                                  <h3 className="text-2xl font-semibold text-foreground mb-2">
                                     {getTypographyLabel(key)}
                                   </h3>
+                                  <p className="text-muted-foreground">
+                                    Bu bölümün tipografi ayarlarını düzenleyin
+                                  </p>
                                 </div>
 
-                                <div className="grid grid-cols-1 gap-8 flex-1">
-                                  <div>
-                                    <Label className="text-foreground text-base font-medium">Font Ailesi</Label>
-                                    <Select 
-                                      value={settings.fontFamily}
-                                      onValueChange={(value) => updateAdvancedSetting(`typography.${key}.fontFamily`, value)}
-                                    >
-                                      <SelectTrigger className="mt-3 bg-background border-border text-foreground h-12">
-                                        <SelectValue />
-                                      </SelectTrigger>
-                                      <SelectContent className="bg-background border-border">
-                                        {availableFonts.map((font) => (
-                                          <SelectItem key={font} value={font}>{font}</SelectItem>
-                                        ))}
-                                      </SelectContent>
-                                    </Select>
-                                  </div>
+                                {/* Font Family */}
+                                <div className="space-y-4">
+                                  <Label className="text-foreground text-lg font-medium">Font Ailesi</Label>
+                                  <Select 
+                                    value={settings.fontFamily}
+                                    onValueChange={(value) => updateAdvancedSetting(`typography.${key}.fontFamily`, value)}
+                                  >
+                                    <SelectTrigger className="bg-background border-border text-foreground h-14 text-lg">
+                                      <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent className="bg-background border-border">
+                                      {availableFonts.map((font) => (
+                                        <SelectItem key={font} value={font} className="text-lg py-3">{font}</SelectItem>
+                                      ))}
+                                    </SelectContent>
+                                  </Select>
+                                </div>
 
-                                  <div>
-                                    <Label className="text-foreground text-base font-medium">
-                                      Boyut: {settings.fontSize}
-                                    </Label>
-                                    <div className="mt-4 flex items-center space-x-4">
-                                      <Slider
-                                        value={[parseInt(settings.fontSize)]}
-                                        onValueChange={(value) => updateAdvancedSetting(`typography.${key}.fontSize`, `${value[0]}px`)}
-                                        max={48}
-                                        min={8}
-                                        step={1}
-                                        className="flex-1"
-                                      />
-                                      <span className="text-sm text-muted-foreground w-16 text-right font-medium">
-                                        {settings.fontSize}
-                                      </span>
+                                {/* Font Size */}
+                                <div className="space-y-6">
+                                  <Label className="text-foreground text-lg font-medium">
+                                    Boyut: {settings.fontSize}
+                                  </Label>
+                                  <div className="flex items-center space-x-6">
+                                    <Slider
+                                      value={[parseInt(settings.fontSize)]}
+                                      onValueChange={(value) => updateAdvancedSetting(`typography.${key}.fontSize`, `${value[0]}px`)}
+                                      max={48}
+                                      min={8}
+                                      step={1}
+                                      className="flex-1"
+                                    />
+                                    <span className="text-lg text-muted-foreground w-20 text-right font-medium">
+                                      {settings.fontSize}
+                                    </span>
+                                  </div>
+                                </div>
+
+                                {/* Alignment and Style */}
+                                <div className="space-y-6">
+                                  <Label className="text-foreground text-lg font-medium">Hizalama ve Stil</Label>
+                                  <div className="flex items-center justify-center space-x-6">
+                                    <div className="flex items-center space-x-2 bg-muted rounded-lg p-2">
+                                      <Button
+                                        variant={settings.alignment === 'left' ? 'default' : 'ghost'}
+                                        size="lg"
+                                        onClick={() => updateAdvancedSetting(`typography.${key}.alignment`, 'left')}
+                                      >
+                                        <AlignLeft className="w-5 h-5" />
+                                      </Button>
+                                      <Button
+                                        variant={settings.alignment === 'center' ? 'default' : 'ghost'}
+                                        size="lg"
+                                        onClick={() => updateAdvancedSetting(`typography.${key}.alignment`, 'center')}
+                                      >
+                                        <AlignCenter className="w-5 h-5" />
+                                      </Button>
+                                      <Button
+                                        variant={settings.alignment === 'right' ? 'default' : 'ghost'}
+                                        size="lg"
+                                        onClick={() => updateAdvancedSetting(`typography.${key}.alignment`, 'right')}
+                                      >
+                                        <AlignRight className="w-5 h-5" />
+                                      </Button>
                                     </div>
-                                  </div>
 
-                                  <div className="space-y-4">
-                                    <Label className="text-foreground text-base font-medium">Hizalama ve Stil</Label>
-                                    <div className="flex items-center space-x-4">
-                                      <div className="flex items-center space-x-2 bg-muted rounded-lg p-1">
-                                        <Button
-                                          variant={settings.alignment === 'left' ? 'default' : 'ghost'}
-                                          size="sm"
-                                          onClick={() => updateAdvancedSetting(`typography.${key}.alignment`, 'left')}
-                                        >
-                                          <AlignLeft className="w-4 h-4" />
-                                        </Button>
-                                        <Button
-                                          variant={settings.alignment === 'center' ? 'default' : 'ghost'}
-                                          size="sm"
-                                          onClick={() => updateAdvancedSetting(`typography.${key}.alignment`, 'center')}
-                                        >
-                                          <AlignCenter className="w-4 h-4" />
-                                        </Button>
-                                        <Button
-                                          variant={settings.alignment === 'right' ? 'default' : 'ghost'}
-                                          size="sm"
-                                          onClick={() => updateAdvancedSetting(`typography.${key}.alignment`, 'right')}
-                                        >
-                                          <AlignRight className="w-4 h-4" />
-                                        </Button>
-                                      </div>
-
-                                      <div className="flex items-center space-x-2 bg-muted rounded-lg p-1">
-                                        <Button
-                                          variant={parseInt(settings.fontWeight) >= 600 ? 'default' : 'ghost'}
-                                          size="sm"
-                                          onClick={() => updateAdvancedSetting(`typography.${key}.fontWeight`, parseInt(settings.fontWeight) >= 600 ? '400' : '700')}
-                                        >
-                                          <Bold className="w-4 h-4" />
-                                        </Button>
-                                        <Button
-                                          variant="ghost"
-                                          size="sm"
-                                        >
-                                          <Italic className="w-4 h-4" />
-                                        </Button>
-                                      </div>
+                                    <div className="flex items-center space-x-2 bg-muted rounded-lg p-2">
+                                      <Button
+                                        variant={parseInt(settings.fontWeight) >= 600 ? 'default' : 'ghost'}
+                                        size="lg"
+                                        onClick={() => updateAdvancedSetting(`typography.${key}.fontWeight`, parseInt(settings.fontWeight) >= 600 ? '400' : '700')}
+                                      >
+                                        <Bold className="w-5 h-5" />
+                                      </Button>
+                                      <Button
+                                        variant="ghost"
+                                        size="lg"
+                                      >
+                                        <Italic className="w-5 h-5" />
+                                      </Button>
                                     </div>
                                   </div>
                                 </div>
+
+                                {/* Spacer */}
+                                <div className="flex-1"></div>
                               </div>
                             </TabsContent>
                           ))}
