@@ -114,7 +114,7 @@ export function ThemeCustomization() {
     const labels = {
       restaurantName: "Restoran Adı",
       restaurantSlogan: "Restoran Sloganı",
-      categoryName: "Kategori Adları",
+      categoryName: "Kategoriler",
       productName: "Ürün Adları",
       productPrice: "Fiyatlar",
       productDescription: "Açıklamalar"
@@ -369,14 +369,14 @@ export function ThemeCustomization() {
 
               <TabsContent value="typography" className="space-y-6">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  {/* Typography Settings */}
-                  <Card className="bg-card border-border">
+                  {/* Typography Settings - Fixed Height */}
+                  <Card className="bg-card border-border h-[700px]">
                     <CardHeader>
                       <CardTitle className="text-foreground">Tipografi Ayarları</CardTitle>
                     </CardHeader>
-                    <CardContent className="p-0">
-                      <Tabs defaultValue="restaurantName" orientation="vertical" className="flex">
-                        <TabsList className="flex flex-col h-auto w-48 bg-muted/30 rounded-none border-r border-border">
+                    <CardContent className="p-0 h-[calc(100%-80px)]">
+                      <Tabs defaultValue="restaurantName" orientation="vertical" className="flex h-full">
+                        <TabsList className="flex flex-col h-full w-48 bg-muted/30 rounded-none border-r border-border">
                           <TabsTrigger 
                             value="restaurantName" 
                             className="w-full justify-start data-[state=active]:bg-background"
@@ -415,24 +415,24 @@ export function ThemeCustomization() {
                           </TabsTrigger>
                         </TabsList>
 
-                        <div className="flex-1 p-6">
+                        <div className="flex-1 p-6 overflow-y-auto">
                           {Object.entries(currentTheme.advancedSettings.typography).map(([key, settings]) => (
-                            <TabsContent key={key} value={key} className="mt-0">
-                              <div className="space-y-6">
+                            <TabsContent key={key} value={key} className="mt-0 h-full">
+                              <div className="space-y-8 h-full flex flex-col justify-center">
                                 <div>
-                                  <h3 className="text-lg font-semibold mb-4 text-foreground">
+                                  <h3 className="text-lg font-semibold mb-6 text-foreground">
                                     {getTypographyLabel(key)}
                                   </h3>
                                 </div>
 
-                                <div className="grid grid-cols-1 gap-6">
+                                <div className="grid grid-cols-1 gap-8 flex-1">
                                   <div>
-                                    <Label className="text-foreground">Font Ailesi</Label>
+                                    <Label className="text-foreground text-base font-medium">Font Ailesi</Label>
                                     <Select 
                                       value={settings.fontFamily}
                                       onValueChange={(value) => updateAdvancedSetting(`typography.${key}.fontFamily`, value)}
                                     >
-                                      <SelectTrigger className="mt-1 bg-background border-border text-foreground">
+                                      <SelectTrigger className="mt-3 bg-background border-border text-foreground h-12">
                                         <SelectValue />
                                       </SelectTrigger>
                                       <SelectContent className="bg-background border-border">
@@ -444,10 +444,10 @@ export function ThemeCustomization() {
                                   </div>
 
                                   <div>
-                                    <Label className="text-foreground">
+                                    <Label className="text-foreground text-base font-medium">
                                       Boyut: {settings.fontSize}
                                     </Label>
-                                    <div className="mt-2 flex items-center space-x-4">
+                                    <div className="mt-4 flex items-center space-x-4">
                                       <Slider
                                         value={[parseInt(settings.fontSize)]}
                                         onValueChange={(value) => updateAdvancedSetting(`typography.${key}.fontSize`, `${value[0]}px`)}
@@ -456,51 +456,54 @@ export function ThemeCustomization() {
                                         step={1}
                                         className="flex-1"
                                       />
-                                      <span className="text-sm text-muted-foreground w-12 text-right">
+                                      <span className="text-sm text-muted-foreground w-16 text-right font-medium">
                                         {settings.fontSize}
                                       </span>
                                     </div>
                                   </div>
 
-                                  <div className="flex items-center space-x-4">
-                                    <div className="flex items-center space-x-2 bg-muted rounded-lg p-1">
-                                      <Button
-                                        variant={settings.alignment === 'left' ? 'default' : 'ghost'}
-                                        size="sm"
-                                        onClick={() => updateAdvancedSetting(`typography.${key}.alignment`, 'left')}
-                                      >
-                                        <AlignLeft className="w-4 h-4" />
-                                      </Button>
-                                      <Button
-                                        variant={settings.alignment === 'center' ? 'default' : 'ghost'}
-                                        size="sm"
-                                        onClick={() => updateAdvancedSetting(`typography.${key}.alignment`, 'center')}
-                                      >
-                                        <AlignCenter className="w-4 h-4" />
-                                      </Button>
-                                      <Button
-                                        variant={settings.alignment === 'right' ? 'default' : 'ghost'}
-                                        size="sm"
-                                        onClick={() => updateAdvancedSetting(`typography.${key}.alignment`, 'right')}
-                                      >
-                                        <AlignRight className="w-4 h-4" />
-                                      </Button>
-                                    </div>
+                                  <div className="space-y-4">
+                                    <Label className="text-foreground text-base font-medium">Hizalama ve Stil</Label>
+                                    <div className="flex items-center space-x-4">
+                                      <div className="flex items-center space-x-2 bg-muted rounded-lg p-1">
+                                        <Button
+                                          variant={settings.alignment === 'left' ? 'default' : 'ghost'}
+                                          size="sm"
+                                          onClick={() => updateAdvancedSetting(`typography.${key}.alignment`, 'left')}
+                                        >
+                                          <AlignLeft className="w-4 h-4" />
+                                        </Button>
+                                        <Button
+                                          variant={settings.alignment === 'center' ? 'default' : 'ghost'}
+                                          size="sm"
+                                          onClick={() => updateAdvancedSetting(`typography.${key}.alignment`, 'center')}
+                                        >
+                                          <AlignCenter className="w-4 h-4" />
+                                        </Button>
+                                        <Button
+                                          variant={settings.alignment === 'right' ? 'default' : 'ghost'}
+                                          size="sm"
+                                          onClick={() => updateAdvancedSetting(`typography.${key}.alignment`, 'right')}
+                                        >
+                                          <AlignRight className="w-4 h-4" />
+                                        </Button>
+                                      </div>
 
-                                    <div className="flex items-center space-x-2 bg-muted rounded-lg p-1">
-                                      <Button
-                                        variant={parseInt(settings.fontWeight) >= 600 ? 'default' : 'ghost'}
-                                        size="sm"
-                                        onClick={() => updateAdvancedSetting(`typography.${key}.fontWeight`, parseInt(settings.fontWeight) >= 600 ? '400' : '700')}
-                                      >
-                                        <Bold className="w-4 h-4" />
-                                      </Button>
-                                      <Button
-                                        variant="ghost"
-                                        size="sm"
-                                      >
-                                        <Italic className="w-4 h-4" />
-                                      </Button>
+                                      <div className="flex items-center space-x-2 bg-muted rounded-lg p-1">
+                                        <Button
+                                          variant={parseInt(settings.fontWeight) >= 600 ? 'default' : 'ghost'}
+                                          size="sm"
+                                          onClick={() => updateAdvancedSetting(`typography.${key}.fontWeight`, parseInt(settings.fontWeight) >= 600 ? '400' : '700')}
+                                        >
+                                          <Bold className="w-4 h-4" />
+                                        </Button>
+                                        <Button
+                                          variant="ghost"
+                                          size="sm"
+                                        >
+                                          <Italic className="w-4 h-4" />
+                                        </Button>
+                                      </div>
                                     </div>
                                   </div>
                                 </div>
@@ -512,19 +515,19 @@ export function ThemeCustomization() {
                     </CardContent>
                   </Card>
 
-                  {/* Font Preview */}
-                  <Card className="bg-card border-border">
+                  {/* Font Preview - Fixed Height */}
+                  <Card className="bg-card border-border h-[700px]">
                     <CardHeader>
                       <CardTitle className="text-foreground flex items-center">
                         <Eye className="w-5 h-5 mr-2" />
                         Font Önizlemesi
                       </CardTitle>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="h-[calc(100%-80px)] overflow-y-auto">
                       <div className="space-y-6">
                         {Object.entries(currentTheme.advancedSettings.typography).map(([key, settings]) => (
                           <div key={key} className="p-4 bg-accent/20 rounded-lg border border-border">
-                            <div className="text-xs text-muted-foreground mb-2 uppercase tracking-wide">
+                            <div className="text-xs text-muted-foreground mb-3 uppercase tracking-wide font-medium">
                               {getTypographyLabel(key)}
                             </div>
                             <div
@@ -536,11 +539,11 @@ export function ThemeCustomization() {
                                 color: currentTheme.advancedSettings.colors[key] || currentTheme.advancedSettings.colors.productName,
                                 lineHeight: '1.4'
                               }}
-                              className="transition-all duration-200"
+                              className="transition-all duration-200 mb-3"
                             >
                               {getFontPreviewText(key)}
                             </div>
-                            <div className="text-xs text-muted-foreground mt-2">
+                            <div className="text-xs text-muted-foreground">
                               {settings.fontFamily} • {settings.fontSize} • {settings.fontWeight} • {settings.alignment}
                             </div>
                           </div>
