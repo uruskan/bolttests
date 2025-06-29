@@ -39,7 +39,8 @@ import {
   ToggleLeft,
   ToggleRight,
   Info,
-  Plus
+  Plus,
+  ChefHat
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
