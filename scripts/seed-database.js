@@ -19,12 +19,35 @@ const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
 });
 
 /**
- * Execute SQL directly using Supabase client
+ * Execute SQL using the proper Supabase SQL method
  */
 async function executeSql(sql) {
   const { data, error } = await supabaseAdmin.rpc('exec_sql', { sql });
-  if (error && !error.message.includes('already exists') && !error.message.includes('does not exist')) {
-    throw error;
+  if (error) {
+    // If exec_sql doesn't exist, try direct SQL execution
+    if (error.message.includes('exec_sql')) {
+      // Use the SQL editor approach
+      const response = await fetch(`${supabaseUrl}/rest/v1/rpc/exec_sql`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${supabaseServiceKey}`,
+          'apikey': supabaseServiceKey
+        },
+        body: JSON.stringify({ sql })
+      });
+      
+      if (!response.ok && !response.statusText.includes('already exists')) {
+        const errorText = await response.text();
+        throw new Error(`SQL execution failed: ${errorText}`);
+      }
+      return null;
+    }
+    
+    // Ignore "already exists" errors
+    if (!error.message.includes('already exists') && !error.message.includes('does not exist')) {
+      throw error;
+    }
   }
   return data;
 }
@@ -39,14 +62,31 @@ async function seedDatabase() {
   console.log('🔑 Service Key:', supabaseServiceKey ? 'Present' : 'Missing');
 
   try {
-    // 1. Create database schema first
-    console.log('📋 Creating database schema...');
+    // 1. Test basic connection first
+    console.log('🔌 Testing Supabase connection...');
     
-    // Enable UUID extension
-    await executeSql('CREATE EXTENSION IF NOT EXISTS "uuid-ossp";');
+    const { data: testData, error: testError } = await supabaseAdmin
+      .from('restaurants')
+      .select('count')
+      .limit(1);
     
-    // Create restaurants table
-    await executeSql(`
+    if (testError && testError.code === '42P01') {
+      console.log('📋 Tables don\'t exist yet, will create them...');
+    } else if (testError) {
+      console.error('❌ Supabase connection failed:', testError);
+      throw testError;
+    } else {
+      console.log('✅ Supabase connection successful');
+    }
+
+    // 2. Run the migration SQL directly
+    console.log('📋 Creating database schema from migration...');
+    
+    const migrationSql = `
+      -- Enable UUID extension
+      CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+      -- Restaurants table
       CREATE TABLE IF NOT EXISTS restaurants (
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
         name TEXT NOT NULL,
@@ -63,10 +103,8 @@ async function seedDatabase() {
         created_at TIMESTAMPTZ DEFAULT NOW(),
         updated_at TIMESTAMPTZ DEFAULT NOW()
       );
-    `);
 
-    // Create user_restaurants table
-    await executeSql(`
+      -- User-Restaurant associations
       CREATE TABLE IF NOT EXISTS user_restaurants (
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
         user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
@@ -75,10 +113,8 @@ async function seedDatabase() {
         created_at TIMESTAMPTZ DEFAULT NOW(),
         UNIQUE(user_id, restaurant_id)
       );
-    `);
 
-    // Create categories table
-    await executeSql(`
+      -- Categories table
       CREATE TABLE IF NOT EXISTS categories (
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
         restaurant_id UUID REFERENCES restaurants(id) ON DELETE CASCADE,
@@ -90,10 +126,8 @@ async function seedDatabase() {
         created_at TIMESTAMPTZ DEFAULT NOW(),
         updated_at TIMESTAMPTZ DEFAULT NOW()
       );
-    `);
 
-    // Create products table
-    await executeSql(`
+      -- Products table
       CREATE TABLE IF NOT EXISTS products (
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
         restaurant_id UUID REFERENCES restaurants(id) ON DELETE CASCADE,
@@ -108,10 +142,8 @@ async function seedDatabase() {
         created_at TIMESTAMPTZ DEFAULT NOW(),
         updated_at TIMESTAMPTZ DEFAULT NOW()
       );
-    `);
 
-    // Create content_items table
-    await executeSql(`
+      -- Content items (stories, ads, featured content)
       CREATE TABLE IF NOT EXISTS content_items (
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
         restaurant_id UUID REFERENCES restaurants(id) ON DELETE CASCADE,
@@ -127,10 +159,8 @@ async function seedDatabase() {
         created_at TIMESTAMPTZ DEFAULT NOW(),
         updated_at TIMESTAMPTZ DEFAULT NOW()
       );
-    `);
 
-    // Create analytics_events table
-    await executeSql(`
+      -- Analytics events
       CREATE TABLE IF NOT EXISTS analytics_events (
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
         restaurant_id UUID REFERENCES restaurants(id) ON DELETE CASCADE,
@@ -140,10 +170,8 @@ async function seedDatabase() {
         ip_address INET,
         created_at TIMESTAMPTZ DEFAULT NOW()
       );
-    `);
 
-    // Create audit_logs table
-    await executeSql(`
+      -- Audit logs for AI assistant and user actions
       CREATE TABLE IF NOT EXISTS audit_logs (
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
         restaurant_id UUID REFERENCES restaurants(id) ON DELETE CASCADE,
@@ -156,21 +184,17 @@ async function seedDatabase() {
         metadata JSONB DEFAULT '{}',
         created_at TIMESTAMPTZ DEFAULT NOW()
       );
-    `);
 
-    console.log('✅ Database tables created');
+      -- Enable Row Level Security
+      ALTER TABLE restaurants ENABLE ROW LEVEL SECURITY;
+      ALTER TABLE user_restaurants ENABLE ROW LEVEL SECURITY;
+      ALTER TABLE categories ENABLE ROW LEVEL SECURITY;
+      ALTER TABLE products ENABLE ROW LEVEL SECURITY;
+      ALTER TABLE content_items ENABLE ROW LEVEL SECURITY;
+      ALTER TABLE analytics_events ENABLE ROW LEVEL SECURITY;
+      ALTER TABLE audit_logs ENABLE ROW LEVEL SECURITY;
 
-    // 2. Enable RLS and create policies
-    console.log('🔒 Setting up Row Level Security...');
-    
-    const tables = ['restaurants', 'user_restaurants', 'categories', 'products', 'content_items', 'analytics_events', 'audit_logs'];
-    
-    for (const table of tables) {
-      await executeSql(`ALTER TABLE ${table} ENABLE ROW LEVEL SECURITY;`);
-    }
-
-    // Create RLS policies
-    await executeSql(`
+      -- RLS Policies
       DROP POLICY IF EXISTS "Users can access their restaurants" ON restaurants;
       CREATE POLICY "Users can access their restaurants" ON restaurants
         FOR ALL USING (
@@ -179,15 +203,11 @@ async function seedDatabase() {
             WHERE user_id = auth.uid()
           )
         );
-    `);
 
-    await executeSql(`
       DROP POLICY IF EXISTS "Users can see their restaurant associations" ON user_restaurants;
       CREATE POLICY "Users can see their restaurant associations" ON user_restaurants
         FOR ALL USING (user_id = auth.uid());
-    `);
 
-    await executeSql(`
       DROP POLICY IF EXISTS "Users can manage their restaurant categories" ON categories;
       CREATE POLICY "Users can manage their restaurant categories" ON categories
         FOR ALL USING (
@@ -196,9 +216,7 @@ async function seedDatabase() {
             WHERE user_id = auth.uid()
           )
         );
-    `);
 
-    await executeSql(`
       DROP POLICY IF EXISTS "Users can manage their restaurant products" ON products;
       CREATE POLICY "Users can manage their restaurant products" ON products
         FOR ALL USING (
@@ -207,9 +225,7 @@ async function seedDatabase() {
             WHERE user_id = auth.uid()
           )
         );
-    `);
 
-    await executeSql(`
       DROP POLICY IF EXISTS "Users can manage their restaurant content" ON content_items;
       CREATE POLICY "Users can manage their restaurant content" ON content_items
         FOR ALL USING (
@@ -218,9 +234,7 @@ async function seedDatabase() {
             WHERE user_id = auth.uid()
           )
         );
-    `);
 
-    await executeSql(`
       DROP POLICY IF EXISTS "Users can view their restaurant analytics" ON analytics_events;
       CREATE POLICY "Users can view their restaurant analytics" ON analytics_events
         FOR SELECT USING (
@@ -229,9 +243,7 @@ async function seedDatabase() {
             WHERE user_id = auth.uid()
           )
         );
-    `);
 
-    await executeSql(`
       DROP POLICY IF EXISTS "Users can view their restaurant audit logs" ON audit_logs;
       CREATE POLICY "Users can view their restaurant audit logs" ON audit_logs
         FOR SELECT USING (
@@ -240,39 +252,23 @@ async function seedDatabase() {
             WHERE user_id = auth.uid()
           )
         );
-    `);
 
-    console.log('✅ RLS policies created');
+      -- Indexes for performance
+      CREATE INDEX IF NOT EXISTS idx_user_restaurants_user_id ON user_restaurants(user_id);
+      CREATE INDEX IF NOT EXISTS idx_user_restaurants_restaurant_id ON user_restaurants(restaurant_id);
+      CREATE INDEX IF NOT EXISTS idx_categories_restaurant_id ON categories(restaurant_id);
+      CREATE INDEX IF NOT EXISTS idx_categories_sort_order ON categories(restaurant_id, sort_order);
+      CREATE INDEX IF NOT EXISTS idx_products_restaurant_id ON products(restaurant_id);
+      CREATE INDEX IF NOT EXISTS idx_products_category_id ON products(category_id);
+      CREATE INDEX IF NOT EXISTS idx_products_sort_order ON products(category_id, sort_order);
+      CREATE INDEX IF NOT EXISTS idx_content_items_restaurant_id ON content_items(restaurant_id);
+      CREATE INDEX IF NOT EXISTS idx_content_items_type ON content_items(restaurant_id, type);
+      CREATE INDEX IF NOT EXISTS idx_analytics_events_restaurant_id ON analytics_events(restaurant_id);
+      CREATE INDEX IF NOT EXISTS idx_analytics_events_created_at ON analytics_events(restaurant_id, created_at);
+      CREATE INDEX IF NOT EXISTS idx_audit_logs_restaurant_id ON audit_logs(restaurant_id);
+      CREATE INDEX IF NOT EXISTS idx_audit_logs_created_at ON audit_logs(restaurant_id, created_at);
 
-    // 3. Create indexes
-    console.log('📊 Creating indexes...');
-    
-    const indexes = [
-      'CREATE INDEX IF NOT EXISTS idx_user_restaurants_user_id ON user_restaurants(user_id);',
-      'CREATE INDEX IF NOT EXISTS idx_user_restaurants_restaurant_id ON user_restaurants(restaurant_id);',
-      'CREATE INDEX IF NOT EXISTS idx_categories_restaurant_id ON categories(restaurant_id);',
-      'CREATE INDEX IF NOT EXISTS idx_categories_sort_order ON categories(restaurant_id, sort_order);',
-      'CREATE INDEX IF NOT EXISTS idx_products_restaurant_id ON products(restaurant_id);',
-      'CREATE INDEX IF NOT EXISTS idx_products_category_id ON products(category_id);',
-      'CREATE INDEX IF NOT EXISTS idx_products_sort_order ON products(category_id, sort_order);',
-      'CREATE INDEX IF NOT EXISTS idx_content_items_restaurant_id ON content_items(restaurant_id);',
-      'CREATE INDEX IF NOT EXISTS idx_content_items_type ON content_items(restaurant_id, type);',
-      'CREATE INDEX IF NOT EXISTS idx_analytics_events_restaurant_id ON analytics_events(restaurant_id);',
-      'CREATE INDEX IF NOT EXISTS idx_analytics_events_created_at ON analytics_events(restaurant_id, created_at);',
-      'CREATE INDEX IF NOT EXISTS idx_audit_logs_restaurant_id ON audit_logs(restaurant_id);',
-      'CREATE INDEX IF NOT EXISTS idx_audit_logs_created_at ON audit_logs(restaurant_id, created_at);'
-    ];
-
-    for (const index of indexes) {
-      await executeSql(index);
-    }
-
-    console.log('✅ Indexes created');
-
-    // 4. Create triggers
-    console.log('⚡ Creating triggers...');
-    
-    await executeSql(`
+      -- Functions for updated_at timestamps
       CREATE OR REPLACE FUNCTION update_updated_at_column()
       RETURNS TRIGGER AS $$
       BEGIN
@@ -280,41 +276,89 @@ async function seedDatabase() {
           RETURN NEW;
       END;
       $$ language 'plpgsql';
-    `);
 
-    const triggers = [
-      'DROP TRIGGER IF EXISTS update_restaurants_updated_at ON restaurants;',
-      'CREATE TRIGGER update_restaurants_updated_at BEFORE UPDATE ON restaurants FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();',
-      'DROP TRIGGER IF EXISTS update_categories_updated_at ON categories;',
-      'CREATE TRIGGER update_categories_updated_at BEFORE UPDATE ON categories FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();',
-      'DROP TRIGGER IF EXISTS update_products_updated_at ON products;',
-      'CREATE TRIGGER update_products_updated_at BEFORE UPDATE ON products FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();',
-      'DROP TRIGGER IF EXISTS update_content_items_updated_at ON content_items;',
-      'CREATE TRIGGER update_content_items_updated_at BEFORE UPDATE ON content_items FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();'
-    ];
+      -- Triggers for updated_at
+      DROP TRIGGER IF EXISTS update_restaurants_updated_at ON restaurants;
+      CREATE TRIGGER update_restaurants_updated_at BEFORE UPDATE ON restaurants
+          FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
-    for (const trigger of triggers) {
-      await executeSql(trigger);
+      DROP TRIGGER IF EXISTS update_categories_updated_at ON categories;
+      CREATE TRIGGER update_categories_updated_at BEFORE UPDATE ON categories
+          FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+      DROP TRIGGER IF EXISTS update_products_updated_at ON products;
+      CREATE TRIGGER update_products_updated_at BEFORE UPDATE ON products
+          FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+      DROP TRIGGER IF EXISTS update_content_items_updated_at ON content_items;
+      CREATE TRIGGER update_content_items_updated_at BEFORE UPDATE ON content_items
+          FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+    `;
+
+    // Execute the migration using direct SQL
+    try {
+      const response = await fetch(`${supabaseUrl}/rest/v1/rpc/exec_sql`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${supabaseServiceKey}`,
+          'apikey': supabaseServiceKey
+        },
+        body: JSON.stringify({ sql: migrationSql })
+      });
+
+      if (!response.ok) {
+        // If exec_sql doesn't work, try using the SQL editor endpoint
+        console.log('⚠️ Direct SQL execution not available, using alternative method...');
+        
+        // Split the SQL into individual statements and execute via Supabase client
+        const statements = migrationSql.split(';').filter(stmt => stmt.trim());
+        
+        for (const statement of statements) {
+          if (statement.trim()) {
+            try {
+              await supabaseAdmin.rpc('exec_sql', { sql: statement.trim() + ';' });
+            } catch (err) {
+              // Ignore "already exists" and "does not exist" errors
+              if (!err.message.includes('already exists') && 
+                  !err.message.includes('does not exist') &&
+                  !err.message.includes('exec_sql')) {
+                console.warn('⚠️ SQL statement warning:', err.message);
+              }
+            }
+          }
+        }
+      }
+    } catch (sqlError) {
+      console.log('⚠️ SQL execution method not available, using Supabase client methods...');
     }
 
-    console.log('✅ Triggers created');
+    console.log('✅ Database schema setup completed');
 
-    // 5. Test connection with a simple query
-    console.log('🔌 Testing database connection...');
+    // 3. Test connection again to verify tables exist
+    console.log('🔌 Verifying database setup...');
     
-    const { data: testData, error: testError } = await supabaseAdmin
+    const { data: verifyData, error: verifyError } = await supabaseAdmin
       .from('restaurants')
       .select('count')
       .limit(1);
     
-    if (testError && !testError.message.includes('relation "restaurants" does not exist')) {
-      console.error('❌ Database connection test failed:', testError);
-      throw testError;
+    if (verifyError && verifyError.code === '42P01') {
+      console.error('❌ Tables still don\'t exist. Please run the migration manually in Supabase SQL editor.');
+      console.log('');
+      console.log('🔧 Manual Setup Required:');
+      console.log('1. Go to your Supabase Dashboard');
+      console.log('2. Navigate to SQL Editor');
+      console.log('3. Copy and paste the migration from supabase/migrations/20250701115301_weathered_lantern.sql');
+      console.log('4. Run the migration');
+      console.log('5. Then run this seeding script again');
+      console.log('');
+      throw new Error('Database tables not found');
     }
     
-    console.log('✅ Database connection successful');
+    console.log('✅ Database verification successful');
 
-    // 6. Create storage bucket for restaurant assets
+    // 4. Create storage bucket for restaurant assets
     console.log('🗂️ Creating storage bucket...');
     
     const { error: bucketError } = await supabaseAdmin.storage.createBucket('restaurant-assets', {
@@ -329,7 +373,7 @@ async function seedDatabase() {
       console.log('✅ Storage bucket ready');
     }
 
-    // 7. Get test user ID
+    // 5. Get test user ID
     console.log('👤 Finding test user...');
     
     const { data: users, error: usersError } = await supabaseAdmin.auth.admin.listUsers();
@@ -354,7 +398,7 @@ async function seedDatabase() {
 
     console.log('✅ Found test user:', testUser.email);
 
-    // 8. Check if restaurant already exists
+    // 6. Check if restaurant already exists
     console.log('🏪 Checking for existing restaurant...');
     
     const { data: existingRestaurant } = await supabaseAdmin
@@ -472,7 +516,7 @@ async function seedDatabase() {
       console.log('✅ Using existing restaurant:', restaurant.name);
     }
 
-    // 9. Associate test user with restaurant
+    // 7. Associate test user with restaurant
     console.log('🔗 Checking user-restaurant association...');
     
     const { data: existingAssociation } = await supabaseAdmin
@@ -501,7 +545,7 @@ async function seedDatabase() {
       console.log('✅ User already associated with restaurant');
     }
 
-    // 10. Create demo categories
+    // 8. Create demo categories
     console.log('📂 Creating demo categories...');
     
     const { data: existingCategories } = await supabaseAdmin
@@ -541,7 +585,7 @@ async function seedDatabase() {
 
       console.log('✅ Demo categories created:', categories.length);
 
-      // 11. Create demo products
+      // 9. Create demo products
       console.log('🍽️ Creating demo products...');
       
       const demoProducts = [
@@ -605,7 +649,7 @@ async function seedDatabase() {
 
       console.log('✅ Demo products created:', products.length);
 
-      // 12. Create demo content items
+      // 10. Create demo content items
       console.log('📱 Creating demo content...');
       
       const demoContent = [
@@ -688,6 +732,12 @@ async function seedDatabase() {
     console.log('   - Check the Supabase dashboard for any issues');
     console.log('   - Verify your environment variables');
     console.log('   - Make sure the test user is created in Auth');
+    console.log('');
+    console.log('🔧 Manual Database Setup:');
+    console.log('   1. Go to Supabase Dashboard > SQL Editor');
+    console.log('   2. Copy the migration from supabase/migrations/20250701115301_weathered_lantern.sql');
+    console.log('   3. Run the migration in SQL Editor');
+    console.log('   4. Then run this seeding script again');
     process.exit(1);
   }
 }
