@@ -116,15 +116,14 @@ async function seedDatabase() {
       );
     `;
 
-    const { error: createError } = await supabaseAdmin.rpc('exec_sql', { sql: createTablesSQL });
-    if (createError) {
-      console.error('Error creating tables:', createError);
-      // Try alternative approach - execute each statement separately
-      const statements = createTablesSQL.split(';').filter(stmt => stmt.trim());
-      for (const statement of statements) {
-        if (statement.trim()) {
-          const { error } = await supabaseAdmin.rpc('exec_sql', { sql: statement });
-          if (error) console.warn('Statement error (may be expected):', error.message);
+    // Execute table creation
+    const statements = createTablesSQL.split(';').filter(stmt => stmt.trim());
+    for (const statement of statements) {
+      if (statement.trim()) {
+        try {
+          await supabaseAdmin.rpc('exec_sql', { sql: statement.trim() + ';' });
+        } catch (error) {
+          console.warn('Statement warning (may be expected):', error.message);
         }
       }
     }
@@ -132,108 +131,119 @@ async function seedDatabase() {
     // 2. Enable RLS
     console.log('🔒 Enabling Row Level Security...');
     
-    const rlsSQL = `
-      ALTER TABLE restaurants ENABLE ROW LEVEL SECURITY;
-      ALTER TABLE user_restaurants ENABLE ROW LEVEL SECURITY;
-      ALTER TABLE categories ENABLE ROW LEVEL SECURITY;
-      ALTER TABLE products ENABLE ROW LEVEL SECURITY;
-      ALTER TABLE content_items ENABLE ROW LEVEL SECURITY;
-      ALTER TABLE analytics_events ENABLE ROW LEVEL SECURITY;
-      ALTER TABLE audit_logs ENABLE ROW LEVEL SECURITY;
-    `;
+    const rlsStatements = [
+      'ALTER TABLE restaurants ENABLE ROW LEVEL SECURITY;',
+      'ALTER TABLE user_restaurants ENABLE ROW LEVEL SECURITY;',
+      'ALTER TABLE categories ENABLE ROW LEVEL SECURITY;',
+      'ALTER TABLE products ENABLE ROW LEVEL SECURITY;',
+      'ALTER TABLE content_items ENABLE ROW LEVEL SECURITY;',
+      'ALTER TABLE analytics_events ENABLE ROW LEVEL SECURITY;',
+      'ALTER TABLE audit_logs ENABLE ROW LEVEL SECURITY;'
+    ];
 
-    await supabaseAdmin.rpc('exec_sql', { sql: rlsSQL });
+    for (const statement of rlsStatements) {
+      try {
+        await supabaseAdmin.rpc('exec_sql', { sql: statement });
+      } catch (error) {
+        console.warn('RLS warning:', error.message);
+      }
+    }
 
     // 3. Create RLS Policies
     console.log('📜 Creating RLS policies...');
     
-    const policiesSQL = `
-      -- Restaurants: Users can access restaurants they're associated with
-      CREATE POLICY IF NOT EXISTS "Users can access their restaurants" ON restaurants
+    const policies = [
+      `CREATE POLICY IF NOT EXISTS "Users can access their restaurants" ON restaurants
         FOR ALL USING (
           id IN (
             SELECT restaurant_id FROM user_restaurants 
             WHERE user_id = auth.uid()
           )
-        );
-
-      -- User restaurants: Users can see their own associations
-      CREATE POLICY IF NOT EXISTS "Users can see their restaurant associations" ON user_restaurants
-        FOR ALL USING (user_id = auth.uid());
-
-      -- Categories: Users can manage categories for their restaurants
-      CREATE POLICY IF NOT EXISTS "Users can manage their restaurant categories" ON categories
+        );`,
+      
+      `CREATE POLICY IF NOT EXISTS "Users can see their restaurant associations" ON user_restaurants
+        FOR ALL USING (user_id = auth.uid());`,
+      
+      `CREATE POLICY IF NOT EXISTS "Users can manage their restaurant categories" ON categories
         FOR ALL USING (
           restaurant_id IN (
             SELECT restaurant_id FROM user_restaurants 
             WHERE user_id = auth.uid()
           )
-        );
-
-      -- Products: Users can manage products for their restaurants
-      CREATE POLICY IF NOT EXISTS "Users can manage their restaurant products" ON products
+        );`,
+      
+      `CREATE POLICY IF NOT EXISTS "Users can manage their restaurant products" ON products
         FOR ALL USING (
           restaurant_id IN (
             SELECT restaurant_id FROM user_restaurants 
             WHERE user_id = auth.uid()
           )
-        );
-
-      -- Content items: Users can manage content for their restaurants
-      CREATE POLICY IF NOT EXISTS "Users can manage their restaurant content" ON content_items
+        );`,
+      
+      `CREATE POLICY IF NOT EXISTS "Users can manage their restaurant content" ON content_items
         FOR ALL USING (
           restaurant_id IN (
             SELECT restaurant_id FROM user_restaurants 
             WHERE user_id = auth.uid()
           )
-        );
-
-      -- Analytics events: Users can view analytics for their restaurants
-      CREATE POLICY IF NOT EXISTS "Users can view their restaurant analytics" ON analytics_events
+        );`,
+      
+      `CREATE POLICY IF NOT EXISTS "Users can view their restaurant analytics" ON analytics_events
         FOR SELECT USING (
           restaurant_id IN (
             SELECT restaurant_id FROM user_restaurants 
             WHERE user_id = auth.uid()
           )
-        );
-
-      -- Audit logs: Users can view audit logs for their restaurants
-      CREATE POLICY IF NOT EXISTS "Users can view their restaurant audit logs" ON audit_logs
+        );`,
+      
+      `CREATE POLICY IF NOT EXISTS "Users can view their restaurant audit logs" ON audit_logs
         FOR SELECT USING (
           restaurant_id IN (
             SELECT restaurant_id FROM user_restaurants 
             WHERE user_id = auth.uid()
           )
-        );
-    `;
+        );`
+    ];
 
-    await supabaseAdmin.rpc('exec_sql', { sql: policiesSQL });
+    for (const policy of policies) {
+      try {
+        await supabaseAdmin.rpc('exec_sql', { sql: policy });
+      } catch (error) {
+        console.warn('Policy warning:', error.message);
+      }
+    }
 
     // 4. Create indexes
     console.log('📊 Creating indexes...');
     
-    const indexesSQL = `
-      CREATE INDEX IF NOT EXISTS idx_user_restaurants_user_id ON user_restaurants(user_id);
-      CREATE INDEX IF NOT EXISTS idx_user_restaurants_restaurant_id ON user_restaurants(restaurant_id);
-      CREATE INDEX IF NOT EXISTS idx_categories_restaurant_id ON categories(restaurant_id);
-      CREATE INDEX IF NOT EXISTS idx_categories_sort_order ON categories(restaurant_id, sort_order);
-      CREATE INDEX IF NOT EXISTS idx_products_restaurant_id ON products(restaurant_id);
-      CREATE INDEX IF NOT EXISTS idx_products_category_id ON products(category_id);
-      CREATE INDEX IF NOT EXISTS idx_products_sort_order ON products(category_id, sort_order);
-      CREATE INDEX IF NOT EXISTS idx_content_items_restaurant_id ON content_items(restaurant_id);
-      CREATE INDEX IF NOT EXISTS idx_content_items_type ON content_items(restaurant_id, type);
-      CREATE INDEX IF NOT EXISTS idx_analytics_events_restaurant_id ON analytics_events(restaurant_id);
-      CREATE INDEX IF NOT EXISTS idx_analytics_events_created_at ON analytics_events(restaurant_id, created_at);
-      CREATE INDEX IF NOT EXISTS idx_audit_logs_restaurant_id ON audit_logs(restaurant_id);
-      CREATE INDEX IF NOT EXISTS idx_audit_logs_created_at ON audit_logs(restaurant_id, created_at);
-    `;
+    const indexes = [
+      'CREATE INDEX IF NOT EXISTS idx_user_restaurants_user_id ON user_restaurants(user_id);',
+      'CREATE INDEX IF NOT EXISTS idx_user_restaurants_restaurant_id ON user_restaurants(restaurant_id);',
+      'CREATE INDEX IF NOT EXISTS idx_categories_restaurant_id ON categories(restaurant_id);',
+      'CREATE INDEX IF NOT EXISTS idx_categories_sort_order ON categories(restaurant_id, sort_order);',
+      'CREATE INDEX IF NOT EXISTS idx_products_restaurant_id ON products(restaurant_id);',
+      'CREATE INDEX IF NOT EXISTS idx_products_category_id ON products(category_id);',
+      'CREATE INDEX IF NOT EXISTS idx_products_sort_order ON products(category_id, sort_order);',
+      'CREATE INDEX IF NOT EXISTS idx_content_items_restaurant_id ON content_items(restaurant_id);',
+      'CREATE INDEX IF NOT EXISTS idx_content_items_type ON content_items(restaurant_id, type);',
+      'CREATE INDEX IF NOT EXISTS idx_analytics_events_restaurant_id ON analytics_events(restaurant_id);',
+      'CREATE INDEX IF NOT EXISTS idx_analytics_events_created_at ON analytics_events(restaurant_id, created_at);',
+      'CREATE INDEX IF NOT EXISTS idx_audit_logs_restaurant_id ON audit_logs(restaurant_id);',
+      'CREATE INDEX IF NOT EXISTS idx_audit_logs_created_at ON audit_logs(restaurant_id, created_at);'
+    ];
 
-    await supabaseAdmin.rpc('exec_sql', { sql: indexesSQL });
+    for (const index of indexes) {
+      try {
+        await supabaseAdmin.rpc('exec_sql', { sql: index });
+      } catch (error) {
+        console.warn('Index warning:', error.message);
+      }
+    }
 
     // 5. Create triggers for updated_at
     console.log('⚡ Creating triggers...');
     
-    const triggersSQL = `
+    const triggerFunction = `
       CREATE OR REPLACE FUNCTION update_updated_at_column()
       RETURNS TRIGGER AS $$
       BEGIN
@@ -241,21 +251,23 @@ async function seedDatabase() {
           RETURN NEW;
       END;
       $$ language 'plpgsql';
-
-      CREATE TRIGGER IF NOT EXISTS update_restaurants_updated_at BEFORE UPDATE ON restaurants
-          FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-
-      CREATE TRIGGER IF NOT EXISTS update_categories_updated_at BEFORE UPDATE ON categories
-          FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-
-      CREATE TRIGGER IF NOT EXISTS update_products_updated_at BEFORE UPDATE ON products
-          FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-
-      CREATE TRIGGER IF NOT EXISTS update_content_items_updated_at BEFORE UPDATE ON content_items
-          FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
     `;
 
-    await supabaseAdmin.rpc('exec_sql', { sql: triggersSQL });
+    const triggers = [
+      'CREATE TRIGGER IF NOT EXISTS update_restaurants_updated_at BEFORE UPDATE ON restaurants FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();',
+      'CREATE TRIGGER IF NOT EXISTS update_categories_updated_at BEFORE UPDATE ON categories FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();',
+      'CREATE TRIGGER IF NOT EXISTS update_products_updated_at BEFORE UPDATE ON products FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();',
+      'CREATE TRIGGER IF NOT EXISTS update_content_items_updated_at BEFORE UPDATE ON content_items FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();'
+    ];
+
+    try {
+      await supabaseAdmin.rpc('exec_sql', { sql: triggerFunction });
+      for (const trigger of triggers) {
+        await supabaseAdmin.rpc('exec_sql', { sql: trigger });
+      }
+    } catch (error) {
+      console.warn('Trigger warning:', error.message);
+    }
 
     // 6. Create storage bucket for restaurant assets
     console.log('🗂️ Creating storage bucket...');
@@ -267,10 +279,29 @@ async function seedDatabase() {
     });
 
     if (bucketError && !bucketError.message.includes('already exists')) {
-      console.warn('Storage bucket error:', bucketError.message);
+      console.warn('Storage bucket warning:', bucketError.message);
     }
 
-    // 7. Create demo restaurant data
+    // 7. Get test user ID
+    console.log('👤 Finding test user...');
+    
+    const { data: users, error: usersError } = await supabaseAdmin.auth.admin.listUsers();
+    if (usersError) {
+      console.error('Error fetching users:', usersError);
+      throw usersError;
+    }
+
+    const testUser = users.users.find(user => user.email === 'test@test.com');
+    if (!testUser) {
+      console.error('❌ Test user test@test.com not found!');
+      console.log('Please create the user first in Supabase Auth dashboard or via SQL:');
+      console.log('INSERT INTO auth.users (email, encrypted_password, email_confirmed_at) VALUES (\'test@test.com\', crypt(\'testtest\', gen_salt(\'bf\')), NOW());');
+      throw new Error('Test user not found');
+    }
+
+    console.log('✅ Found test user:', testUser.email);
+
+    // 8. Create demo restaurant data
     console.log('🏪 Creating demo restaurant...');
     
     const demoRestaurant = {
@@ -367,150 +398,172 @@ async function seedDatabase() {
       .single();
 
     if (restaurantError) {
-      console.warn('Demo restaurant creation error:', restaurantError.message);
-    } else {
-      console.log('✅ Demo restaurant created:', restaurant.name);
-
-      // 8. Create demo categories
-      console.log('📂 Creating demo categories...');
-      
-      const demoCategories = [
-        {
-          restaurant_id: restaurant.id,
-          name: 'Kahvaltılar',
-          description: 'Taze ve lezzetli kahvaltı seçenekleri',
-          image_url: 'https://images.pexels.com/photos/1126359/pexels-photo-1126359.jpeg?auto=compress&cs=tinysrgb&w=800',
-          sort_order: 0,
-          is_active: true
-        },
-        {
-          restaurant_id: restaurant.id,
-          name: 'Tatlılar',
-          description: 'Ev yapımı tatlılar ve pastalar',
-          image_url: 'https://images.pexels.com/photos/2147491/pexels-photo-2147491.jpeg?auto=compress&cs=tinysrgb&w=800',
-          sort_order: 1,
-          is_active: true
-        }
-      ];
-
-      const { data: categories, error: categoriesError } = await supabaseAdmin
-        .from('categories')
-        .insert(demoCategories)
-        .select();
-
-      if (categoriesError) {
-        console.warn('Demo categories creation error:', categoriesError.message);
-      } else {
-        console.log('✅ Demo categories created:', categories.length);
-
-        // 9. Create demo products
-        console.log('🍽️ Creating demo products...');
-        
-        const demoProducts = [
-          // Kahvaltılar
-          {
-            restaurant_id: restaurant.id,
-            category_id: categories[0].id,
-            name: 'Köri Soslu Tavuk',
-            description: 'Jülyen tavuk, renkli biberler, krema, köri baharatı, mevsim yeşillikleri ve kremalı penne makarna ile servis edilir.',
-            price: 395.00,
-            image_url: 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=400',
-            sort_order: 0,
-            is_active: true,
-            is_featured: true
-          },
-          {
-            restaurant_id: restaurant.id,
-            category_id: categories[0].id,
-            name: 'Barbekü Soslu Tavuk',
-            description: 'Jülyen tavuk, renkli biberler, barbekü sos, mevsim yeşillikleri ve kremalı penne makarna ile servis edilir.',
-            price: 395.00,
-            image_url: 'https://images.pexels.com/photos/2147491/pexels-photo-2147491.jpeg?auto=compress&cs=tinysrgb&w=400',
-            sort_order: 1,
-            is_active: true,
-            is_featured: false
-          },
-          // Tatlılar
-          {
-            restaurant_id: restaurant.id,
-            category_id: categories[1].id,
-            name: 'Tiramisu',
-            description: 'Geleneksel İtalyan tatlısı, mascarpone peyniri ve kahve aroması',
-            price: 85.00,
-            image_url: 'https://images.pexels.com/photos/4518843/pexels-photo-4518843.jpeg?auto=compress&cs=tinysrgb&w=400',
-            sort_order: 0,
-            is_active: true,
-            is_featured: true
-          },
-          {
-            restaurant_id: restaurant.id,
-            category_id: categories[1].id,
-            name: 'Cheesecake',
-            description: 'Kremsi cheesecake, meyveli sos ile',
-            price: 75.00,
-            image_url: 'https://images.pexels.com/photos/8753999/pexels-photo-8753999.jpeg?auto=compress&cs=tinysrgb&w=400',
-            sort_order: 1,
-            is_active: true,
-            is_featured: false
-          }
-        ];
-
-        const { data: products, error: productsError } = await supabaseAdmin
-          .from('products')
-          .insert(demoProducts)
-          .select();
-
-        if (productsError) {
-          console.warn('Demo products creation error:', productsError.message);
-        } else {
-          console.log('✅ Demo products created:', products.length);
-        }
-
-        // 10. Create demo content items
-        console.log('📱 Creating demo content...');
-        
-        const demoContent = [
-          {
-            restaurant_id: restaurant.id,
-            type: 'advertisement',
-            title: 'COFFEE Instant choice',
-            description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
-            image_url: 'https://images.pexels.com/photos/1126359/pexels-photo-1126359.jpeg?auto=compress&cs=tinysrgb&w=800',
-            status: 'active',
-            sort_order: 0
-          },
-          {
-            restaurant_id: restaurant.id,
-            type: 'story',
-            title: 'Yeni Menümüz',
-            description: 'Bahar menümüzü keşfedin!',
-            image_url: 'https://images.pexels.com/photos/2147491/pexels-photo-2147491.jpeg?auto=compress&cs=tinysrgb&w=400',
-            status: 'active',
-            sort_order: 0
-          },
-          {
-            restaurant_id: restaurant.id,
-            type: 'featured',
-            title: 'Özel Kahvaltı',
-            description: 'Hafta sonu özel kahvaltı menümüz',
-            image_url: 'https://images.pexels.com/photos/4518843/pexels-photo-4518843.jpeg?auto=compress&cs=tinysrgb&w=400',
-            status: 'active',
-            sort_order: 0
-          }
-        ];
-
-        const { data: content, error: contentError } = await supabaseAdmin
-          .from('content_items')
-          .insert(demoContent)
-          .select();
-
-        if (contentError) {
-          console.warn('Demo content creation error:', contentError.message);
-        } else {
-          console.log('✅ Demo content created:', content.length);
-        }
-      }
+      console.error('Demo restaurant creation error:', restaurantError);
+      throw restaurantError;
     }
+
+    console.log('✅ Demo restaurant created:', restaurant.name);
+
+    // 9. Associate test user with restaurant
+    console.log('🔗 Associating test user with restaurant...');
+    
+    const { error: associationError } = await supabaseAdmin
+      .from('user_restaurants')
+      .insert({
+        user_id: testUser.id,
+        restaurant_id: restaurant.id,
+        role: 'owner'
+      });
+
+    if (associationError) {
+      console.error('User-restaurant association error:', associationError);
+      throw associationError;
+    }
+
+    console.log('✅ Test user associated with restaurant');
+
+    // 10. Create demo categories
+    console.log('📂 Creating demo categories...');
+    
+    const demoCategories = [
+      {
+        restaurant_id: restaurant.id,
+        name: 'Kahvaltılar',
+        description: 'Taze ve lezzetli kahvaltı seçenekleri',
+        image_url: 'https://images.pexels.com/photos/1126359/pexels-photo-1126359.jpeg?auto=compress&cs=tinysrgb&w=800',
+        sort_order: 0,
+        is_active: true
+      },
+      {
+        restaurant_id: restaurant.id,
+        name: 'Tatlılar',
+        description: 'Ev yapımı tatlılar ve pastalar',
+        image_url: 'https://images.pexels.com/photos/2147491/pexels-photo-2147491.jpeg?auto=compress&cs=tinysrgb&w=800',
+        sort_order: 1,
+        is_active: true
+      }
+    ];
+
+    const { data: categories, error: categoriesError } = await supabaseAdmin
+      .from('categories')
+      .insert(demoCategories)
+      .select();
+
+    if (categoriesError) {
+      console.error('Demo categories creation error:', categoriesError);
+      throw categoriesError;
+    }
+
+    console.log('✅ Demo categories created:', categories.length);
+
+    // 11. Create demo products
+    console.log('🍽️ Creating demo products...');
+    
+    const demoProducts = [
+      // Kahvaltılar
+      {
+        restaurant_id: restaurant.id,
+        category_id: categories[0].id,
+        name: 'Köri Soslu Tavuk',
+        description: 'Jülyen tavuk, renkli biberler, krema, köri baharatı, mevsim yeşillikleri ve kremalı penne makarna ile servis edilir.',
+        price: 395.00,
+        image_url: 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=400',
+        sort_order: 0,
+        is_active: true,
+        is_featured: true
+      },
+      {
+        restaurant_id: restaurant.id,
+        category_id: categories[0].id,
+        name: 'Barbekü Soslu Tavuk',
+        description: 'Jülyen tavuk, renkli biberler, barbekü sos, mevsim yeşillikleri ve kremalı penne makarna ile servis edilir.',
+        price: 395.00,
+        image_url: 'https://images.pexels.com/photos/2147491/pexels-photo-2147491.jpeg?auto=compress&cs=tinysrgb&w=400',
+        sort_order: 1,
+        is_active: true,
+        is_featured: false
+      },
+      // Tatlılar
+      {
+        restaurant_id: restaurant.id,
+        category_id: categories[1].id,
+        name: 'Tiramisu',
+        description: 'Geleneksel İtalyan tatlısı, mascarpone peyniri ve kahve aroması',
+        price: 85.00,
+        image_url: 'https://images.pexels.com/photos/4518843/pexels-photo-4518843.jpeg?auto=compress&cs=tinysrgb&w=400',
+        sort_order: 0,
+        is_active: true,
+        is_featured: true
+      },
+      {
+        restaurant_id: restaurant.id,
+        category_id: categories[1].id,
+        name: 'Cheesecake',
+        description: 'Kremsi cheesecake, meyveli sos ile',
+        price: 75.00,
+        image_url: 'https://images.pexels.com/photos/8753999/pexels-photo-8753999.jpeg?auto=compress&cs=tinysrgb&w=400',
+        sort_order: 1,
+        is_active: true,
+        is_featured: false
+      }
+    ];
+
+    const { data: products, error: productsError } = await supabaseAdmin
+      .from('products')
+      .insert(demoProducts)
+      .select();
+
+    if (productsError) {
+      console.error('Demo products creation error:', productsError);
+      throw productsError;
+    }
+
+    console.log('✅ Demo products created:', products.length);
+
+    // 12. Create demo content items
+    console.log('📱 Creating demo content...');
+    
+    const demoContent = [
+      {
+        restaurant_id: restaurant.id,
+        type: 'advertisement',
+        title: 'COFFEE Instant choice',
+        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
+        image_url: 'https://images.pexels.com/photos/1126359/pexels-photo-1126359.jpeg?auto=compress&cs=tinysrgb&w=800',
+        status: 'active',
+        sort_order: 0
+      },
+      {
+        restaurant_id: restaurant.id,
+        type: 'story',
+        title: 'Yeni Menümüz',
+        description: 'Bahar menümüzü keşfedin!',
+        image_url: 'https://images.pexels.com/photos/2147491/pexels-photo-2147491.jpeg?auto=compress&cs=tinysrgb&w=400',
+        status: 'active',
+        sort_order: 0
+      },
+      {
+        restaurant_id: restaurant.id,
+        type: 'featured',
+        title: 'Özel Kahvaltı',
+        description: 'Hafta sonu özel kahvaltı menümüz',
+        image_url: 'https://images.pexels.com/photos/4518843/pexels-photo-4518843.jpeg?auto=compress&cs=tinysrgb&w=400',
+        status: 'active',
+        sort_order: 0
+      }
+    ];
+
+    const { data: content, error: contentError } = await supabaseAdmin
+      .from('content_items')
+      .insert(demoContent)
+      .select();
+
+    if (contentError) {
+      console.error('Demo content creation error:', contentError);
+      throw contentError;
+    }
+
+    console.log('✅ Demo content created:', content.length);
 
     console.log('🎉 Database seeding completed successfully!');
     console.log('');
@@ -520,7 +573,12 @@ async function seedDatabase() {
     console.log('- ✅ Indexes created');
     console.log('- ✅ Triggers set up');
     console.log('- ✅ Storage bucket created');
+    console.log('- ✅ Test user associated with restaurant');
     console.log('- ✅ Demo data inserted');
+    console.log('');
+    console.log('🔑 Test Login Credentials:');
+    console.log('   Email: test@test.com');
+    console.log('   Password: testtest');
     console.log('');
     console.log('🔗 Demo restaurant URL: http://localhost:3000/menu/delago-cafe');
     console.log('');

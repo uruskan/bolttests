@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { AuthGuard } from '@/components/auth/AuthGuard';
 import { DashboardLayout } from '@/components/templates/DashboardLayout';
 import { DashboardPage } from '@/components/pages/DashboardPage';
 import { MenuManagement } from '@/components/menu/MenuManagement';
@@ -50,8 +51,10 @@ export default function Home() {
   }
 
   return (
-    <DashboardLayout activeView={activeView} onViewChange={setActiveView}>
-      {renderActiveView()}
-    </DashboardLayout>
+    <AuthGuard>
+      <DashboardLayout activeView={activeView} onViewChange={setActiveView}>
+        {renderActiveView()}
+      </DashboardLayout>
+    </AuthGuard>
   );
 }

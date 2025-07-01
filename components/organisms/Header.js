@@ -1,14 +1,26 @@
 'use client';
 
-import { Bell, User, Menu, X } from 'lucide-react';
+import { Bell, User, Menu, X, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Logo } from '@/components/atoms/Logo';
 import { ThemeToggle } from '@/components/atoms/ThemeToggle';
 import { SearchInput } from '@/components/atoms/SearchInput';
+import { useAuthStore } from '@/stores/authStore';
 import { cn } from '@/lib/utils';
 
 export function Header({ sidebarOpen, onToggleSidebar }) {
+  const { user, signOut } = useAuthStore();
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+    } catch (error) {
+      console.error('Sign out error:', error);
+    }
+  };
+
   return (
     <header className={cn(
       "backdrop-blur-xl border-b sticky top-0 z-50 transition-all duration-300",
@@ -60,17 +72,30 @@ export function Header({ sidebarOpen, onToggleSidebar }) {
 
             <ThemeToggle />
 
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className={cn(
-                "transition-colors duration-200",
-                "text-gray-600 hover:text-gray-900 hover:bg-gray-100",
-                "dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-800"
-              )}
-            >
-              <User className="w-4 h-4" />
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className={cn(
+                    "transition-colors duration-200",
+                    "text-gray-600 hover:text-gray-900 hover:bg-gray-100",
+                    "dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-800"
+                  )}
+                >
+                  <User className="w-4 h-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <div className="px-2 py-1.5 text-sm text-muted-foreground">
+                  {user?.email}
+                </div>
+                <DropdownMenuItem onClick={handleSignOut}>
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Çıkış Yap
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </div>
