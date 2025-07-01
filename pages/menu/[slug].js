@@ -47,6 +47,38 @@ export default function PublicMenu() {
     }
   }, [slug]);
 
+  // Listen for theme updates from dashboard
+  useEffect(() => {
+    const handleMessage = (event) => {
+      if (event.data?.source === 'DASHBOARD') {
+        const { type, payload } = event.data;
+        
+        switch (type) {
+          case 'PREVIEW_READY':
+            // Send confirmation that preview is loaded
+            window.parent.postMessage({
+              source: 'PREVIEW',
+              type: 'PREVIEW_LOADED',
+              payload: { timestamp: Date.now() }
+            }, '*');
+            break;
+          case 'THEME_UPDATE':
+            // Update theme in real-time
+            if (payload && restaurant) {
+              setRestaurant(prev => ({
+                ...prev,
+                theme_config: payload
+              }));
+            }
+            break;
+        }
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, [restaurant]);
+
   const loadMenuData = async () => {
     try {
       setLoading(true);
@@ -108,9 +140,23 @@ export default function PublicMenu() {
           event_data: { slug, timestamp: new Date().toISOString() }
         });
 
+      // Send loaded confirmation to parent (dashboard)
+      window.parent.postMessage({
+        source: 'PREVIEW',
+        type: 'PREVIEW_LOADED',
+        payload: { timestamp: Date.now() }
+      }, '*');
+
     } catch (err) {
       console.error('Error loading menu:', err);
       setError('Menü yüklenirken hata oluştu');
+      
+      // Send error to parent
+      window.parent.postMessage({
+        source: 'PREVIEW',
+        type: 'PREVIEW_ERROR',
+        payload: { error: err.message }
+      }, '*');
     } finally {
       setLoading(false);
     }

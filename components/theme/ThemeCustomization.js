@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -41,7 +41,6 @@ import {
   Settings,
   Wand2,
   Smartphone,
-  Monitor,
   AlignLeft,
   AlignCenter,
   AlignRight,
@@ -60,6 +59,139 @@ import {
   layoutOptions,
   getDefaultThemeBlueprint 
 } from '@/lib/theme/themeBlueprint';
+
+// Live Preview Component with PostMessage Communication
+function LivePreview({ currentTheme }) {
+  const iframeRef = useRef(null);
+  const [isConnected, setIsConnected] = useState(false);
+  const [previewError, setPreviewError] = useState(null);
+
+  useEffect(() => {
+    const handleMessage = (event) => {
+      if (event.data?.source === 'PREVIEW') {
+        const { type, payload } = event.data;
+        
+        switch (type) {
+          case 'PREVIEW_LOADED':
+            setIsConnected(true);
+            setPreviewError(null);
+            // Send initial theme data
+            sendThemeUpdate(currentTheme);
+            break;
+          case 'PREVIEW_ERROR':
+            setPreviewError(payload.error);
+            setIsConnected(false);
+            break;
+        }
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, []);
+
+  useEffect(() => {
+    if (isConnected) {
+      sendThemeUpdate(currentTheme);
+    }
+  }, [currentTheme, isConnected]);
+
+  const sendThemeUpdate = (themeConfig) => {
+    if (iframeRef.current?.contentWindow && isConnected) {
+      iframeRef.current.contentWindow.postMessage({
+        source: 'DASHBOARD',
+        type: 'THEME_UPDATE',
+        payload: themeConfig
+      }, '*');
+    }
+  };
+
+  const handleIframeLoad = () => {
+    // Wait a bit for the iframe content to initialize
+    setTimeout(() => {
+      if (iframeRef.current?.contentWindow) {
+        iframeRef.current.contentWindow.postMessage({
+          source: 'DASHBOARD',
+          type: 'PREVIEW_READY',
+          payload: { timestamp: Date.now() }
+        }, '*');
+      }
+    }, 1000);
+  };
+
+  return (
+    <Card className="backdrop-blur-xl border sticky top-6 bg-card">
+      <CardHeader>
+        <CardTitle className="flex items-center justify-between text-foreground">
+          <span className="flex items-center">
+            <Eye className="w-5 h-5 mr-2" />
+            QR Menü Önizlemesi
+          </span>
+          <div className="flex items-center space-x-2">
+            <Badge variant={isConnected ? "default" : "secondary"} className="text-xs">
+              {isConnected ? "Bağlı" : "Bağlanıyor..."}
+            </Badge>
+            <div className="flex items-center space-x-1 bg-muted rounded-lg p-1">
+              <Button variant="default" size="sm" className="h-6 px-2 text-xs">
+                <Smartphone className="w-3 h-3 mr-1" />
+                Mobil
+              </Button>
+            </div>
+          </div>
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="relative">
+          {/* Mobile Frame */}
+          <div className="mx-auto w-80 h-[600px] bg-gray-900 rounded-[2.5rem] p-2 shadow-2xl">
+            <div className="w-full h-full bg-white rounded-[2rem] overflow-hidden relative">
+              {/* Mobile Notch */}
+              <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-32 h-6 bg-gray-900 rounded-b-2xl z-10"></div>
+              
+              {/* Preview Content */}
+              <div className="w-full h-full">
+                {previewError ? (
+                  <div className="flex items-center justify-center h-full text-center p-4">
+                    <div>
+                      <div className="text-red-500 mb-2">⚠️</div>
+                      <p className="text-sm text-red-600">Önizleme yüklenemedi</p>
+                      <p className="text-xs text-gray-500 mt-1">{previewError}</p>
+                    </div>
+                  </div>
+                ) : (
+                  <iframe
+                    ref={iframeRef}
+                    src="/menu/delago-cafe"
+                    className="w-full h-full border-none"
+                    onLoad={handleIframeLoad}
+                    title="Menu Preview"
+                  />
+                )}
+              </div>
+              
+              {/* Loading Overlay */}
+              {!isConnected && !previewError && (
+                <div className="absolute inset-0 bg-white/90 flex items-center justify-center">
+                  <div className="text-center">
+                    <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
+                    <p className="text-sm text-gray-600">Önizleme yükleniyor...</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+          
+          {/* Mobile Controls */}
+          <div className="mt-4 text-center">
+            <p className="text-xs text-muted-foreground">
+              Değişiklikler otomatik olarak önizlemede görünür
+            </p>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
 
 // Sortable Block Component
 function SortableBlock({ block, blockLabels }) {
@@ -979,148 +1111,19 @@ export function ThemeCustomization() {
 
         {/* Live Preview */}
         <div className="lg:col-span-1">
-          <Card className="backdrop-blur-xl border sticky top-6 bg-card">
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between text-foreground">
-                <span className="flex items-center">
-                  <Eye className="w-5 h-5 mr-2" />
-                  QR Menü Önizlemesi
-                </span>
-                <div className="flex items-center space-x-2">
-                  <Button variant="ghost" size="icon" className="h-8 w-8">
-                    <Smartphone className="w-4 h-4" />
-                  </Button>
-                  <Button variant="ghost" size="icon" className="h-8 w-8">
-                    <Monitor className="w-4 h-4" />
-                  </Button>
-                </div>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {/* Preview Header */}
-                <div 
-                  className="p-4 rounded-lg"
-                  style={{ 
-                    backgroundColor: currentTheme.advancedSettings.colors.header,
-                    borderRadius: `${borderRadius[0]}px`
-                  }}
-                >
-                  <h3 
-                    className="font-bold text-lg"
-                    style={{ 
-                      fontSize: `${fontSize[0] + 4}px`,
-                      fontFamily: currentTheme.advancedSettings.typography.restaurantName.fontFamily,
-                      color: getContrastingTextColor(currentTheme.advancedSettings.colors.header)
-                    }}
-                  >
-                    Bella Vista
-                  </h3>
-                  <p 
-                    className="text-sm opacity-90"
-                    style={{ 
-                      fontFamily: currentTheme.advancedSettings.typography.restaurantSlogan.fontFamily,
-                      color: getContrastingTextColor(currentTheme.advancedSettings.colors.header)
-                    }}
-                  >
-                    İtalyan Mutfağı
-                  </p>
-                </div>
-
-                {/* Preview Menu Item */}
-                <div 
-                  className="border border-border"
-                  style={{ 
-                    backgroundColor: currentTheme.advancedSettings.colors.cards,
-                    borderRadius: `${borderRadius[0]}px`,
-                    padding: `${density[0]}px`
-                  }}
-                >
-                  <h4 
-                    className="font-semibold mb-2"
-                    style={{ 
-                      fontSize: `${fontSize[0] + 2}px`,
-                      fontFamily: currentTheme.advancedSettings.typography.productName.fontFamily,
-                      color: currentTheme.advancedSettings.colors.productName
-                    }}
-                  >
-                    Pasta Carbonara
-                  </h4>
-                  <p 
-                    className="mb-3"
-                    style={{ 
-                      fontSize: `${fontSize[0]}px`,
-                      fontFamily: currentTheme.advancedSettings.typography.productDescription.fontFamily,
-                      color: currentTheme.advancedSettings.colors.productDescription
-                    }}
-                  >
-                    Taze malzemelerle lezzetli makarna
-                  </p>
-                  <div className="flex items-center justify-between">
-                    <span 
-                      className="text-lg font-bold"
-                      style={{ 
-                        color: currentTheme.advancedSettings.colors.productPrice,
-                        fontFamily: currentTheme.advancedSettings.typography.productPrice.fontFamily
-                      }}
-                    >
-                      ₺89.99
-                    </span>
-                    <button
-                      className="text-white px-3 py-1 rounded text-sm font-medium"
-                      style={{ 
-                        backgroundColor: currentTheme.advancedSettings.colors.buttons,
-                        borderRadius: `${borderRadius[0] / 2}px`,
-                        fontSize: `${fontSize[0] - 2}px`,
-                        color: getContrastingTextColor(currentTheme.advancedSettings.colors.buttons)
-                      }}
-                    >
-                      Detay
-                    </button>
-                  </div>
-                </div>
-
-                {/* Preview Category */}
-                <div 
-                  className="border border-border"
-                  style={{ 
-                    backgroundColor: currentTheme.advancedSettings.colors.cards,
-                    borderRadius: `${borderRadius[0]}px`,
-                    padding: `${density[0]}px`
-                  }}
-                >
-                  <h4 
-                    className="font-semibold mb-2"
-                    style={{ 
-                      fontSize: `${fontSize[0] + 2}px`,
-                      fontFamily: currentTheme.advancedSettings.typography.categoryName.fontFamily,
-                      color: currentTheme.advancedSettings.colors.productName
-                    }}
-                  >
-                    Ana Yemekler
-                  </h4>
-                  <p 
-                    className="text-sm"
-                    style={{ 
-                      color: currentTheme.advancedSettings.colors.labels
-                    }}
-                  >
-                    8 öğe
-                  </p>
-                </div>
-
-                {/* Reset Button */}
-                <Button 
-                  variant="outline" 
-                  className="w-full mt-6"
-                  onClick={resetToDefault}
-                >
-                  <RotateCcw className="w-4 h-4 mr-2" />
-                  Varsayılana Sıfırla
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+          <LivePreview currentTheme={currentTheme} />
+          
+          {/* Reset Button */}
+          <div className="mt-6">
+            <Button 
+              variant="outline" 
+              className="w-full"
+              onClick={resetToDefault}
+            >
+              <RotateCcw className="w-4 h-4 mr-2" />
+              Varsayılana Sıfırla
+            </Button>
+          </div>
         </div>
       </div>
     </div>
