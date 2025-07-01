@@ -57,6 +57,7 @@ import {
   availableFonts, 
   socialIconPacks,
   categoryAnimationTypes,
+  layoutOptions,
   getDefaultThemeBlueprint 
 } from '@/lib/theme/themeBlueprint';
 
@@ -100,6 +101,52 @@ function SortableBlock({ block, blockLabels }) {
       <Badge variant="outline" className="text-xs border-border text-muted-foreground">
         Sıra: {block}
       </Badge>
+    </div>
+  );
+}
+
+// Layout Selection Component
+function LayoutSelection({ type, currentLayout, onLayoutChange }) {
+  const layouts = layoutOptions[type] || {};
+  
+  return (
+    <div className="space-y-4">
+      <Label className="text-foreground text-lg font-medium">
+        {type === 'category' ? 'Kategori Düzeni' : 'Ürün Düzeni'}
+      </Label>
+      <div className="grid grid-cols-1 gap-4">
+        {Object.entries(layouts).map(([key, layout]) => (
+          <div
+            key={key}
+            className={cn(
+              "border rounded-lg p-4 cursor-pointer transition-all duration-200",
+              currentLayout === key 
+                ? "border-primary bg-primary/5" 
+                : "border-border hover:border-primary/50"
+            )}
+            onClick={() => onLayoutChange(key)}
+          >
+            <div className="flex items-start space-x-4">
+              <div className="w-20 h-16 rounded-lg overflow-hidden bg-muted">
+                <img 
+                  src={layout.preview} 
+                  alt={layout.name}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-medium mb-1 text-foreground">{layout.name}</h3>
+                <p className="text-sm text-muted-foreground">{layout.description}</p>
+                {currentLayout === key && (
+                  <Badge className="mt-2 bg-primary text-primary-foreground">
+                    Seçili
+                  </Badge>
+                )}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
@@ -701,6 +748,41 @@ export function ThemeCustomization() {
                     </DndContext>
                   </CardContent>
                 </Card>
+
+                {/* Layout Selection */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <Card className="bg-card border-border">
+                    <CardHeader>
+                      <CardTitle className="text-foreground">Kategori Düzeni</CardTitle>
+                      <p className="text-muted-foreground text-sm">
+                        Kategorilerin nasıl görüneceğini seçin
+                      </p>
+                    </CardHeader>
+                    <CardContent>
+                      <LayoutSelection
+                        type="category"
+                        currentLayout={currentTheme.advancedSettings.layout.categoryLayout}
+                        onLayoutChange={(layout) => updateAdvancedSetting('layout.categoryLayout', layout)}
+                      />
+                    </CardContent>
+                  </Card>
+
+                  <Card className="bg-card border-border">
+                    <CardHeader>
+                      <CardTitle className="text-foreground">Ürün Düzeni</CardTitle>
+                      <p className="text-muted-foreground text-sm">
+                        Ürünlerin nasıl görüneceğini seçin
+                      </p>
+                    </CardHeader>
+                    <CardContent>
+                      <LayoutSelection
+                        type="product"
+                        currentLayout={currentTheme.advancedSettings.layout.productLayout}
+                        onLayoutChange={(layout) => updateAdvancedSetting('layout.productLayout', layout)}
+                      />
+                    </CardContent>
+                  </Card>
+                </div>
 
                 <Card className="bg-card border-border">
                   <CardHeader>
